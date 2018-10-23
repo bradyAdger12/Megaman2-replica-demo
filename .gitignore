@@ -1,5 +1,10 @@
 /openFrameworks
 /addons
 /local_addons
+.DS_Store
+Makefile
+Project.xcconfig
+*.make
+*.plsit
 
 
