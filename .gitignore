@@ -4,4 +4,7 @@
 Project.xcconfig
 openFrameworks-Info.plist
 shooterDebug.app
+*.DS_Store
+Makefile
+*.make
 
