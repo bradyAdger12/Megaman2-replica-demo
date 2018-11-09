@@ -1,67 +1,89 @@
 #include "ofApp.h"  
 #include "object.h"
-shared_ptr<ofxBox2dRect> rectangle;  
-shared_ptr<ofxBox2dCircle> circle; 
-object rect;
+#include <cmath>
+#include "player.h"
+shared_ptr<ofxBox2dRect> ground;  
+shared_ptr<ofxBox2dCircle> obstacle;  
+vector<shared_ptr<ofxBox2dBaseShape>> object::objectList;
+player *p1;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 
 	//world setup
+	background.load("images/background.jpg");
 	world.init(); 
-	world.setFPS(60.0);    
+	world.setFPS(60.0); 
+	world.setGravity(0, 15);  
+
+	//create player
+	p1 = new player();
+	p1->setup(); 
+
+	//create ball
+	object *ob2 = new object();
+	obstacle = ob2->Circle(50, 100, 15, 2, .60, 2.0);
+	soccerBall.load("images/ball.png");
+
+	object *ob3 = new object();
+	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 0);  
 	
-	//setup objects
-	int diff = 0;
-	for (int i = 0; i < 10; i++) {
-		object *ob = new object();
-		circle = ob->Circle(100 + diff, 100 + diff, 10, 4.0, .5, 0); 
-		circles.push_back(circle);
-		diff++;
-	}  
-	rectangle = rect.Rectangle(0, ofGetHeight() - 20, ofGetWidth(), 20, 0 , 0, 2);  
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	world.update();
-	for (int i = 0; i < circles.size(); i++) { 
-		circles[i].get()->update();
+
+	//keep obstacle in bounds
+	if (obstacle.get()->getPosition().x + obstacle.get()->getRadius() >= ofGetWidth()) {
+		obstacle.get()->setVelocity(obstacle.get()->getVelocity().x * -1, obstacle.get()->getVelocity().y);
 	}
-	rectangle.get()->enableGravity(false);
+	if (obstacle.get()->getPosition().x - obstacle.get()->getRadius() <= 0) {
+		obstacle.get()->setVelocity(obstacle.get()->getVelocity().x * -1, obstacle.get()->getVelocity().y);
+	}
+
+	//update world
+	world.update();
+	obstacle.get()->update();
+	ground.get()->enableGravity(true);
+
+
+	//update player
+	p1->update();
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){	 
+void ofApp::draw(){
 
 	//draw world 
 	world.draw();  
 
-	//draw circle 
-	ofSetColor(0);
-	for (int i = 0; i < circles.size(); i++) {
-		circles[i].get()->draw();
-	}
-	ofSetColor(0);
-	rectangle.get()->draw();
+	//draw background
+	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
+
+	//falling obstacle
+	obstacle.get()->draw();
+	soccerBall.draw(obstacle.get()->getPosition().x - 15, obstacle.get()->getPosition().y - 15, 30, 30);
+
+	//draw player 
+	p1->draw();
+	
 	  
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){ 
-	if (key == 'f') {
-		cout << world.getBodyCount() << endl;
-		circle.get()->destroy();
-		rectangle.get()->destroy();
-		cout << world.getBodyCount() << endl;
+	p1->keyPressed(key);
+	 
+	if (key == 'g') {
+		obstacle.get()->addImpulseForce(ofVec2f(obstacle.get()->getPosition() + 10), ofVec2f(0, -5));
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+	p1->keyReleased(key);
 }
 
 //--------------------------------------------------------------

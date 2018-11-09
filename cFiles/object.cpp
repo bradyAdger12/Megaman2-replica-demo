@@ -11,6 +11,7 @@ shared_ptr<ofxBox2dCircle> object::Circle(int x, int y, float radius, float dens
 	circle = std::make_shared<ofxBox2dCircle>();
 	circle.get()->setPhysics(density, bounce , friction);
 	circle.get()->setup(ofApp::world.getWorld(), x, y, radius);
+	objectList.push_back(circle);
 	return circle;
 }
 
@@ -20,5 +21,6 @@ shared_ptr<ofxBox2dRect> object::Rectangle(int x, int y, int w, int h, float den
 	rect = std::make_shared<ofxBox2dRect>(); 
 	rect.get()->setPhysics(density, bounce, friction);
 	rect.get()->setup(ofApp::world.getWorld(), x, y, w, h);
+	objectList.push_back(rect);
 	return rect;
 }
