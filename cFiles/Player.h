@@ -2,13 +2,13 @@
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
-#include "object.h"
+#include "collider.h"
 #include <vector>
 
 class player {
 public:
 	int getX(), getY(), speed, runningFrameNum; 
-	float getXVelocity(), getYVelocity(), jump; 
+	float getXVelocity(), getYVelocity(), jumpForce; 
 	void setup();
 	void update();
 	void draw();
@@ -20,6 +20,6 @@ public:
 	ofImage idleSkin;
 	vector<ofImage> runningAnimation;
 	shared_ptr<ofxBox2dCircle> playerCollider;
-	object *ob;
+	collider *ob;
 	bool leftOriented, running; 
 };

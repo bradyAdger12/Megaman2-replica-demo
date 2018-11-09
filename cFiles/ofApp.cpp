@@ -1,10 +1,10 @@
 #include "ofApp.h"  
-#include "object.h"
+#include "collider.h"
 #include <cmath>
 #include "player.h"
 shared_ptr<ofxBox2dRect> ground;  
 shared_ptr<ofxBox2dCircle> obstacle;  
-vector<shared_ptr<ofxBox2dBaseShape>> object::objectList;
+vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 player *p1;
 
 //--------------------------------------------------------------
@@ -21,11 +21,11 @@ void ofApp::setup(){
 	p1->setup(); 
 
 	//create ball
-	object *ob2 = new object();
+	collider *ob2 = new collider();
 	obstacle = ob2->Circle(50, 100, 15, 2, .60, 2.0);
 	soccerBall.load("images/ball.png");
 
-	object *ob3 = new object();
+	collider *ob3 = new collider();
 	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 0);  
 	
 }
@@ -74,10 +74,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){ 
-	p1->keyPressed(key);
-	 
+	p1->keyPressed(key); 
 	if (key == 'g') {
-		obstacle.get()->addImpulseForce(ofVec2f(obstacle.get()->getPosition() + 10), ofVec2f(0, -5));
+		obstacle.get()->addForce(ofVec2f(0, obstacle.get()->getPosition().y), -2);
 	}
 }
 

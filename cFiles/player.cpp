@@ -10,7 +10,7 @@ void player::setup()
 	//setup player attributes
 	speed = 12;
 	runningFrameNum = 0;
-	jump = -10;
+	jumpForce = 80;
 	
 	//load idle image
 	idleSkin.load("images/idle.png");
@@ -24,7 +24,7 @@ void player::setup()
 	}
 
 	//create playerCollider 
-	ob = new object();
+	ob = new collider();
 	playerCollider = ob->Circle(50, ofGetHeight()-40, 35, 25, 0, 0); 
 
 }
@@ -47,15 +47,15 @@ void player::draw()
 void player::keyPressed(int key)
 {
 	if (key == 'd') {
-		playerCollider.get()->setVelocity(speed, getXVelocity());
+		setVelocity(speed, getYVelocity());
 		running = true; 
 	}
 	else if (key == 'a') { 
 		running = true;  
-		playerCollider.get()->setVelocity(-speed, getYVelocity());
+		setVelocity(-speed, getYVelocity());
 	}
 	else if (key == 'w') {
-		playerCollider.get()->setVelocity(getXVelocity(), jump);
+		playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
 	}
 }
 
@@ -70,10 +70,8 @@ void player::keyReleased(int key)
 	if (key == 'a') {
 		running = false;
 		setVelocity(0, getYVelocity());
-	}
-	if (key == 'w') {
-		setVelocity(getXVelocity(), 0);
-	}
+	} 
+	
 }
 
 int player::getX()
