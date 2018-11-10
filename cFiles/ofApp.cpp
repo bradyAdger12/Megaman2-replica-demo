@@ -6,7 +6,7 @@ shared_ptr<ofxBox2dRect> ground;
 shared_ptr<ofxBox2dCircle> obstacle;  
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 player *p1;
-
+float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
 
@@ -14,7 +14,7 @@ void ofApp::setup(){
 	background.load("images/background.jpg");
 	world.init(); 
 	world.setFPS(60.0); 
-	world.setGravity(0, 15);  
+	world.setGravity(0, 20);  
 
 	//create player
 	p1 = new player();
@@ -22,11 +22,12 @@ void ofApp::setup(){
 
 	//create ball
 	collider *ob2 = new collider();
-	obstacle = ob2->Circle(50, 100, 15, 2, .60, 2.0);
+	obstacle = ob2->Circle(ofGetWidth()/2, 100, 25, 2, .60, 2.0);
 	soccerBall.load("images/ball.png");
-
+	
+	//create ground
 	collider *ob3 = new collider();
-	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 0);  
+	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 8);  
 	
 }
 
@@ -60,10 +61,13 @@ void ofApp::draw(){
 	//draw background
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-
-	//falling obstacle
-	obstacle.get()->draw();
-	soccerBall.draw(obstacle.get()->getPosition().x - 15, obstacle.get()->getPosition().y - 15, 30, 30);
+	//draw and rotate ball 
+	ofPushMatrix(); 
+	ofTranslate(obstacle.get()->getPosition().x, obstacle.get()->getPosition().y, 0);
+	soccerBall.setAnchorPercent(0.5f, 0.5f);
+	ofRotate(obstacle.get()->getRotation()); 
+	soccerBall.draw(0, 0, 50, 50);	
+	ofPopMatrix();
 
 	//draw player 
 	p1->draw();

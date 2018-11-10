@@ -7,19 +7,23 @@
 
 class player {
 public:
-	int getX(), getY(), speed, runningFrameNum; 
-	float getXVelocity(), getYVelocity(), jumpForce; 
+	int getX(), getY(), speed, runningNum, idleNum, radius, size; 
+	float getXVelocity(), getYVelocity(), jumpForce, blink; 
 	void setup();
 	void update();
 	void draw();
+	void setX(float x);
+	void setY(float y);
 	void setVelocity(float x, float y);
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void flipImages();
-	void runningHandler();
-	ofImage idleSkin;
+	void runningHandler(); 
+	void idleHandler();
 	vector<ofImage> runningAnimation;
+	vector<ofImage> idleAnimation;
+	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider;
 	collider *ob;
-	bool leftOriented, running; 
+	bool leftOriented, running, isFlipped; 
 };
