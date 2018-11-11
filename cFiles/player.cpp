@@ -4,17 +4,21 @@ void player::setup()
 {
 	//player states
 	running = false;
-	leftOriented = false; 
+	leftOriented = false;
 	jumpState = false;
-	inAir = false;  
+	inAir = false; 
 	
 	//setup player attributes
-	speed = 12;
-	runningNum = 0; 
+	speed = 12;  //speed of player
+	speedMultiplier = 1.60; //sprint at 160%
+	jumpCount = 0; //used to keep track of double jump
+	runningNum = 0;  //used to index running sprites
+	idleNum = 0;  //index idle sprites
+	jumpNum = 0;  //index jump sprites
 	blink = 0;    //random between 0 and 1
-	size = 140;   //size of the player skin
-	jumpForce = size*2;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
-	radius = size/2.2;
+	radius = 65;  //radius of circle collider
+	size = radius * 2.2;  //size of character image is based of size of collider
+	jumpForce = size * 2.8;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
 
 	//load jumping animation
 	for (int i = 1; i < 4; i++) {
@@ -23,6 +27,7 @@ void player::setup()
 		jump.load(file);
 		jumpAnimation.push_back(jump);
 	}
+
 	
 	//load idle animation
 	for (int i = 1; i < 5; i++) {
@@ -46,8 +51,8 @@ void player::setup()
 
 }
 
-void player::update()  {  
-
+void player::update()
+{  
 	playerCollider.get()->update();	
 	if (getX()-radius < 0) {
 		setX(radius);
@@ -57,10 +62,11 @@ void player::update()  {
 	}
 }
 
-void player::draw() 
+void player::draw()
 { 
 	//set back to white
 	ofSetColor(255);
+
 	//orient images based on player state/direction
 	orientPlayer();
 
@@ -69,9 +75,12 @@ void player::draw()
 		runningHandler();
 	}
 
+	//jump handler
 	else if (jumpState) {
 		jumpHandler();
 	}
+
+	//idle handler
 	else {
 		idleHandler();
 	}
@@ -80,40 +89,67 @@ void player::draw()
 
 void player::keyPressed(int key) {
 
-		if (key == 'd') {
-			setVelocity(speed, getYVelocity());
-			running = true;
-		}
-		else if (key == 'a') {
-			running = true;
-			setVelocity(-speed, getYVelocity());
-		}
-	
-		else if (!inAir) {
-			if (key == 'w') {
-				jumpState = true;
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+
+	//able to sprint if runnning and not in the air
+	if (running && !inAir) {
+		if (key == 'k') {
+			if (getXVelocity() > 0) {
+				setVelocity(speed * speedMultiplier, getYVelocity());
 			}
+			else {
+				setVelocity(-speed * speedMultiplier, getYVelocity());
+			}
+		}
+	}
+	
+	//run right
+	else if (key == 'd') {
+		setVelocity(speed, getYVelocity());
+		running = true;
+	}
+
+	//run left
+	else if (key == 'a') {
+		running = true;
+		setVelocity(-speed, getYVelocity());
+	}
+	
+	//if not in the air, jump
+	if (jumpCount < 2) {
+		if (key == 32) { 
+			jumpCount++;
+			jumpState = true;
+			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+		}
 	}
 }
 
 void player::keyReleased(int key)
-{ 
-	if (key == 'd') { 
-		running = false; 
-		setVelocity(0, getYVelocity());
-	}
-	if (key == 'a') { 
+{
+
+	if (key == 'd') {
 		running = false;
 		setVelocity(0, getYVelocity());
-	} 
-	
+	}
+	if (key == 'a') {
+		running = false;
+		setVelocity(0, getYVelocity());
+	}
+	if (running) {
+		if (key == 'k') {
+			if (!leftOriented) {
+				setVelocity(-speed, getYVelocity());
+			}
+			else {
+				setVelocity(speed, getYVelocity());
+			}
+
+		}
+	}
 }
 
 
-
 //flip images whenever turned to the left
->>>>>>> dev
 void player::flipImages() {
 	isFlipped = true;
 	for (int i = 0; i < runningAnimation.size(); i++) { 
@@ -143,15 +179,12 @@ void player::orientPlayer() {
 	}
 }
 
-void player::runningHandler() { 
-
+void player::runningHandler() {
 		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 15, size, size);
 		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
-		}
-		
-	
+		}	
 }
 
 
@@ -175,6 +208,7 @@ void player::jumpHandler() {
 	//reset after falling to the ground
 	else {
 		inAir = false;
+		jumpCount = 0;  
 		jumpState = false;
 		jumpNum = 0;  //reset to first jump images whenever you hit the ground
 	}

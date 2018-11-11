@@ -15,6 +15,7 @@ shared_ptr<ofxBox2dCircle> collider::Circle(int x, int y, float radius, float de
 	return circle;
 }
 
+
 shared_ptr<ofxBox2dRect> collider::Rectangle(int x, int y, int w, int h, float density, float bounce, float friction) {
 	shared_ptr<ofxBox2dRect> rect;
 	rect = std::make_shared<ofxBox2dRect>(); 
@@ -22,4 +23,7 @@ shared_ptr<ofxBox2dRect> collider::Rectangle(int x, int y, int w, int h, float d
 	rect.get()->setup(ofApp::world.getWorld(), x, y, w, h);
 	objectList.push_back(rect);
 	return rect;
+}
+
+void collider::update() { 
 }

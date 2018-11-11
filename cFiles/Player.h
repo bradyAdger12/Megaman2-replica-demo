@@ -1,18 +1,14 @@
 #pragma once
 #include "ofMain.h"
-<<<<<<< HEAD
 #include "ofxBox2dCircle.h"
-=======
-#include "ofxBox2dCircle.h"
->>>>>>> dev
 #include "ofxBox2d.h"
 #include "collider.h"
 #include <vector>
 
 class player {
-public: 
+public:
 	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 
-	float getXVelocity(), getYVelocity(), jumpForce, blink, lastY, y; 
+	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	void setup();
 	void update();
 	void draw();

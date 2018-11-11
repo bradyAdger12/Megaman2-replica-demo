@@ -16,6 +16,7 @@ void ofApp::setup(){
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
 
+
 	//create player
 	p1 = new player();
 	p1->setup(); 
@@ -23,7 +24,7 @@ void ofApp::setup(){
 	//create ball
 	collider *ob2 = new collider();
 	obstacle = ob2->Circle(ofGetWidth()/2, 100, 25, 2, .60, 2.0);
-	soccerBall.load("images/ball.png");
+	soccerBall.load("images/ball.png"); 
 	
 	//create ground
 	collider *ob3 = new collider();
@@ -32,21 +33,20 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update(){ 
 	 
-
 	//keep obstacle in bounds
 	if (obstacle.get()->getPosition().x + obstacle.get()->getRadius() >= ofGetWidth()) {
-		obstacle.get()->setVelocity(obstacle.get()->getVelocity().x * -1, obstacle.get()->getVelocity().y);
+		obstacle.get()->setVelocity(obstacle.get()->getVelocity().x * -1, obstacle.get()->getVelocity().y);	
 	}
-	if (obstacle.get()->getPosition().x - obstacle.get()->getRadius() <= 0) {
+	else if (obstacle.get()->getPosition().x - obstacle.get()->getRadius() <= 0) {
 		obstacle.get()->setVelocity(obstacle.get()->getVelocity().x * -1, obstacle.get()->getVelocity().y);
 	}
 
 	//update world
 	world.update();
 	obstacle.get()->update();
-	ground.get()->enableGravity(true);
+
 
 	//update player
 	p1->update();
@@ -62,6 +62,9 @@ void ofApp::draw(){
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	//draw and rotate ball 
+	ofSetColor(0);
+	obstacle.get()->draw();
+	ofSetColor(255);
 	ofPushMatrix(); 
 	ofTranslate(obstacle.get()->getPosition().x, obstacle.get()->getPosition().y, 0);
 	soccerBall.setAnchorPercent(0.5f, 0.5f);
@@ -85,7 +88,7 @@ void ofApp::keyPressed(int key) {
 	if (key == 'r') {
 		obstacle.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
 	}
-
+	 
 }
 
 //--------------------------------------------------------------
