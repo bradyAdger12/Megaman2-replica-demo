@@ -23,7 +23,7 @@ void Item::setup(){
 	collide = new collider();
 	it = collide->Circle(x, y, mass, 2, .2, 2.0);
 	it.get()->setFixedRotation(true);
-	tossForce = 4;
+	tossForce = 8;
 }
 void Item::update(){
 	//keep item in bounds 
@@ -66,11 +66,12 @@ void Item::toss(){
 	cout << "Thrown from: (" << it.get()->getPosition() << ")" << endl;
 	if (parent->leftOriented) {
 		cout << "toss right" << endl;
-		it.get()->addForce(ofVec2f(it.get()->getPosition().x, (it.get()->getPosition().y) * -1), tossForce);
-	}
+		it.get()->addForce(ofVec2f(500, -300), tossForce);
+	} 
+
 	else {
 		cout << "toss left" << endl;
-		it.get()->addForce(ofVec2f(it.get()->getPosition()), -tossForce);
+		it.get()->addForce(ofVec2f(-500, -300), tossForce);
 	}
     hasPlayer = false;
 }

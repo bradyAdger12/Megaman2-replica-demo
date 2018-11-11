@@ -151,6 +151,7 @@ void Player::keyPressed(int key) {
 	if (jumpCount < 2) {
 		if (key == 32) { 
 			jumpCount++;
+			jumpNum = 0;
 			jumpState = true;
 			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
 		}
