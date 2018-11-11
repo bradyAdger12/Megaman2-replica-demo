@@ -1,15 +1,16 @@
 //
-//  Item.hpp
+//  Item.h
 //  GameFinal
 //
 //  Created by Jfry on 11/10/18.
 //
+#pragma once
 
-#ifndef Item_h
-#define Item_h
+
 #include "ofMain.h"
 #include <stdio.h>
 class Player; //foward declaration
+
 class Item{
     
 public:
@@ -33,4 +34,5 @@ private:
     bool hasPlayer;
     Player *parent;
 };
-#endif /* Item_h */
+
+

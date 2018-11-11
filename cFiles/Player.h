@@ -1,7 +1,6 @@
 
+#pragma once
 
-#ifndef Player_h
-#define Player_h
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
@@ -47,5 +46,4 @@ public:
 	bool leftOriented, running, isFlipped, inAir, moveInAir; 
 	bool jumpState;
 };
-#endif /* Player_h */
 
