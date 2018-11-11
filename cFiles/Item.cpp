@@ -8,12 +8,13 @@
 #include "Item.h"
 #include "Player.h"
 Item::Item(string s, int x, int y, int mass, int style, ofImage image){
+
     this->x = x;
     this->y = y;
     this->mass = mass;
     this->style = style; //0 = throwable 1= consumable
     this->image = image;
-	this->shape = s; 
+	this->shape = s;
 	hasPlayer = false;
 	
 
@@ -63,6 +64,7 @@ void Item::draw(){
 	ofRotate(it.get()->getRotation());
 	image.draw(0, 0, 50, 50);
 	ofPopMatrix();
+
 }
 
 //Ability
@@ -70,7 +72,7 @@ void Item::use(){
     //abillity->trigger();
     cout << "Item_Used"<< endl;
 }
-void Item::toss(){ 
+void Item::toss(){
 	cout << "Thrown from: (" << it.get()->getPosition() << ")" << endl;
 	if (parent->leftOriented) {
 		cout << "toss right" << endl;
@@ -85,7 +87,6 @@ void Item::toss(){
     hasPlayer = false;
 	tossForce = scale;
 	count = 0;
-
 }
 void Item::setParent(Player *parent){
     this->parent = parent;
@@ -99,5 +100,6 @@ int Item::getX(){
 }
 int Item::getY(){
     return it.get()->getPosition().y;
+
 }
 
