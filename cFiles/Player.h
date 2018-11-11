@@ -9,8 +9,7 @@
 #include "Item.h"
 #include <vector>
 
-
-class player {
+class Player {
 public:
 	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;

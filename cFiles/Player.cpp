@@ -1,7 +1,7 @@
 
-#include "player.h" 
+#include "Player.h"
 
-void player::setup()
+void Player::setup()
 {
 	//player states
 	running = false;
@@ -113,7 +113,7 @@ void Player::draw()
 
 }
 
-void player::keyPressed(int key) {
+void Player::keyPressed(int key) {
 
 
 	//able to sprint if runnning and not in the air
@@ -150,7 +150,7 @@ void player::keyPressed(int key) {
 	}
 }
 
-void player::keyReleased(int key)
+void Player::keyReleased(int key)
 {
 
 	if (key == 'd') {
@@ -177,7 +177,7 @@ void player::keyReleased(int key)
 
 
 //flip images whenever turned to the left
-void player::flipImages() { 
+void Player::flipImages() {
 	isFlipped = true;
 	for (int i = 0; i < runningAnimation.size(); i++) { 
 		runningAnimation[i].mirror(false, true);
@@ -205,7 +205,7 @@ void Player::orientPlayer() {
 	}
 }
 
-void player::runningHandler() { 
+void Player::runningHandler() {
 		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 15, size, size);
 		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
@@ -214,7 +214,7 @@ void player::runningHandler() {
 }
 
 
-void player::jumpHandler() {
+void Player::jumpHandler() {
 
 	//if in the air 
 	if (abs(getYVelocity()) > 0) {
@@ -240,7 +240,7 @@ void player::jumpHandler() {
 	}
 }
 
-void player::idleHandler() {
+void Player::idleHandler() {
 	if (ofGetFrameNum() % 17 == 0) {
 		idleNum++;
 		idleNum = idleNum % idleAnimation.size();
