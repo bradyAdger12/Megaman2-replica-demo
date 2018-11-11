@@ -8,6 +8,7 @@
 #ifndef Item_h
 #define Item_h
 #include "Player.h"
+#include "ofMain.h"
 #include <stdio.h>
 class Item{
     
@@ -32,5 +33,4 @@ private:
     bool hasPlayer;
     Player *parent;
 };
-
 #endif /* Item_h */

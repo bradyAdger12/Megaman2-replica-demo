@@ -1,12 +1,13 @@
+
+
+#ifndef Player_h
+#define Player_h
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "collider.h"
 #include "Item.h"
 #include <vector>
-
-#ifndef Item_h
-#define Item_h
 class Player {
 public: 
 	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 
