@@ -29,15 +29,23 @@ public:
     int getX();
     int getY();
 	int style;
+	
+	//used to throw item further
+	float multiplier; //increases the force of a throw
+	float tossForce; //set to the value of scale as a default but is increased by the multiplier. Get reset after item is thrown
+	float maxTossForce; //maximum velocity an item can be thrown
+	float scale; //default throwing force
+	int count;  //used to track # of times the 'e' key is pressed 
 
 	
     
 private:
     ofImage image;
 	string shape;
-    int x, y, mass, tossForce;
+	int x, y, mass;
     bool hasPlayer;
     Player *parent;
+
 	//collider
 	collider *collide;
 	shared_ptr<ofxBox2dCircle> it;

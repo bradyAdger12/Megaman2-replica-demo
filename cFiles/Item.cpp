@@ -23,7 +23,11 @@ void Item::setup(){
 	collide = new collider();
 	it = collide->Circle(x, y, mass, 2, .2, 2.0);
 	it.get()->setFixedRotation(true);
-	tossForce = 8;
+	scale = 5;
+	tossForce = scale;
+	multiplier = 1.35;
+	maxTossForce = 22;
+	count = 0;
 }
 void Item::update(){
 	//keep item in bounds 
@@ -40,6 +44,10 @@ void Item::update(){
 			it.get()->setPosition(parent->getX() + 15, parent->getY() - parent->radius - it.get()->getRadius() - 15); //change to x_Slot in future 
 		}
 	
+
+		if (tossForce >= maxTossForce) {
+			tossForce = maxTossForce;	
+		}
 	
 	it.get()->update();
     
@@ -66,14 +74,18 @@ void Item::toss(){
 	cout << "Thrown from: (" << it.get()->getPosition() << ")" << endl;
 	if (parent->leftOriented) {
 		cout << "toss right" << endl;
-		it.get()->addForce(ofVec2f(500, -300), tossForce);
+		it.get()->addForce(ofVec2f(500, -150), tossForce);
 	} 
 
 	else {
 		cout << "toss left" << endl;
-		it.get()->addForce(ofVec2f(-500, -300), tossForce);
+		it.get()->addForce(ofVec2f(-500, -150), tossForce);
 	}
+
     hasPlayer = false;
+	tossForce = scale;
+	count = 0;
+
 }
 void Item::setParent(Player *parent){
     this->parent = parent;

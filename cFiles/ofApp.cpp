@@ -5,7 +5,7 @@
 shared_ptr<ofxBox2dRect> ground;   
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 Player *p1;
-Item *i1;
+Item *i1; 
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -68,10 +68,10 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	p1->keyPressed(key);
-    if(key == 't'){ //bypass user Key pressed so we can pass item to player from main
+    if(key == 'e'){ //bypass user Key pressed so we can pass item to player from main
         if(p1->hasItem){  
-			if (p1->getItem()->style == 0) {
-				p1->throwItem();
+			if (p1->getItem()->style == 0) { 
+				p1->getItem()->tossForce *= p1->getItem()->multiplier;
 			}
 			else {
 				p1->useItem();
@@ -113,6 +113,17 @@ double ofApp::distance(int x1,int x2,int y1,int y2){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 	p1->keyReleased(key);
+	if (key == 'e') { //bypass user Key pressed so we can pass item to player from main
+		if (p1->hasItem) {
+			p1->getItem()->count++;
+			if (p1->getItem()->style == 0) {
+				if (p1->getItem()->count == 2) {
+					cout << "Thow Force: " << p1->getItem()->tossForce << endl;
+					p1->throwItem();
+				}
+			}
+		}
+	}
 }
 
 //--------------------------------------------------------------
