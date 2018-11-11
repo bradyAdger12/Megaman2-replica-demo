@@ -24,6 +24,3 @@ shared_ptr<ofxBox2dRect> collider::Rectangle(int x, int y, int w, int h, float d
 	objectList.push_back(rect);
 	return rect;
 }
-
-void collider::update() { 
-}

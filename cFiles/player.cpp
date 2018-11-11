@@ -1,6 +1,7 @@
-#include "player.h" 
 
-void player::setup()
+#include "Player.h"
+
+void Player::setup()
 {
 	//player states
 	running = false;
@@ -25,10 +26,9 @@ void player::setup()
 		string file = "images/jump" + ofToString(i) + ".png";
 		ofImage jump;
 		jump.load(file);
-		jumpAnimation.push_back(jump);
+		jumpAnimation.push_back(jump); 
 	}
 
-	
 	//load idle animation
 	for (int i = 1; i < 5; i++) {
 		string file = "images/idle" + ofToString(i) + ".png";
@@ -50,9 +50,41 @@ void player::setup()
 	playerCollider = ob->Circle(50, ofGetHeight()-40, radius, 25, 0, 0); 
 
 }
+//********************** ITEM LOGIC **********************************************
+int Player::getX_Slot(){
+    return x_Slot;
+}
+int Player::getY_Slot(){
+    return y_Slot;
+}
+void Player::useItem(){
+    if(hasItem){
+        item->use();
+    }
+}
+void Player::throwItem(){
+    item->toss();
+    hasItem = false;
+}
+void Player::equipItem(Item *item){
+    if(item){
+        this->item=item;
+        hasItem = true;
+        this->item->setParent(this);
+    }
+}
 
-void player::update()
-{  
+Item* Player::getItem() {
+	if (hasItem) {
+		return this->item;
+	}
+	return NULL;
+}
+//********************** ITEM LOGIC **********************************************
+
+
+void Player::update()  {
+
 	playerCollider.get()->update();	
 	if (getX()-radius < 0) {
 		setX(radius);
@@ -60,9 +92,10 @@ void player::update()
 	if (getX() + radius > ofGetWidth()) {
 		setX(ofGetWidth()-radius);
 	}
+    //NEED TO UPDATE x & y slot positions
 }
 
-void player::draw()
+void Player::draw() 
 { 
 	//set back to white
 	ofSetColor(255);
@@ -83,11 +116,11 @@ void player::draw()
 	//idle handler
 	else {
 		idleHandler();
-	}
+	} 
 
 }
 
-void player::keyPressed(int key) {
+void Player::keyPressed(int key) {
 
 
 	//able to sprint if runnning and not in the air
@@ -124,7 +157,7 @@ void player::keyPressed(int key) {
 	}
 }
 
-void player::keyReleased(int key)
+void Player::keyReleased(int key)
 {
 
 	if (key == 'd') {
@@ -134,6 +167,7 @@ void player::keyReleased(int key)
 	if (key == 'a') {
 		running = false;
 		setVelocity(0, getYVelocity());
+
 	}
 	if (running) {
 		if (key == 'k') {
@@ -150,7 +184,7 @@ void player::keyReleased(int key)
 
 
 //flip images whenever turned to the left
-void player::flipImages() {
+void Player::flipImages() {
 	isFlipped = true;
 	for (int i = 0; i < runningAnimation.size(); i++) { 
 		runningAnimation[i].mirror(false, true);
@@ -163,7 +197,7 @@ void player::flipImages() {
 	}
 }
 
-void player::orientPlayer() {
+void Player::orientPlayer() {
 	if (running) {
 		if (leftOriented && getXVelocity() < 0) {
 			flipImages();
@@ -174,12 +208,11 @@ void player::orientPlayer() {
 			if (isFlipped) {
 				flipImages();
 			}
-
 		}
 	}
 }
 
-void player::runningHandler() {
+void Player::runningHandler() {
 		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 15, size, size);
 		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
@@ -188,7 +221,7 @@ void player::runningHandler() {
 }
 
 
-void player::jumpHandler() {
+void Player::jumpHandler() {
 
 	//if in the air 
 	if (abs(getYVelocity()) > 0) {
@@ -214,7 +247,7 @@ void player::jumpHandler() {
 	}
 }
 
-void player::idleHandler() {
+void Player::idleHandler() {
 	if (ofGetFrameNum() % 17 == 0) {
 		idleNum++;
 		idleNum = idleNum % idleAnimation.size();
@@ -232,37 +265,37 @@ void player::idleHandler() {
 }
 
 
-int player::getX()
+int Player::getX()
 {
 	return playerCollider.get()->getPosition().x;
 }
 
-int player::getY()
+int Player::getY()
 {
 	return playerCollider.get()->getPosition().y;
 }
 
-float player::getXVelocity()
+float Player::getXVelocity()
 {
 	return playerCollider.get()->getVelocity().x;
 }
 
-float player::getYVelocity()
+float Player::getYVelocity()
 {
 	return playerCollider.get()->getVelocity().y;
 }
 
-void player::setX(float x)
+void Player::setX(float x)
 {
 	playerCollider.get()->setPosition(x, playerCollider.get()->getPosition().y);
 }
 
-void player::setY(float y)
+void Player::setY(float y)
 {
 	playerCollider.get()->setPosition(playerCollider.get()->getPosition().x, y);
 }
 
-void player::setVelocity(float x, float y)
+void Player::setVelocity(float x, float y)
 {
 	return playerCollider.get()->setVelocity(x, y);
 }

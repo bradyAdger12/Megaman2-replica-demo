@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
-
+#include "Item.h"
 class ofApp : public ofBaseApp{
 
 	public:
@@ -27,6 +27,9 @@ class ofApp : public ofBaseApp{
 		ofImage soccerBall;
 		static ofxBox2d world;
 		
-		 
-		
+    vector<Item*> items;
+    Item* closestUsableItem(int x, int y);
+    void spawnRandomItem();
+    double distance(int x1,int x2,int y1,int y2);
+    
 };
