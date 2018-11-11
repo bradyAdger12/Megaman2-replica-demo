@@ -14,7 +14,7 @@ void ofApp::setup(){
 	background.load("images/background.jpg");
 	world.init(); 
 	world.setFPS(60.0); 
-	world.setGravity(0, 20);  
+	world.setGravity(0, 30);  
 
 	//create player
 	p1 = new player();
@@ -33,6 +33,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	 
 
 	//keep obstacle in bounds
 	if (obstacle.get()->getPosition().x + obstacle.get()->getRadius() >= ofGetWidth()) {
@@ -46,7 +47,6 @@ void ofApp::update(){
 	world.update();
 	obstacle.get()->update();
 	ground.get()->enableGravity(true);
-
 
 	//update player
 	p1->update();
@@ -77,11 +77,15 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){ 
-	p1->keyPressed(key); 
+void ofApp::keyPressed(int key) {
+	p1->keyPressed(key);
 	if (key == 'g') {
-		obstacle.get()->addForce(ofVec2f(0, obstacle.get()->getPosition().y), -2);
+		obstacle.get()->addForce(ofVec2f(0, obstacle.get()->getPosition().y), -5);
 	}
+	if (key == 'r') {
+		obstacle.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
+	}
+
 }
 
 //--------------------------------------------------------------

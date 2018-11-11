@@ -4,16 +4,25 @@ void player::setup()
 {
 	//player states
 	running = false;
-	leftOriented = false;
-	isFlipped = false;
+	leftOriented = false; 
+	jumpState = false;
+	inAir = false;  
 	
 	//setup player attributes
 	speed = 12;
-	runningNum = 0;
-	blink = 0;
-	size = 140;
-	jumpForce = size*2;
+	runningNum = 0; 
+	blink = 0;    //random between 0 and 1
+	size = 140;   //size of the player skin
+	jumpForce = size*2;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
 	radius = size/2.2;
+
+	//load jumping animation
+	for (int i = 1; i < 4; i++) {
+		string file = "images/jump" + ofToString(i) + ".png";
+		ofImage jump;
+		jump.load(file);
+		jumpAnimation.push_back(jump);
+	}
 	
 	//load idle animation
 	for (int i = 1; i < 5; i++) {
@@ -37,8 +46,8 @@ void player::setup()
 
 }
 
-void player::update()
-{ 
+void player::update()  {  
+
 	playerCollider.get()->update();	
 	if (getX()-radius < 0) {
 		setX(radius);
@@ -48,15 +57,20 @@ void player::update()
 	}
 }
 
-void player::draw()
+void player::draw() 
 { 
 	//set back to white
 	ofSetColor(255);
+	//orient images based on player state/direction
+	orientPlayer();
 
-
-	if (running) {
+	if (running && !jumpState) {
 		//running Animation handler
 		runningHandler();
+	}
+
+	else if (jumpState) {
+		jumpHandler();
 	}
 	else {
 		idleHandler();
@@ -64,35 +78,42 @@ void player::draw()
 
 }
 
-void player::keyPressed(int key)
-{
-	if (key == 'd') {
-		setVelocity(speed, getYVelocity());
-		running = true; 
-	}
-	else if (key == 'a') { 
-		running = true;  
-		setVelocity(-speed, getYVelocity());
-	}
-	else if (key == 'w') {  
-		playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+void player::keyPressed(int key) {
+
+		if (key == 'd') {
+			setVelocity(speed, getYVelocity());
+			running = true;
+		}
+		else if (key == 'a') {
+			running = true;
+			setVelocity(-speed, getYVelocity());
+		}
+	
+		else if (!inAir) {
+			if (key == 'w') {
+				jumpState = true;
+				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+			}
 	}
 }
 
 void player::keyReleased(int key)
-{
-	
-	if (key == 'd') {
+{ 
+	if (key == 'd') { 
 		running = false; 
 		setVelocity(0, getYVelocity());
 	}
-	if (key == 'a') {
+	if (key == 'a') { 
 		running = false;
 		setVelocity(0, getYVelocity());
 	} 
 	
 }
 
+
+
+//flip images whenever turned to the left
+>>>>>>> dev
 void player::flipImages() {
 	isFlipped = true;
 	for (int i = 0; i < runningAnimation.size(); i++) { 
@@ -101,29 +122,62 @@ void player::flipImages() {
 	for (int i = 0; i < idleAnimation.size(); i++) {
 		idleAnimation[i].mirror(false, true);
 	}
+	for (int i = 0; i < jumpAnimation.size(); i++) {
+		jumpAnimation[i].mirror(false, true);
+	}
 }
 
-void player::runningHandler() { 
+void player::orientPlayer() {
+	if (running) {
 		if (leftOriented && getXVelocity() < 0) {
 			flipImages();
-			leftOriented = false; 
+			leftOriented = false;
 		}
 		if (!leftOriented && getXVelocity() > 0) {
 			leftOriented = true;
-			if (isFlipped) { 
+			if (isFlipped) {
 				flipImages();
 			}
 
 		}
+	}
+}
 
-		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 10, size, size);
+void player::runningHandler() { 
 
-		if (ofGetFrameNum() % int(speed * .5) == 0) {
+		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 15, size, size);
+		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
 		}
 		
 	
+}
+
+
+void player::jumpHandler() {
+
+	//if in the air 
+	if (abs(getYVelocity()) > 0) {
+		inAir = true;
+		jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 15, size, size);
+		if (ofGetFrameNum() % 25 == 0) {
+			if (jumpNum == jumpAnimation.size()-1) {
+				jumpAnimation[jumpAnimation.size()-1].draw(getX() - radius, getY() - radius - 15, size, size);
+			}
+			else {
+				jumpNum++;
+			}
+			jumpNum = jumpNum % jumpAnimation.size();
+		}
+	}
+
+	//reset after falling to the ground
+	else {
+		inAir = false;
+		jumpState = false;
+		jumpNum = 0;  //reset to first jump images whenever you hit the ground
+	}
 }
 
 void player::idleHandler() {
@@ -135,11 +189,11 @@ void player::idleHandler() {
 	}
 
 	//blinks about half the time  
-	if (idleNum == 3 && blink > .5) {
-		idleAnimation[0].draw(getX() - radius, getY() - radius - 10, size, size);
+	if (idleNum == 3 && blink > .35) {
+		idleAnimation[0].draw(getX() - radius, getY() - radius - 15, size, size);
 	}
 	else {
-		idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 10, size, size);
+		idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 15, size, size);
 	}
 }
 
