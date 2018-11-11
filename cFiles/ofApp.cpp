@@ -1,11 +1,11 @@
 #include "ofApp.h"  
 #include "collider.h"
 #include <cmath>
-#include "player.h"
+#include "Player.h"
 shared_ptr<ofxBox2dRect> ground;  
 shared_ptr<ofxBox2dCircle> obstacle;  
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-player *p1;
+Player *p1;
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -18,7 +18,7 @@ void ofApp::setup(){
 
 
 	//create player
-	p1 = new player();
+	p1 = new Player();
 	p1->setup(); 
 
 	//create ball
@@ -88,7 +88,37 @@ void ofApp::keyPressed(int key) {
 	if (key == 'r') {
 		obstacle.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
 	}
-	 
+    if(key == 't'){ //bypass user Key pressed so we can pass item to player from main
+        if(p1->hasItem){
+            p1->useItem();
+        }else{
+            p1->equipItem(closestUsableItem(p1->getX(), p1->getY()));
+        }
+    }
+
+}
+
+Item* ofApp::closestUsableItem(int x, int y){
+    Item *closest;
+    double dist;
+    double closest_dist = 40;
+    if(items.size() > 0){                      //if there are items
+        for(int i = 0; i < items.size(); i++){ //check all
+            if(!items[i]->hasParent()){        //without parent
+                dist = distance(x, items[i]->getX(), y, items[i]->getY());
+                if(dist < closest_dist){ //within distance
+                    closest = items[i];
+                    closest_dist = dist;
+                }
+            }
+        }
+    }
+    return closest;
+}
+
+//Returns distance between 2 pts
+double ofApp::distance(int x1,int x2,int y1,int y2){
+    return sqrt(pow(x1-x2, 2) + pow(y1-y2, 2));
 }
 
 //--------------------------------------------------------------

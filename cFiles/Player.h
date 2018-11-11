@@ -1,9 +1,14 @@
-#pragma once
+
+
+#ifndef Player_h
+#define Player_h
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "collider.h"
+#include "Item.h"
 #include <vector>
+
 
 class player {
 public:
@@ -21,7 +26,19 @@ public:
 	void runningHandler(); 
 	void jumpHandler();
 	void orientPlayer();
-	void idleHandler();
+    void idleHandler();
+    
+    //Item vars and methods
+    int x_Slot;
+    int y_Slot;
+    bool hasItem;
+    int getX_Slot();
+    int getY_Slot();
+    Item *item;
+    void useItem();
+    void throwItem();
+    void equipItem(Item *item);
+    
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
@@ -31,3 +48,5 @@ public:
 	bool leftOriented, running, isFlipped, inAir, moveInAir; 
 	bool jumpState;
 };
+#endif /* Player_h */
+
