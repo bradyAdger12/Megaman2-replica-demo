@@ -65,6 +65,7 @@ void Player::equipItem(Item *item){
     if(item){
         this->item=item;
         hasItem = true;
+        this->item->setParent(this);
     }
 }
 //********************** ITEM LOGIC **********************************************

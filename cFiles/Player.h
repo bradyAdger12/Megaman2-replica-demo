@@ -1,4 +1,3 @@
-#pragma once
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
@@ -6,6 +5,8 @@
 #include "Item.h"
 #include <vector>
 
+#ifndef Item_h
+#define Item_h
 class Player {
 public: 
 	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 
@@ -44,3 +45,5 @@ public:
 	bool leftOriented, running, isFlipped, inAir, moveInAir; 
 	bool jumpState;
 };
+#endif /* Player_h */
+
