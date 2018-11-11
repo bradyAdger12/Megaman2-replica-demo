@@ -6,6 +6,7 @@
 //
 
 #include "Item.h"
+#include "Player.h"
 Item::Item(int x, int y, int mass, int style, ofImage image){
     this->x = x;
     this->y = y;
@@ -18,7 +19,7 @@ void Item::setup(){
     
 }
 void Item::update(){
-    if(hasParent){
+    if(hasPlayer){
         x = parent->getX(); //change to x_Slot in future
         y = parent->getY();//change to y_Slot in future
     }else{
@@ -26,7 +27,7 @@ void Item::update(){
     }
 }
 void draw(){
-    image.draw(x,y);
+    //image.draw(x,y);
 }
 
 //Ability
@@ -36,11 +37,11 @@ void Item::use(){
 }
 void Item::toss(){
     //add foward and rotational force
-    hasParent = false;
+    hasPlayer = false;
 }
 void Item::setParent(Player *parent){
     this->parent = parent;
-    hasParent = true;
+    hasPlayer = true;
 }
 bool Item::hasParent(){
     return parent;
