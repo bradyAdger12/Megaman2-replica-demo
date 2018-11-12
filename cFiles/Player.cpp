@@ -74,13 +74,13 @@ void Player::equipItem(Item *item){
         this->item->setParent(this);
     }
 }
-
 Item* Player::getItem() {
 	if (hasItem) {
 		return this->item;
 	}
 	return NULL;
 }
+
 //********************** ITEM LOGIC **********************************************
 
 

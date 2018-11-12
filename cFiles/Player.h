@@ -2,6 +2,7 @@
 
 #ifndef Player_h
 #define Player_h
+
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
@@ -37,6 +38,7 @@ public:
     void useItem();
     void throwItem();
 	Item* getItem();
+
     void equipItem(Item *item);
     
 	vector<ofImage> runningAnimation;
@@ -49,4 +51,5 @@ public:
 	bool jumpState;
 };
 #endif /* Player_h */
+
 

@@ -2,12 +2,13 @@
 #include "collider.h"
 #include <cmath>
 #include "Player.h"
-shared_ptr<ofxBox2dRect> ground;   
+shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 Player *p1;
 Item *i1;
 Item *i2;
 Item *i3;
+
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -74,7 +75,7 @@ void ofApp::draw(){
 	//draw background
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-	//item draw 
+	//item draw
 	for (int i = 0; i < items.size(); i++) {
 		items[i]->draw();
 	}
