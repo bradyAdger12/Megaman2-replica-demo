@@ -66,10 +66,11 @@ void Player::throwItem(){
     item->toss();
     hasItem = false;
 }
+
 void Player::equipItem(Item *item){
     if(item){
         this->item=item;
-        hasItem = true;
+        hasItem = true; 
         this->item->setParent(this);
     }
 }

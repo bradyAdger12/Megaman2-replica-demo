@@ -25,6 +25,9 @@ class ofApp : public ofBaseApp{
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background;
 		ofImage soccerBall;
+		ofImage block;
+		ofImage block2;
+		ofTrueTypeFont controlFont;
 		static ofxBox2d world;
 		
     vector<Item*> items;

@@ -7,44 +7,55 @@
 
 #include "Item.h"
 #include "Player.h"
-Item::Item(string s, int x, int y, int mass, int style, ofImage image){
+Item::Item(string shape, int x, int y, int size, int style, ofImage image){
     this->x = x;
     this->y = y;
-    this->mass = mass;
+    this->size = size;
+	this->shape = shape;
     this->style = style; //0 = throwable 1= consumable
     this->image = image;
-	this->shape = s; 
-	hasPlayer = false;
-	
-
-}
+	hasPlayer = false;  
+	if (shape == "circle") {
+		it = collide->Circle(x, y, size, 2, .2, 2.0);
+		it.get()->setFixedRotation(true);
+	}
+	if(shape == "square") { 
+		size *= 2;
+		it = collide->Rectangle(x, y, size, size, 2, .2, 2.0);
+		it.get()->setFixedRotation(true);
+	}
+} 
 
 void Item::setup(){
-	collide = new collider();
-	it = collide->Circle(x, y, mass, 2, .2, 2.0);
-	it.get()->setFixedRotation(true);
 	scale = 5;
 	tossForce = scale;
 	multiplier = 1.35;
-	maxTossForce = 22;
+	maxTossForce = 20;
 	count = 0;
 }
 void Item::update(){
 	//keep item in bounds 
 	
-	if (it.get()->getPosition().x + it.get()->getRadius() >= ofGetWidth()) {
+	if (it.get()->getPosition().x + size >= ofGetWidth()) {
 		it.get()->setVelocity(it.get()->getVelocity().x * -1, it.get()->getVelocity().y);
+		//added this second if statement to respawn object if it gets off screen
+		if (it.get()->getPosition().x >= ofGetWidth()) {
+			it.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
+		}
 	}
-	else if (it.get()->getPosition().x - it.get()->getRadius() <= 0) {
+	else if (it.get()->getPosition().x - size <= 0) {
 		it.get()->setVelocity(it.get()->getVelocity().x * -1, it.get()->getVelocity().y);
+		//added this second if statement to respawn object if it gets off screen
+		if (it.get()->getPosition().x + size/2 <= 0) {
+			it.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
+		}
 	}
 	
 		//a little messy. if item has player. bind to player in up right corner of collider. Arbitrary offset
 		if (hasPlayer) { 
-			it.get()->setPosition(parent->getX() + 15, parent->getY() - parent->radius - it.get()->getRadius() - 15); //change to x_Slot in future 
+			it.get()->setPosition(parent->getX() + 15, parent->getY() - parent->radius - size - 15); //change to x_Slot in future 
 		}
 	
-
 		if (tossForce >= maxTossForce) {
 			tossForce = maxTossForce;	
 		}
@@ -61,7 +72,7 @@ void Item::draw(){
 	ofTranslate(it.get()->getPosition().x, it.get()->getPosition().y, 0);
 	image.setAnchorPercent(0.5f, 0.5f);
 	ofRotate(it.get()->getRotation());
-	image.draw(0, 0, 50, 50);
+	image.draw(0, 0, size*2, size*2);
 	ofPopMatrix();
 }
 
@@ -84,7 +95,7 @@ void Item::toss(){
 
     hasPlayer = false;
 	tossForce = scale;
-	count = 0;
+	count = 0; 
 
 }
 void Item::setParent(Player *parent){
