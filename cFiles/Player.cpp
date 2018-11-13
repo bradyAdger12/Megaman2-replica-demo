@@ -98,7 +98,7 @@ void Player::update()  {
 	if (getX() + radius > ofGetWidth()) {
 		setX(ofGetWidth()-radius);
 	}
-    controllerInput(controller->getI());
+    controllerInput(controller->getInput());
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -154,11 +154,31 @@ void Player::controllerInput(char key){
     
     //if not in the air, jump
     if (jumpCount < 2) {
-        if (key == 32) {
+        if (key == 'p') {
             jumpCount++;
             jumpNum = 0;
             jumpState = true;
             playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+        }
+    }
+    if (key == 'R') {
+        running = false;
+        setVelocity(0, getYVelocity());
+    }
+    if (key == 'L') {
+        running = false;
+        setVelocity(0, getYVelocity());
+        
+    }
+    if (running) {
+        if (key == 'k') {
+            if (!leftOriented) {
+                setVelocity(-speed, getYVelocity());
+            }
+            else {
+                setVelocity(speed, getYVelocity());
+            }
+            
         }
     }
 }

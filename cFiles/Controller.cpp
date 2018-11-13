@@ -18,6 +18,7 @@ void Controller::update(){
         std::cout << i << endl;
     }
 }
-char Controller::getI(){
+char Controller::getInput(){
     return i;
 }
+

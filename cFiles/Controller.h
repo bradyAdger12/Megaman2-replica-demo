@@ -15,7 +15,7 @@ public:
     Controller(string port, int baud);
     void update();
     void setup();
-    char getI();
+    char getInput();
 private:
     ofSerial input;
     char i;
