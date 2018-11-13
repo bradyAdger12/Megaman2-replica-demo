@@ -21,6 +21,7 @@ public:
     void setup();
     void update();
     void draw();
+	void recreateCollider();
     
     //Ability
     void use();
@@ -30,6 +31,7 @@ public:
     int getX();
     int getY();
 	int style;
+	int density;
 	
 	//used to throw item further
 	float multiplier; //increases the force of a throw
@@ -37,6 +39,7 @@ public:
 	float maxTossForce; //maximum velocity an item can be thrown
 	float scale; //default throwing force
 	int count;  //used to track # of times the 'e' key is pressed  
+	shared_ptr<ofxBox2dBaseShape> it;
 
 	
     
@@ -47,7 +50,6 @@ private:
     bool hasPlayer;
     Player *parent;
 	collider *collide;
-	shared_ptr<ofxBox2dBaseShape> it;
 	 
 };
 #endif /* Item_h */

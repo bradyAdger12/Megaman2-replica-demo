@@ -43,8 +43,8 @@ public:
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
-	shared_ptr<ofxBox2dCircle> playerCollider;
-	collider *ob;
+	shared_ptr<ofxBox2dCircle> playerCollider; 
+	collider *ob; 
 	bool leftOriented, running, isFlipped, inAir, moveInAir; 
 	bool jumpState;
 };

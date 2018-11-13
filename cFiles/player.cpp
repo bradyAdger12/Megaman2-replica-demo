@@ -1,5 +1,5 @@
 
-#include "Player.h"
+#include "Player.h" 
 
 void Player::setup()
 {
@@ -7,7 +7,7 @@ void Player::setup()
 	running = false;
 	leftOriented = false;
 	jumpState = false;
-	inAir = false; 
+	inAir = false;  
 	
 	//setup player attributes
 	speed = 12;  //speed of player
@@ -84,9 +84,11 @@ Item* Player::getItem() {
 //********************** ITEM LOGIC **********************************************
 
 
-void Player::update()  {
+void Player::update() {
+	
+	
 
-	playerCollider.get()->update();	
+	playerCollider.get()->update();	 
 	if (getX()-radius < 0) {
 		setX(radius);
 	}
@@ -98,7 +100,7 @@ void Player::update()  {
 
 void Player::draw() 
 { 
-	//set back to white
+	//set back to white 
 	ofSetColor(255);
 
 	//orient images based on player state/direction
@@ -122,6 +124,15 @@ void Player::draw()
 }
 
 void Player::keyPressed(int key) {
+	if (key == 'e') {
+		if (jumpCount < 2) {
+			jumpCount++;
+			jumpNum = 0;
+			jumpState = true;
+			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+		}
+	}
+	
 
 
 	//able to sprint if runnning and not in the air
@@ -137,36 +148,29 @@ void Player::keyPressed(int key) {
 	}
 	
 	//run right
-	else if (key == 'd') {
+	else if (key == 'd') { 
 		setVelocity(speed, getYVelocity());
 		running = true;
 	}
 
 	//run left
-	else if (key == 'a') {
+	else if (key == 'a') { 
 		running = true;
 		setVelocity(-speed, getYVelocity());
 	}
 	
 	//if not in the air, jump
-	if (jumpCount < 2) {
-		if (key == 32) { 
-			jumpCount++;
-			jumpNum = 0;
-			jumpState = true;
-			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-		}
-	}
+	
 }
 
 void Player::keyReleased(int key)
 {
 
-	if (key == 'd') {
+	if (key == 'd') { 
 		running = false;
 		setVelocity(0, getYVelocity());
 	}
-	if (key == 'a') {
+	if (key == 'a') { 
 		running = false;
 		setVelocity(0, getYVelocity());
 
@@ -215,7 +219,7 @@ void Player::orientPlayer() {
 }
 
 void Player::runningHandler() {
-		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 15, size, size);
+		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 12, size, size);
 		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
@@ -226,12 +230,12 @@ void Player::runningHandler() {
 void Player::jumpHandler() {
 
 	//if in the air 
-	if (abs(getYVelocity()) > 0) {
+	if (abs(getYVelocity()) > .0001) {
 		inAir = true;
-		jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 15, size, size);
+		jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 12, size, size);
 		if (ofGetFrameNum() % 25 == 0) {
 			if (jumpNum == jumpAnimation.size()-1) {
-				jumpAnimation[jumpAnimation.size()-1].draw(getX() - radius, getY() - radius - 15, size, size);
+				jumpAnimation[jumpAnimation.size()-1].draw(getX() - radius, getY() - radius - 12, size, size);
 			}
 			else {
 				jumpNum++;
@@ -259,10 +263,10 @@ void Player::idleHandler() {
 
 	//blinks about half the time  
 	if (idleNum == 3 && blink > .35) {
-		idleAnimation[0].draw(getX() - radius, getY() - radius - 15, size, size);
+		idleAnimation[0].draw(getX() - radius, getY() - radius - 12, size, size);
 	}
 	else {
-		idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 15, size, size);
+		idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 12, size, size);
 	}
 }
 

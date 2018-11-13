@@ -25,14 +25,14 @@ class ofApp : public ofBaseApp{
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background;
 		ofImage soccerBall;
-		ofImage block;
-		ofImage block2;
+		ofImage block; 
 		ofTrueTypeFont controlFont;
 		static ofxBox2d world;
+		static ofSerial serial;
+		static char c;
 		
     vector<Item*> items;
     Item* closestUsableItem(int x, int y);
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);
-    
 };

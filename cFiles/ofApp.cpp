@@ -5,9 +5,7 @@
 shared_ptr<ofxBox2dRect> ground;   
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 Player *p1;
-Item *i1;
-Item *i2;
-Item *i3;
+Item *i1; 
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -17,30 +15,38 @@ void ofApp::setup(){
 	world.init(); 
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
+	
+	//setup serial
+	bool ok = serial.setup("COM3", 9600);
+	if (ok) {
+		cout << "it worked!" << endl;
+	}
+	else {
+		cout << "not connected" << endl;
+	}
 
 
 	//create player
 	p1 = new Player();
 	p1->setup(); 
 
-	//create circular item
+	//images for items
 	soccerBall.load("images/ball.png");
+	block.load("images/goldBlock.png");
+
+	//create circular item
 	i1 = new Item("circle", 300, 300, 20, 0, soccerBall);
-	items.push_back(i1);
+	items.push_back(i1); 
 	i1->setup();
 
-	//create square item
-	block.load("images/goldBlock.png");
-	i2 = new Item("square", 700, 150, 20, 0, block);
-	items.push_back(i2);
-	i2->setup();
-
-	//create another square
-	block2.load("images/goldBlock.png");
-	i3 = new Item("square", 950, 175, 20, 0, block);
-	items.push_back(i3);
-	i3->setup();
-	
+	//create blocks
+	for (int i = 0; i < 8; i++) {
+		Item *it;
+		it = new Item("square", ofRandom(1500), 175, 20, 0, block);
+		items.push_back(it);
+		it->setup();
+	}
+	 
 	//create ground
 	collider *ob3 = new collider();
 	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 8);  
@@ -53,16 +59,18 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){ 
 
+
 	//update world
 	world.update(); 
 
-	//update player
-	p1->update();
-	
 	//item update
 	for (int i = 0; i < items.size(); i++) {
 		items[i]->update();
 	}
+
+	//update player
+	p1->update();
+	
 }
 
 //--------------------------------------------------------------
@@ -74,13 +82,13 @@ void ofApp::draw(){
 	//draw background
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
+	//draw player 
+	p1->draw();
+
 	//item draw 
 	for (int i = 0; i < items.size(); i++) {
 		items[i]->draw();
 	}
-
-	//draw player 
-	p1->draw();
 
 	//draw font
 	controlFont.drawString("D -> right", 50, 50);
@@ -100,6 +108,9 @@ void ofApp::keyPressed(int key) {
         if(p1->hasItem){  
 			if (p1->getItem()->style == 0) { 
 				p1->getItem()->tossForce *= p1->getItem()->multiplier;
+				if (p1->getItem()->tossForce >= p1->getItem()->maxTossForce) {
+					p1->getItem()->tossForce = p1->getItem()->maxTossForce;
+				}
 			}
 			else {
 				p1->useItem();
