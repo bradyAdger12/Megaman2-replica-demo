@@ -9,14 +9,15 @@
 #include "Player.h"
 #include "ofApp.h" 
 Item::Item(string shape, int x, int y, int size, int style, ofImage image){
+
     this->x = x;
     this->y = y;
     this->size = size;
 	this->shape = shape;
     this->style = style; //0 = throwable 1= consumable
-    this->image = image;
+    this->image = image; 
 	density = size / 2.1;
-	hasPlayer = false;  
+	hasPlayer = false;   
 	if (shape == "circle") {
 		it = collide->Circle(x, y, size, density, .2, .5);
 		it.get()->setFixedRotation(true);
@@ -64,7 +65,7 @@ void Item::update(){
     
 }
 void Item::draw(){
-    //draw item and rotate image
+    //draw item and rotate image 
 	if (it.get()->alive) {
 		ofSetColor(0);
 		it.get()->draw();
@@ -86,7 +87,7 @@ void Item::draw(){
 		else {
 			image.draw(parent->getX() - parent->radius + 20, parent->getY() + 15, size * 2, size * 2);
 		}
-	}
+	} 
 }
 
 //Ability
@@ -94,8 +95,9 @@ void Item::use(){
     //abillity->trigger();
     cout << "Item_Used"<< endl;
 }
+ 
 void Item::toss(){ 
-	recreateCollider();
+	recreateCollider(); 
 	cout << "Thrown from: (" << it.get()->getPosition() << ")" << endl;
 	if (parent->leftOriented) {
 		cout << "toss right" << endl;
@@ -108,7 +110,7 @@ void Item::toss(){
 	}
     hasPlayer = false;
 	tossForce = scale;
-	count = 0; 
+	count = 0;
 
 }
 void Item::setParent(Player *parent){
@@ -123,6 +125,7 @@ int Item::getX(){
 }
 int Item::getY(){
     return it.get()->getPosition().y;
+
 }
 
 

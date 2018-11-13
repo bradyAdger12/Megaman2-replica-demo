@@ -2,11 +2,13 @@
 
 #ifndef Player_h
 #define Player_h
+
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "collider.h"
 #include "Item.h"
+#include "Controller.h"
 #include <vector>
 
 class Player {
@@ -26,7 +28,8 @@ public:
 	void jumpHandler();
 	void orientPlayer();
     void idleHandler();
-    
+    void controllerInput(char key);
+    Player();
     //Item vars and methods
     int x_Slot;
     int y_Slot;
@@ -39,6 +42,9 @@ public:
 	Item* getItem();
     void equipItem(Item *item);
     
+    //Controller Logic
+    Controller *controller;
+    
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
@@ -47,6 +53,8 @@ public:
 	collider *ob; 
 	bool leftOriented, running, isFlipped, inAir, moveInAir; 
 	bool jumpState;
+    
 };
 #endif /* Player_h */
+
 

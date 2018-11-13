@@ -2,14 +2,16 @@
 #include "collider.h"
 #include <cmath>
 #include "Player.h"
-shared_ptr<ofxBox2dRect> ground;   
+shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-Player *p1;
-Item *i1; 
+Player *p1; 
+Item *i1;  
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    //serial.listDevices();
+    //serial.setup("cu.usbmodemFD131", 9600);
+    
 	//world setup
 	background.load("images/background.jpg");
 	world.init(); 
