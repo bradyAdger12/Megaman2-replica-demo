@@ -1,6 +1,9 @@
 
 #include "Player.h"
 
+Player::Player(){
+    
+}
 void Player::setup()
 {
 	//player states
@@ -47,8 +50,9 @@ void Player::setup()
 
 	//create playerCollider 
 	ob = new collider();
-	playerCollider = ob->Circle(50, ofGetHeight()-40, radius, 25, 0, 0); 
-
+	playerCollider = ob->Circle(50, ofGetHeight()-40, radius, 25, 0, 0);
+    controller = new Controller("/dev/tty.usbmodemFA141", 9600);
+    controller->setup();
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -84,8 +88,9 @@ Item* Player::getItem() {
 //********************** ITEM LOGIC **********************************************
 
 
-void Player::update()  {
 
+void Player::update()  {
+    controller->update();
 	playerCollider.get()->update();	
 	if (getX()-radius < 0) {
 		setX(radius);
@@ -93,6 +98,7 @@ void Player::update()  {
 	if (getX() + radius > ofGetWidth()) {
 		setX(ofGetWidth()-radius);
 	}
+    controllerInput(controller->getI());
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -117,12 +123,47 @@ void Player::draw()
 	//idle handler
 	else {
 		idleHandler();
-	} 
+	}
+    //playerCollider.get()->draw();
 
+}
+void Player::controllerInput(char key){
+    //able to sprint if runnning and not in the air
+    if (running && !inAir) {
+        if (key == '3') {
+            if (getXVelocity() > 0) {
+                setVelocity(speed * speedMultiplier, getYVelocity());
+            }
+            else {
+                setVelocity(-speed * speedMultiplier, getYVelocity());
+            }
+        }
+    }
+    
+    //run right
+    else if (key == 'r') {
+        setVelocity(speed, getYVelocity());
+        running = true;
+    }
+    
+    //run left
+    else if (key == 'l') {
+        running = true;
+        setVelocity(-speed, getYVelocity());
+    }
+    
+    //if not in the air, jump
+    if (jumpCount < 2) {
+        if (key == 32) {
+            jumpCount++;
+            jumpNum = 0;
+            jumpState = true;
+            playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+        }
+    }
 }
 
 void Player::keyPressed(int key) {
-
 
 	//able to sprint if runnning and not in the air
 	if (running && !inAir) {

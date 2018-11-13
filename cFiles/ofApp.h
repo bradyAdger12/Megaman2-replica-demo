@@ -34,5 +34,6 @@ class ofApp : public ofBaseApp{
     Item* closestUsableItem(int x, int y);
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);
+    //ofSerial serial;
     
 };

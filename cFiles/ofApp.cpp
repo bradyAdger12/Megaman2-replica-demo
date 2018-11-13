@@ -12,7 +12,9 @@ Item *i3;
 float rot = 0;
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    //serial.listDevices();
+    //serial.setup("cu.usbmodemFD131", 9600);
+    
 	//world setup
 	background.load("images/background.jpg");
 	world.init(); 
