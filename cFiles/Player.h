@@ -10,7 +10,7 @@
 #include "Item.h"
 #include "Controller.h"
 #include <vector>
-
+using namespace std;
 class Player {
 public:
 	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 

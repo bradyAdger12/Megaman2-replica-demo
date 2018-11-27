@@ -25,6 +25,7 @@ Item::Item(string shape, int x, int y, int size, int style, ofImage image){
 		it = collide->Rectangle(x, y, size, size, 2, .2, 2.0);
 		it.get()->setFixedRotation(true);
 	}
+    it->setData(this);
 } 
 
 void Item::setup(){

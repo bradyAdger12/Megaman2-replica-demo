@@ -53,6 +53,7 @@ void Player::setup()
 	playerCollider = ob->Circle(50, ofGetHeight()-40, radius, 25, 0, 0);
     controller = new Controller("/dev/tty.usbmodemFA141", 9600);
     controller->setup();
+    playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){

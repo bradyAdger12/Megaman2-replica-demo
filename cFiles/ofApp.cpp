@@ -17,32 +17,45 @@ void ofApp::setup(){
     
 	//world setup
 	background.load("images/background.jpg");
-	world.init(); 
-	world.setFPS(60.0); 
+	world.init();
+    world.enableEvents();
+    world.setFPS(60.0);
 	world.setGravity(0, 30);  
 
-
+    // register the listener so that we get the events
+    ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
+    ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
+    
+    
 	//create player
 	p1 = new Player();
 	p1->setup(); 
+    collisionObjects.insert(make_pair(p1, "player1"));
 
+    
 	//create circular item
 	soccerBall.load("images/ball.png");
 	i1 = new Item("circle", 300, 300, 20, 0, soccerBall);
 	items.push_back(i1);
 	i1->setup();
+    collisionObjects.insert(make_pair(i1, "item1"));
 
+    
 	//create square item
 	block.load("images/goldBlock.png");
 	i2 = new Item("square", 700, 150, 20, 0, block);
 	items.push_back(i2);
 	i2->setup();
+    collisionObjects.insert(make_pair(i2, "item2"));
 
+    
 	//create another square
 	block2.load("images/goldBlock.png");
 	i3 = new Item("square", 950, 175, 20, 0, block);
 	items.push_back(i3);
 	i3->setup();
+    collisionObjects.insert(make_pair(i3, "item3"));
+
 	
 	//create ground
 	collider *ob3 = new collider();
@@ -95,6 +108,46 @@ void ofApp::draw(){
 	  
 	
 }
+//--------------------------------------------------------------
+void ofApp::contactStart(ofxBox2dContactArgs &e) {
+    if(e.a != NULL && e.b != NULL) {
+        // if we collide with the ground we do not
+        // want to play a sound. this is how you do that
+        if(e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle) {
+            string a_type;
+            string b_type;
+            
+            itr =collisionObjects.find(e.a->GetBody()->GetUserData());//seach collision object address map
+            if(itr == collisionObjects.end()){
+                
+            }else{
+               a_type = itr->second;
+            }
+            itr =collisionObjects.find(e.b->GetBody()->GetUserData());//seach collision object address map
+            if(itr == collisionObjects.end()){
+                
+            }else{
+                b_type = itr->second;
+            }
+         
+            std::cout << e.a->GetBody()->GetUserData() << endl;
+            std::cout << e.b->GetBody()->GetUserData() << endl;
+            
+            std::cout<<a_type<<endl;
+            std::cout<<b_type<<endl;
+
+        }
+    }
+}
+//--------------------------------------------------------------
+void ofApp::contactEnd(ofxBox2dContactArgs &e) {
+    if(e.a != NULL && e.b != NULL) {
+    }
+}
+
+
+
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
@@ -111,7 +164,6 @@ void ofApp::keyPressed(int key) {
             p1->equipItem(closestUsableItem(p1->getX(), p1->getY()));
         }
     }
-
 }
 
 Item* ofApp::closestUsableItem(int x, int y){

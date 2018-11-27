@@ -4,6 +4,7 @@
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "Item.h"
+using namespace std;
 class ofApp : public ofBaseApp{
 
 	public:
@@ -21,7 +22,13 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);   
+		void gotMessage(ofMessage msg);
+        string getObjectType(void* data);
+    
+    // this is the function for contacts
+    void contactStart(ofxBox2dContactArgs &e);
+    void contactEnd(ofxBox2dContactArgs &e);
+    
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background;
 		ofImage soccerBall;
@@ -29,7 +36,10 @@ class ofApp : public ofBaseApp{
 		ofImage block2;
 		ofTrueTypeFont controlFont;
 		static ofxBox2d world;
-		
+    
+    map<void*, string> collisionObjects;
+    map<void*, string>::iterator itr;
+    
     vector<Item*> items;
     Item* closestUsableItem(int x, int y);
     void spawnRandomItem();
