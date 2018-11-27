@@ -12,16 +12,22 @@ void ofApp::setup(){
     
 	//world setup
 	background.load("images/background.jpg");  
-	
 	world.init(); 
+	world.enableEvents();
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
+
+	// register the listener so that we get the events
+	ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
+	ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
 
 	//create player(s)
 	p1 = new Player("COM3", 50, ofGetHeight() - 100);
 	p1->setup(); 
+	collisionObjects.insert(make_pair(p1, "player1"));
 	p2 = new Player("COM6", ofGetWidth() - 100, ofGetHeight() - 100);
 	p2->setup();
+	collisionObjects.insert(make_pair(p2, "player2"));
 
 	//images for items
 	soccerBall.load("images/bomb.png");
@@ -31,6 +37,7 @@ void ofApp::setup(){
 	i1 = new Item("circle", 300, 300, 20, 0, soccerBall);
 	items.push_back(i1); 
 	i1->setup();
+	collisionObjects.insert(make_pair(i1, "item1"));
 
 	//create blocks
 	/*
@@ -44,6 +51,7 @@ void ofApp::setup(){
 	//create ground
 	collider *ob3 = new collider();
 	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 8);  
+	collisionObjects.insert(make_pair(ob3, "ground"));
 
 	//load font
 	controlFont.load("fonts/controlFont.ttf", 30);
@@ -103,6 +111,43 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
+void ofApp::contactStart(ofxBox2dContactArgs &e) {
+	if (e.a != NULL && e.b != NULL) {
+		// if we collide with the ground we do not
+		// want to play a sound. this is how you do that
+		if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle) {
+			string a_type;
+			string b_type;
+
+			itr = collisionObjects.find(e.a->GetBody()->GetUserData());//seach collision object address map
+			if (itr == collisionObjects.end()) {
+
+			}
+			else {
+				a_type = itr->second;
+			}
+			itr = collisionObjects.find(e.b->GetBody()->GetUserData());//seach collision object address map
+			if (itr == collisionObjects.end()) {
+
+			}
+			else {
+				b_type = itr->second;
+			}
+
+			std::cout << e.a->GetBody()->GetUserData() << endl;
+			std::cout << e.b->GetBody()->GetUserData() << endl;
+
+			std::cout << a_type << endl;
+			std::cout << b_type << endl;
+
+		}
+	}
+}
+//--------------------------------------------------------------
+void ofApp::contactEnd(ofxBox2dContactArgs &e) {
+	if (e.a != NULL && e.b != NULL) {
+	}
+}
 void ofApp::keyPressed(int key) { 
 }
 

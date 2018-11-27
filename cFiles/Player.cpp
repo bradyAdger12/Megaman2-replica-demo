@@ -68,6 +68,8 @@ void Player::setup()
 		runningAnimation.push_back(runner);
 	}
 
+	playerCollider->setData(this);
+
 	
 }
 //********************** ITEM LOGIC **********************************************

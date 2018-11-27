@@ -21,13 +21,22 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);   
+		void gotMessage(ofMessage msg); 
+		//string getObjectType(void* data);
+
+		// this is the function for contacts
+		void contactStart(ofxBox2dContactArgs &e);
+		void contactEnd(ofxBox2dContactArgs &e);
+
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background; 
 		ofImage soccerBall;
 		ofImage block; 
 		ofTrueTypeFont controlFont;
 		static ofxBox2d world;   
+
+		map<void*, string> collisionObjects;
+		map<void*, string>::iterator itr;
 		
 	static vector<Item*> items;
     void spawnRandomItem();
