@@ -23,17 +23,16 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);   
 		vector <shared_ptr<ofxBox2dCircle>> circles;
-		ofImage background;
+		ofImage background; 
 		ofImage soccerBall;
 		ofImage block; 
 		ofTrueTypeFont controlFont;
-		static ofxBox2d world; 
+		static ofxBox2d world;   
 		
-    vector<Item*> items;
-    Item* closestUsableItem(int x, int y);
+	static vector<Item*> items;
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);
 
-
+   
     
 };

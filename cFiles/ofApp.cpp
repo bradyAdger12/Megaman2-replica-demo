@@ -5,35 +5,26 @@
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 Player *p1; 
-Item *i1;  
-float rot = 0;
+Player *p2;
+Item *i1;   
 //--------------------------------------------------------------
-void ofApp::setup(){
-    //serial.listDevices();
-    //serial.setup("cu.usbmodemFD131", 9600);
+void ofApp::setup(){ 
     
 	//world setup
-	background.load("images/background.jpg");
+	background.load("images/background.jpg");  
+	
 	world.init(); 
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
-	
-	//setup serial
-	bool ok = serial.setup("COM3", 9600);
-	if (ok) {
-		cout << "it worked!" << endl;
-	}
-	else {
-		cout << "not connected" << endl;
-	}
 
-
-	//create player
-	p1 = new Player();
+	//create player(s)
+	p1 = new Player("COM3", 50, ofGetHeight() - 100);
 	p1->setup(); 
+	p2 = new Player("COM6", ofGetWidth() - 100, ofGetHeight() - 100);
+	p2->setup();
 
 	//images for items
-	soccerBall.load("images/ball.png");
+	soccerBall.load("images/bomb.png");
 	block.load("images/goldBlock.png");
 
 	//create circular item
@@ -42,12 +33,13 @@ void ofApp::setup(){
 	i1->setup();
 
 	//create blocks
+	/*
 	for (int i = 0; i < 8; i++) {
 		Item *it;
 		it = new Item("square", ofRandom(1500), 175, 20, 0, block);
 		items.push_back(it);
 		it->setup();
-	}
+	}*/
 	 
 	//create ground
 	collider *ob3 = new collider();
@@ -61,105 +53,61 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){ 
 
-
 	//update world
-	world.update(); 
+	world.update();  
 
 	//item update
-	for (int i = 0; i < items.size(); i++) {
+	
+	for (int i = 0; i < 1; i++) {
 		items[i]->update();
 	}
 
 	//update player
-	p1->update();
+	p1->update(); 
+	p2->update();
+	
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+
 	//draw world 
-	world.draw();  
+	world.draw(); 
 
 	//draw background
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
-	//draw player 
-	p1->draw();
+
+	//draw player  
+	p1->draw(); 
+	p2->draw();
+	
 
 	//item draw 
-	for (int i = 0; i < items.size(); i++) {
+	
+	for (int i = 0; i < 1; i++) {
 		items[i]->draw();
 	}
 
 	//draw font
-	controlFont.drawString("D -> right", 50, 50);
-	controlFont.drawString("A -> left", 50, 90);
-	controlFont.drawString("Space -> jump", 50, 130);
-	controlFont.drawString("K -> sprint", 50, 170);
-	controlFont.drawString("E -> pick up/throw item (Hold to throw further)", 50, 210);
+	controlFont.drawString("SQUARE -> pick up/throw item", 50, 50);
+	controlFont.drawString("X -> jump", 50, 90); 
+	controlFont.drawString("L3 -> sprint", 50, 130);
+	controlFont.drawString("L -> run", 50, 170); 
 	
 	  
+
 	
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
-	p1->keyPressed(key);
-    if(key == 'e'){ //bypass user Key pressed so we can pass item to player from main
-        if(p1->hasItem){  
-			if (p1->getItem()->style == 0) { 
-				p1->getItem()->tossForce *= p1->getItem()->multiplier;
-				if (p1->getItem()->tossForce >= p1->getItem()->maxTossForce) {
-					p1->getItem()->tossForce = p1->getItem()->maxTossForce;
-				}
-			}
-			else {
-				p1->useItem();
-			}
-        }else{
-            p1->equipItem(closestUsableItem(p1->getX(), p1->getY()));
-        }
-    }
-
-}
-
-Item* ofApp::closestUsableItem(int x, int y){
-    Item *closest;
-    double dist;
-    double closest_dist = 120;
-	if (items.size() > 0) {      //if there are items  
-		for (int i = 0; i < items.size(); i++) { //check all
-			if (!items[i]->hasParent()) {        //without parent
-				dist = distance(x, items[i]->getX(), y, items[i]->getY());
-				if (dist < closest_dist) { //within distance
-					return items[i]; 
-				}  
-			}
-		}
-	}
-	return NULL;
-}
-
-//Returns distance between 2 pts
-double ofApp::distance(int x1,int x2,int y1,int y2){
-    return sqrt(pow(x1-x2, 2) + pow(y1-y2, 2));
+void ofApp::keyPressed(int key) { 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	p1->keyReleased(key);
-	if (key == 'e') { //bypass user Key pressed so we can pass item to player from main
-		if (p1->hasItem) {
-			p1->getItem()->count++;
-			if (p1->getItem()->style == 0) {
-				if (p1->getItem()->count == 2) {
-					cout << "Thow Force: " << p1->getItem()->tossForce << endl;
-					p1->throwItem();
-				}
-			}
-		}
-	}
 }
 
 //--------------------------------------------------------------

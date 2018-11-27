@@ -6,39 +6,55 @@
 #include "ofMain.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
-#include "collider.h"
+#include "collider.h" 
 #include "Item.h"
 #include "Controller.h"
 #include <vector>
 
 class Player {
 public:
-	int getX(), getY(), speed, runningNum, idleNum,jumpNum, radius, size; 
+
+	//constructor
+	Player(string portNumber, int x, int y);
+
+	//var and methods
+	int getX(), getY(), getRadius(), speed, runningNum, idleNum,jumpNum, radius, size; 
+	int x, y;
+	string portName;
+	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem;
+	bool jumpState;
 	void setup();
 	void update();
 	void draw();
 	void setX(float x);
 	void setY(float y);
-	void setVelocity(float x, float y);
-	void keyPressed(int key);
-	void keyReleased(int key);
+	void setVelocity(float x, float y); 
 	void flipImages();
 	void runningHandler(); 
 	void jumpHandler();
 	void orientPlayer();
     void idleHandler();
     void controllerInput(char key);
-    Player();
+
+	//list of players
+	static vector<Player*> playerList;
+    
+
     //Item vars and methods
     int x_Slot;
     int y_Slot;
+	int count;
     bool hasItem;
     int getX_Slot();
-    int getY_Slot();
-    Item *item;
+    int getY_Slot(); 
+	Item *item;
+	//Consumable *consumable;
     void useItem();
     void throwItem();
+	Item* closestUsableItem(int x, int y);
+	double distance(int x1, int x2, int y1, int y2);
 	Item* getItem();
     void equipItem(Item *item);
     
@@ -51,8 +67,6 @@ public:
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 
-	bool leftOriented, running, isFlipped, inAir, moveInAir; 
-	bool jumpState;
     
 };
 #endif /* Player_h */

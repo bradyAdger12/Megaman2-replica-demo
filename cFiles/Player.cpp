@@ -1,8 +1,15 @@
 
 #include "Player.h" 
+#include "Controller.h"
+#include "ofApp.h"
+b2Timer timer;
+vector<Item*> ofApp::items;
+Player::Player(string portName, int x, int y){
+	this->portName = portName;
+	this->x = x;
+	this->y = y;
+	playerList.push_back(this);
 
-Player::Player(){
-    
 }
 void Player::setup()
 {
@@ -11,6 +18,10 @@ void Player::setup()
 	leftOriented = false;
 	jumpState = false;
 	inAir = false;  
+	isFlipped = false;
+	doubleJump = false;
+	hasItem = false;  
+
 	
 	//setup player attributes
 	speed = 12;  //speed of player
@@ -22,7 +33,16 @@ void Player::setup()
 	blink = 0;    //random between 0 and 1
 	radius = 65;  //radius of circle collider
 	size = radius * 2.2;  //size of character image is based of size of collider
-	jumpForce = size * 2.8;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
+	jumpForce = radius * 3.2;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
+
+	//create playerCollider 
+	ob = new collider();
+	playerCollider = ob->Circle(x, y, radius, 25, 0, 0);
+	controller = new Controller(portName, 9600);
+	controller->setup();
+
+	//item vars
+	count = 0; //used to determine when item is throwable
 
 	//load jumping animation
 	for (int i = 1; i < 4; i++) {
@@ -48,11 +68,7 @@ void Player::setup()
 		runningAnimation.push_back(runner);
 	}
 
-	//create playerCollider 
-	ob = new collider();
-	playerCollider = ob->Circle(50, ofGetHeight()-40, radius, 25, 0, 0);
-    controller = new Controller("/dev/tty.usbmodemFA141", 9600);
-    controller->setup();
+	
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -68,7 +84,7 @@ void Player::useItem(){
 }
 void Player::throwItem(){
     item->toss();
-    hasItem = false;
+    hasItem = false; 
 }
 
 void Player::equipItem(Item *item){
@@ -98,7 +114,9 @@ void Player::update()  {
 	if (getX() + radius > ofGetWidth()) {
 		setX(ofGetWidth()-radius);
 	}
-    controllerInput(controller->getI());
+	
+	//get controller input
+    controllerInput(controller->getI()); 
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -108,10 +126,11 @@ void Player::draw()
 	ofSetColor(255);
 
 	//orient images based on player state/direction
-	orientPlayer();
+	orientPlayer(); 
 
 	if (running && !jumpState) {
-		//running Animation handler
+		//running Animation handler 
+
 		runningHandler();
 	}
 
@@ -127,105 +146,90 @@ void Player::draw()
     //playerCollider.get()->draw();
 
 }
+
+//b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
-    //able to sprint if runnning and not in the air
-    if (running && !inAir) {
-        if (key == '3') {
-            if (getXVelocity() > 0) {
-                setVelocity(speed * speedMultiplier, getYVelocity());
-            }
-            else {
-                setVelocity(-speed * speedMultiplier, getYVelocity());
-            }
-        }
-    }
-    
-    //run right
-    else if (key == 'r') {
-        setVelocity(speed, getYVelocity());
-        running = true;
-    }
-    
-    //run left
-    else if (key == 'l') {
-        running = true;
-        setVelocity(-speed, getYVelocity());
-    }
-    
-    //if not in the air, jump
-    if (jumpCount < 2) {
-        if (key == 32) {
-            jumpCount++;
-            jumpNum = 0;
-            jumpState = true;
-            playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-        }
-    }
+	switch (key) {  
+
+		//sprint
+		case 's': 
+			if (running && !inAir) {
+				if (getXVelocity() > 0) {
+					setVelocity(speed * speedMultiplier, getYVelocity());
+				}
+				else {
+					setVelocity(-speed * speedMultiplier, getYVelocity());					}		
+				}
+				break;
+		
+
+		//run right
+		case 'r': {
+			running = true; 
+			setVelocity(speed, getYVelocity());
+			break;
+		}
+		case 'R': {
+			running = false;
+			setVelocity(0, getYVelocity());
+			break;
+		}
+
+		//run left
+		case 'l': {
+			running = true;
+			setVelocity(-speed, getYVelocity());
+			break;
+		}
+		case 'L': {
+			running = false;
+			setVelocity(0, getYVelocity());
+			break;
+		}
+
+
+		//jump
+		case 'c': 
+			if (!inAir) { 
+				jumpNum = 0;
+				jumpState = true;
+				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+			}
+			if (doubleJump) {
+				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+				doubleJump = false;
+			}
+			break;  
+			
+			 		
+		//grab items (left button) 
+		case 'p':  
+			if (hasItem) {  
+				if (getItem()->style == 0) { 
+					getItem()->tossForce *= getItem()->multiplier;
+					if (getItem()->tossForce >= getItem()->maxTossForce) {
+						getItem()->tossForce = getItem()->maxTossForce;
+					}
+					
+				}
+				else {
+					useItem();
+				}
+			}
+			else {  
+				equipItem(closestUsableItem(getX(), getY()));
+			}
+			break;
+
+		case 'P':   
+			if (hasItem && getItem()->tossForce > getItem()->scale + 2) {
+				throwItem();
+			}
+			break;
+		}
+
 }
 
-void Player::keyPressed(int key) {
-	if (key == 'e') {
-		if (jumpCount < 2) {
-			jumpCount++;
-			jumpNum = 0;
-			jumpState = true;
-			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-		}
-	}
-	
-
-	//able to sprint if runnning and not in the air
-	if (running && !inAir) {
-		if (key == 'k') {
-			if (getXVelocity() > 0) {
-				setVelocity(speed * speedMultiplier, getYVelocity());
-			}
-			else {
-				setVelocity(-speed * speedMultiplier, getYVelocity());
-			}
-		}
-	}
-	
-	//run right
-	else if (key == 'd') { 
-		setVelocity(speed, getYVelocity());
-		running = true;
-	}
-
-	//run left
-	else if (key == 'a') { 
-		running = true;
-		setVelocity(-speed, getYVelocity());
-	}
-	
-	//if not in the air, jump
-	
-}
-
-void Player::keyReleased(int key)
-{
-
-	if (key == 'd') { 
-		running = false;
-		setVelocity(0, getYVelocity());
-	}
-	if (key == 'a') { 
-		running = false;
-		setVelocity(0, getYVelocity());
-
-	}
-	if (running) {
-		if (key == 'k') {
-			if (!leftOriented) {
-				setVelocity(-speed, getYVelocity());
-			}
-			else {
-				setVelocity(speed, getYVelocity());
-			}
-
-		}
-	}
-}
 
 
 //flip images whenever turned to the left
@@ -269,7 +273,7 @@ void Player::runningHandler() {
 void Player::jumpHandler() {
 
 	//if in the air 
-	if (abs(getYVelocity()) > .0001) {
+	if (abs(getYVelocity()) > 0) {
 		inAir = true;
 		jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 12, size, size);
 		if (ofGetFrameNum() % 25 == 0) {
@@ -285,10 +289,9 @@ void Player::jumpHandler() {
 
 	//reset after falling to the ground
 	else {
-		inAir = false;
-		jumpCount = 0;  
-		jumpState = false;
-		jumpNum = 0;  //reset to first jump images whenever you hit the ground
+		inAir = false; 
+		jumpState = false; 
+		jumpNum = 0;  //reset to first jump images whenever you hit the ground 
 	}
 }
 
@@ -320,6 +323,16 @@ int Player::getY()
 	return playerCollider.get()->getPosition().y;
 }
 
+int Player::getRadius()
+{
+	return playerCollider.get()->getRadius();
+}
+
+ofVec2f Player::getPosition()
+{
+	return ofVec2f(getX(), getY());
+}
+
 float Player::getXVelocity()
 {
 	return playerCollider.get()->getVelocity().x;
@@ -343,4 +356,26 @@ void Player::setY(float y)
 void Player::setVelocity(float x, float y)
 {
 	return playerCollider.get()->setVelocity(x, y);
+}
+
+Item* Player::closestUsableItem(int x, int y) {
+	Item *closest;
+	double dist;
+	double closest_dist = 120;
+	if (ofApp::items.size() > 0) {      //if there are items  
+		for (int i = 0; i < ofApp::items.size(); i++) { //check all
+			if (!ofApp::items[i]->hasParent()) {        //without parent
+				dist = distance(x, ofApp::items[i]->getX(), y, ofApp::items[i]->getY());
+				if (dist < closest_dist) { //within distance
+					return ofApp::items[i];
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+//Returns distance between 2 pts
+double Player::distance(int x1, int x2, int y1, int y2) {
+	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }

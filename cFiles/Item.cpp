@@ -8,6 +8,7 @@
 #include "Item.h"
 #include "Player.h"
 #include "ofApp.h" 
+vector<Player*> Player::playerList;  
 Item::Item(string shape, int x, int y, int size, int style, ofImage image){
 
     this->x = x;
@@ -32,14 +33,15 @@ Item::Item(string shape, int x, int y, int size, int style, ofImage image){
 void Item::setup(){
 	scale = 5;
 	tossForce = scale;
-	multiplier = 1.25;
-	maxTossForce = 70;
-	count = 0;
+	multiplier = 1.05;
+	maxTossForce = 70;  
+	color.set(255, 0, 0);
 }
 void Item::update(){
+	 
 
 	//if alive, update item 
-	if (it.get()->alive) {
+	if (it.get()->alive) { 
 		if (it.get()->getPosition().x + size >= ofGetWidth()) {
 			it.get()->setVelocity(it.get()->getVelocity().x * -1, it.get()->getVelocity().y);
 			//added this second if statement to respawn object if it gets off screen
@@ -54,7 +56,9 @@ void Item::update(){
 				it.get()->setPosition(ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2));
 			}
 		} 
+
 		it.get()->update();
+	
 	}
 	
 		//if player has item. destroy collider until player throws item
@@ -64,11 +68,9 @@ void Item::update(){
 		}
     
 }
-void Item::draw(){
-    //draw item and rotate image 
+void Item::draw() {
+	//draw item and rotate image 
 	if (it.get()->alive) {
-		ofSetColor(0);
-		it.get()->draw();
 		ofSetColor(255);
 		ofPushMatrix();
 		ofTranslate(it.get()->getPosition().x, it.get()->getPosition().y, 0);
@@ -76,7 +78,7 @@ void Item::draw(){
 		ofRotate(it.get()->getRotation());
 		image.draw(0, 0, size * 2, size * 2);
 		ofPopMatrix();
-	}
+	} 
 
 
 	//draw the item image when player is holding the item
@@ -107,10 +109,9 @@ void Item::toss(){
 	else {
 		cout << "toss left" << endl;
 		it.get()->addForce(ofVec2f(-300, -300), tossForce);
-	}
+	} 
     hasPlayer = false;
-	tossForce = scale;
-	count = 0;
+	tossForce = scale; 
 
 }
 void Item::setParent(Player *parent){
