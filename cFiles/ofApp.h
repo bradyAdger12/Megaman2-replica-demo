@@ -32,10 +32,9 @@ class ofApp : public ofBaseApp{
 		ofImage background; 
 		ofImage soccerBall;
 		ofImage block; 
-		ofTrueTypeFont controlFont;
 		static ofxBox2d world;   
 
-		map<void*, string> collisionObjects;
+		static map<void*, string> collisionObjects;
 		map<void*, string>::iterator itr;
 		
 	static vector<Item*> items;

@@ -2,32 +2,36 @@
 #include "collider.h"
 #include <cmath>
 #include "Player.h"
+#include "GameManager.h"
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
+vector<Player*> GameManager::playerList;
 Player *p1; 
 Player *p2;
 Item *i1;   
+ofColor color;
+GameManager *gm;
 //--------------------------------------------------------------
 void ofApp::setup(){ 
     
 	//world setup
-	background.load("images/background.jpg");  
+	background.load("images/background.gif");  
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
 
+
+	//GameManager
+	gm = new GameManager();
+	gm->setup();
+
+	//color
+	color.set(255);
+
 	// register the listener so that we get the events
 	ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
 	ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
-
-	//create player(s)
-	p1 = new Player("COM3", 50, ofGetHeight() - 100);
-	p1->setup(); 
-	collisionObjects.insert(make_pair(p1, "player1"));
-	p2 = new Player("COM6", ofGetWidth() - 100, ofGetHeight() - 100);
-	p2->setup();
-	collisionObjects.insert(make_pair(p2, "player2"));
 
 	//images for items
 	soccerBall.load("images/bomb.png");
@@ -38,77 +42,73 @@ void ofApp::setup(){
 	items.push_back(i1); 
 	i1->setup();
 	collisionObjects.insert(make_pair(i1, "item1"));
-
-	//create blocks
-	/*
-	for (int i = 0; i < 8; i++) {
-		Item *it;
-		it = new Item("square", ofRandom(1500), 175, 20, 0, block);
-		items.push_back(it);
-		it->setup();
-	}*/
 	 
 	//create ground
 	collider *ob3 = new collider();
-	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 8);  
+	ground = ob3->Rectangle(0, ofGetHeight() - 40, ofGetWidth()*2, 20, 0 , 0, 8);  
 	collisionObjects.insert(make_pair(ob3, "ground"));
-
-	//load font
-	controlFont.load("fonts/controlFont.ttf", 30);
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){ 
 
-	//update world
-	world.update();  
+	//game UI
+	gm->update();
 
-	//item update
-	
-	for (int i = 0; i < 1; i++) {
-		items[i]->update();
+	if (gm->active) {
+
+		//update world
+		world.update();
+		 
+		//item update
+		for (int i = 0; i < 1; i++) {
+			items[i]->update();
+		}
+
+		//update player(s)
+		for (int i = 0; i < GameManager::playerList.size(); i++) {
+			GameManager::playerList[i]->update();
+		}
 	}
-
-	//update player
-	p1->update(); 
-	p2->update();
-	
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-
-	//draw world 
-	world.draw(); 
-
-	//draw background
+	//draw background 
+	ofSetColor(color);
 	background.draw(0, 0, ofGetWidth(), ofGetHeight());
 
+	//draw game UI
+	gm->draw();
 
-	//draw player  
-	p1->draw(); 
-	p2->draw();
-	
+	if (gm->active || gm->paused) {
+		if (gm->paused) {
+			color.set(180);
+		}
+		else {
+			color.set(255);
+		}
+		//draw world 
+		world.draw();
 
-	//item draw 
-	
-	for (int i = 0; i < 1; i++) {
-		items[i]->draw();
+		//draw player  
+		for (int i = 0; i < GameManager::playerList.size(); i++) {
+			GameManager::playerList[i]->draw();
+		}
+
+
+		//item draw 
+
+		for (int i = 0; i < 1; i++) {
+			items[i]->draw();
+		}
 	}
-
-	//draw font
-	controlFont.drawString("SQUARE -> pick up/throw item", 50, 50);
-	controlFont.drawString("X -> jump", 50, 90); 
-	controlFont.drawString("L3 -> sprint", 50, 130);
-	controlFont.drawString("L -> run", 50, 170); 
-	
-	  
-
-	
 }
+
+
 
 //--------------------------------------------------------------
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
