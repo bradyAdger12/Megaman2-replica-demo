@@ -10,7 +10,7 @@
 #include "Item.h"
 #include "Controller.h"
 #include <vector>
-
+using namespace std;
 class Player {
 public:
 

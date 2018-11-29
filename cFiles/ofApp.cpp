@@ -2,6 +2,7 @@
 #include "collider.h"
 #include <cmath>
 #include "Player.h"
+#include "MultiPlayerManager.h"
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 Player *p1; 
@@ -9,9 +10,10 @@ Player *p2;
 Item *i1;   
 //--------------------------------------------------------------
 void ofApp::setup(){ 
+    mpm = new MultiPlayerManager();
     
 	//world setup
-	background.load("images/background.jpg");  
+	background.load("images/background.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(60.0); 
@@ -33,6 +35,8 @@ void ofApp::setup(){
 	soccerBall.load("images/bomb.png");
 	block.load("images/goldBlock.png");
 
+
+    
 	//create circular item
 	i1 = new Item("circle", 300, 300, 20, 0, soccerBall);
 	items.push_back(i1); 
@@ -48,6 +52,7 @@ void ofApp::setup(){
 		it->setup();
 	}*/
 	 
+
 	//create ground
 	collider *ob3 = new collider();
 	ground = ob3->Rectangle(0, ofGetHeight() - 20, ofGetWidth()*2, 20, 0 , 0, 8);  
@@ -109,7 +114,6 @@ void ofApp::draw(){
 
 	
 }
-
 //--------------------------------------------------------------
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
 	if (e.a != NULL && e.b != NULL) {

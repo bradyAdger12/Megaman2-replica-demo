@@ -69,8 +69,6 @@ void Player::setup()
 	}
 
 	playerCollider->setData(this);
-
-	
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -116,9 +114,9 @@ void Player::update()  {
 	if (getX() + radius > ofGetWidth()) {
 		setX(ofGetWidth()-radius);
 	}
-	
-	//get controller input
-    controllerInput(controller->getI()); 
+    //get controller input
+    controllerInput(controller->getInput());
+
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -148,7 +146,6 @@ void Player::draw()
     //playerCollider.get()->draw();
 
 }
-
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
 	switch (key) {  

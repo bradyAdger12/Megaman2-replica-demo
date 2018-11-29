@@ -10,14 +10,15 @@ Controller::Controller(string port, int baud){
     input.setup(port, baud);
 }
 void Controller::setup(){
-    input.listDevices();
+    //input.listDevices();
 }
 void Controller::update(){
     if(input.available()){
         i = input.readByte();
-        std::cout << i << endl;
+        //std::cout << i << endl;
     }
 }
-char Controller::getI(){
+char Controller::getInput(){
     return i;
 }
+
