@@ -3,32 +3,21 @@
 #include "Controller.h"
 #include "b2Timer.h"
 #include "Player.h"
+#include "Menu.h"
 class GameManager {
 public:
-	GameManager();
-	static bool active;
+	GameManager(); 
 	void setup();
 	void draw();
 	void update();
 	Controller *controller; 
-	static bool createController, paused, createPlayerController;
-	
+	static bool createController, paused, active, createPlayerController;
 	static vector <Player*> playerList;
+	Menu *menu;
 
-private:
-	bool isSelected, controlMenu;
-	int index;
-	ofColor selectionColor;
-	ofImage controllerImage;
-	ofTrueTypeFont controls;
-	ofTrueTypeFont onePlayer;
-	ofTrueTypeFont twoPlayer;
-	ofTrueTypeFont controlFont;
-	map<string, bool> selectionList;
-	vector<string> determineSelection;
-	vector<Controller*> controllerList;
-	map<string, bool>::iterator selectionI;
+
+private:   
+	vector<Controller*> controllerList; 
 	void createPlayers(int num);
-	void controllerInput(char key);
-	void controlMenuInterface();
+	void controllerInput(char key); 
 };

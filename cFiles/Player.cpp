@@ -222,20 +222,6 @@ void Player::controllerInput(char key){
 			setVelocity(0, getYVelocity());
 			break;
 		}
-
-
-		//jump
-		case 'c': 
-			if (!inAir) { 
-				jumpNum = 0;
-				jumpState = true;
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-			}
-			if (doubleJump) {
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-				doubleJump = false;
-			}
-			break;  
 			
 			 		
 		//grab items (left button) 
@@ -272,6 +258,22 @@ void Player::controllerInput(char key){
 			delete(controller);
 			}
 		}
+
+		//jump
+	if (key == 'c') {
+		if (jumpCount < 2 && !doubleJump) {
+			jumpNum = 0;
+			jumpState = true;
+			doubleJump = true; 
+			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
+		}
+	}
+
+	if (key == 'C' && doubleJump) {
+		doubleJump = false;
+		jumpCount++;
+		
+	}
 
 }
 
@@ -335,6 +337,7 @@ void Player::jumpHandler() {
 	else {
 		inAir = false; 
 		jumpState = false; 
+		jumpCount = 0;
 		jumpNum = 0;  //reset to first jump images whenever you hit the ground 
 	}
 }

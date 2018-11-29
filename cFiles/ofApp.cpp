@@ -15,11 +15,16 @@ GameManager *gm;
 void ofApp::setup(){ 
     
 	//world setup
-	background.load("images/background.gif");  
+	background.load("images/background.gif"); 
+	menuBackground.load("images/titleBackground.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(60.0); 
 	world.setGravity(0, 30);  
+
+	//sounds
+	TitleScreenMusic.load("sounds/TitleScreen.mp3");
+	TitleScreenMusic.setLoop(true);
 
 
 	//GameManager
@@ -55,9 +60,18 @@ void ofApp::update(){
 
 	//game UI
 	gm->update();
+	if (!gm->active) {
+		if (!TitleScreenMusic.isPlaying()) {
+			TitleScreenMusic.play();
+		}
+	}
 
 	if (gm->active) {
 
+		//stop title music
+		if (TitleScreenMusic.isPlaying()) {
+			TitleScreenMusic.stop();
+		}
 		//update world
 		world.update();
 		 
@@ -77,14 +91,18 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	//draw background 
-	ofSetColor(color);
-	background.draw(0, 0, ofGetWidth(), ofGetHeight());
-
+	//title background 
+	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+	
 	//draw game UI
 	gm->draw();
 
 	if (gm->active || gm->paused) {
+
+		//draw in game background
+		ofSetColor(color);
+		background.draw(0, 0, ofGetWidth(), ofGetHeight());
+		
 		if (gm->paused) {
 			color.set(180);
 		}

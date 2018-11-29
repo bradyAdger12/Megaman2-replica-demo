@@ -1,83 +1,28 @@
-#include "GameManager.h"
-#include "Controller.h"   
-#include "ofApp.h"
-#include "Player.h"
+#include "GameManager.h" 
+#include "ofApp.h" 
 map<void*, string> ofApp::collisionObjects; 
 GameManager::GameManager() {
 
 }
 void GameManager::setup()
 {
-	isSelected = false;
+	
 	active = false;
 	createController = true;
 	createPlayerController = false;
 	paused = false;
-	controlMenu = false;
-	index = 0;
+	menu = new Menu();
+	menu->setup();
 
-	//images
-	controllerImage.load("images/controller.png");
-
-	//menu options
-	controls.load("fonts/controlFont.ttf", 60);
-	onePlayer.load("fonts/controlFont.ttf", 60);
-	twoPlayer.load("fonts/controlFont.ttf", 60); 
-	selectionList["one player"] = true;
-	selectionList["two player"] = false; 
-	selectionList["controls"] = false;
-	determineSelection.push_back("one player");
-	determineSelection.push_back("two player");
-	determineSelection.push_back("controls");
-
-	controlFont.load("fonts/controlFont.ttf", 60);
-	 
 }
 
 void GameManager::draw()
 {
-	if (!active) {
-		if (paused) {
-			ofSetColor(255);
-			controlFont.drawString("PAUSED", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 20);
-		}
-		else if (controlMenu) {
-			controlMenuInterface();
-		}
-		else {
-			for (selectionI = selectionList.begin(); selectionI != selectionList.end(); selectionI++) {
-				if (selectionI->second == false) {
-					selectionColor.set(255);
-				}
-				else {
-					selectionColor.set(255, 0, 0);
-				}
-				ofSetColor(selectionColor);
-				if (selectionI->first == "one player") {
-					onePlayer.drawString("1 Player", ofGetWidth() / 2 - 120, ofGetHeight() / 2 - 60);
-					continue;
-				}
-				if (selectionI->first == "two player") {
-					twoPlayer.drawString("2 Player", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 20);
-					continue;
-				}
-				if (selectionI->first == "controls") { 
-					controls.drawString("Controls", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 100);
-					continue;
-				}
-
-			}
-		}
-		 
-		ofSetColor(255);
-	}
-
-	
+	menu->draw();
 }
 
 void GameManager::update()
 {  
-	
 	if (!active) {
 		if (createController) { 
 			controller = new Controller("COM3", 9600);
@@ -91,43 +36,43 @@ void GameManager::update()
 
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void GameManager::controllerInput(char key) {  
-	if (key == 'd' && !isSelected) {
-		index++;
-		isSelected = true;
-		selectionList[determineSelection[index % determineSelection.size()]] = true;
-		for (int i = 0; i < determineSelection.size(); i++) {
-			if (index % determineSelection.size() != i) {
-				selectionList[determineSelection[i]] = false;
+	if (key == 'd' && !menu->isSelected) {
+		menu->index++;
+		menu->isSelected = true;
+		menu->selectionList[menu->determineSelection[menu->index % menu->determineSelection.size()]] = true;
+		for (int i = 0; i < menu->determineSelection.size(); i++) {
+			if (menu->index % menu->determineSelection.size() != i) {
+				menu->selectionList[menu->determineSelection[i]] = false;
 			}
 		}
 	}
 
-	if (key == 'u' && !isSelected) {
-		index--;
-		isSelected = true;
-		selectionList[determineSelection[index % determineSelection.size()]] = true;
-		for (int i = 0; i < determineSelection.size(); i++) {
-			if (index % determineSelection.size() != i) {
-				selectionList[determineSelection[i]] = false;
+	if (key == 'u' && !menu->isSelected) {
+		menu->index--;
+		menu->isSelected = true;
+		menu->selectionList[menu->determineSelection[menu->index % menu->determineSelection.size()]] = true;
+		for (int i = 0; i < menu->determineSelection.size(); i++) {
+			if (menu->index % menu->determineSelection.size() != i) {
+				menu->selectionList[menu->determineSelection[i]] = false;
 			}
 		}
 	}
 
 	if (key == 'D' || key == 'U') {
-		isSelected = false;
+		menu->isSelected = false;
 	}
 
 	if (key == 'c' && !paused) {
-		for (selectionI = selectionList.begin(); selectionI != selectionList.end(); selectionI++) {
-			if (selectionI->second == true) {
-				if (selectionI->first == "one player") { 
+		for (menu->selectionI = menu->selectionList.begin(); menu->selectionI != menu->selectionList.end(); menu->selectionI++) {
+			if (menu->selectionI->second == true) {
+				if (menu->selectionI->first == "one player") {
 					createPlayers(1); 
 				}
-				if (selectionI->first == "two player") { 
+				if (menu->selectionI->first == "two player") {
 					createPlayers(2);
 				}
-				if (selectionI->first == "controls") {  
-					controlMenu = true;	
+				if (menu->selectionI->first == "controls") {
+					menu->controlMenu = true;
 				}
 			}
 		}
@@ -140,8 +85,8 @@ void GameManager::controllerInput(char key) {
 		delete(controller);
 	}
 
-	if (key == 'a' && controlMenu) { 
-		controlMenu = false;
+	if (key == 'a' && menu->controlMenu) {
+		menu->controlMenu = false;
 	}
 }
 
@@ -165,11 +110,4 @@ void GameManager::createPlayers(int num) {
 		playerList.push_back(player2);
 		active = true;
 	}
-}
-
-
-void GameManager::controlMenuInterface() {
-	//draw font
-	ofSetColor(255);
-	controllerImage.draw(ofGetWidth() / 2 - 300, ofGetHeight() / 2 - 300, 600, 600); 
 }
