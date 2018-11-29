@@ -12,8 +12,7 @@ Player::Player(string portName, int x, int y){
 	this->portName = portName;
 	this->x = x;
 	this->y = y;
-	playerList.push_back(this);
-
+	//playerList.push_back(this);
 }
 void Player::setup()
 {
@@ -140,7 +139,7 @@ void Player::update()  {
 		idleHandler(); 
 	} 
     //get controller input
-    controllerInput(controller->getInput());
+    controllerInput(controller->getI());
  
     //NEED TO UPDATE x & y slot positions
 }

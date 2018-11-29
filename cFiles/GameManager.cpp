@@ -66,10 +66,10 @@ void GameManager::controllerInput(char key) {
 		for (menu->selectionI = menu->selectionList.begin(); menu->selectionI != menu->selectionList.end(); menu->selectionI++) {
 			if (menu->selectionI->second == true) {
 				if (menu->selectionI->first == "one player") {
-					createPlayers(1); 
+//                    createPlayers(1);
 				}
 				if (menu->selectionI->first == "two player") {
-					createPlayers(2);
+//                    createPlayers(2);
 				}
 				if (menu->selectionI->first == "controls") {
 					menu->controlMenu = true;
@@ -90,24 +90,24 @@ void GameManager::controllerInput(char key) {
 	}
 }
 
-void GameManager::createPlayers(int num) {
-	delete(controller);
-	if (num == 1) {
-		Player *player = new Player("COM3", 50, ofGetHeight() - 100);
-		player->setup();
-		ofApp::collisionObjects.insert(make_pair(player, "player1"));
-		playerList.push_back(player);
-		active = true;
-	}
-	else {
-		Player *player = new Player("COM3", 50, ofGetHeight() - 100);
-		player->setup();
-		ofApp::collisionObjects.insert(make_pair(player, "player1"));
-		playerList.push_back(player);
-		Player *player2 = new Player("COM5", ofGetWidth() - 100, ofGetHeight() - 100);
-		player2->setup();
-		ofApp::collisionObjects.insert(make_pair(player2, "player2"));
-		playerList.push_back(player2);
-		active = true;
-	}
-}
+//void GameManager::createPlayers(int num) {
+//    delete(controller);
+//    if (num == 1) {
+//        Player *player = new Player("COM3", 50, ofGetHeight() - 100);
+//        player->setup();
+//        ofApp::collisionObjects.insert(make_pair(player, "player1"));
+//        playerList.push_back(player);
+//        active = true;
+//    }
+//    else {
+//        Player *player = new Player("COM3", 50, ofGetHeight() - 100);
+//        player->setup();
+//        ofApp::collisionObjects.insert(make_pair(player, "player1"));
+//        playerList.push_back(player);
+//        Player *player2 = new Player("COM5", ofGetWidth() - 100, ofGetHeight() - 100);
+//        player2->setup();
+//        ofApp::collisionObjects.insert(make_pair(player2, "player2"));
+//        playerList.push_back(player2);
+//        active = true;
+//    }
+//}

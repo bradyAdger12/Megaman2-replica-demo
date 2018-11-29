@@ -19,6 +19,9 @@ public:
     void setup();
     void update();
     void draw();
+    int getPlayerXAvg();
+    int getPlayerYAvg();
+
 private:
     ofSerial ports;
     vector<Player*> players;

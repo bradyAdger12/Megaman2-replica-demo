@@ -21,17 +21,20 @@ void MultiPlayerManager::draw(){
 
 void MultiPlayerManager::assignPorts(){
     vector <ofSerialDeviceInfo> deviceList = ports.getDeviceList();
-    for(int i =0; i<deviceList.size();i++){
-        ports.setup(deviceList[i].getDevicePath(), 9600);
-        if(ports.isInitialized()){
+    for(int i =0; i<1;i++){
+        //ports.setup(deviceList[i].getDevicePath(), 9600);
+//        if(ports.isInitialized()){
             availblePorts.push_back(deviceList[i].getDevicePath());
-        }
+            //ports.close();
+        //}
     }
     for(int i =0; i < availblePorts.size(); i++){
         cout<<"devicePort: "<<availblePorts[i]<<endl;
         players.push_back(new Player(availblePorts[i], 50 + i*20, ofGetHeight() - 100));
+        players[i]->setup();
     }
 }
 MultiPlayerManager::MultiPlayerManager(){
     assignPorts();
 }
+
