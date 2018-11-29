@@ -2,7 +2,11 @@
 #include "Player.h" 
 #include "Controller.h"
 #include "ofApp.h"
-b2Timer timer;
+#include "GameManager.h"
+bool GameManager::active;
+bool GameManager::createPlayerController;
+bool GameManager::createController;
+bool GameManager::paused;
 vector<Item*> ofApp::items;
 Player::Player(string portName, int x, int y){
 	this->portName = portName;
@@ -106,17 +110,38 @@ Item* Player::getItem() {
 
 
 void Player::update()  {
-    controller->update();
-	playerCollider.get()->update();	 
-	if (getX()-radius < 0) {
-		setX(radius);
+
+	//get controller input 
+	if (!GameManager::paused) {
+		if (GameManager::createPlayerController) {
+			cout << portName << endl;
+			controller = new Controller("COM3", 9600);
+			controller->setup();
+			GameManager::createPlayerController = false;
+		}
+		controller->update();
+		controllerInput(controller->getI());
 	}
-	if (getX() + radius > ofGetWidth()) {
-		setX(ofGetWidth()-radius);
+
+	playerCollider.get()->update();	  
+
+	//handle running
+	if (running && !jumpState) { 
+		runningHandler();
 	}
+
+	//handle jumping
+	else if (jumpState) {
+		jumpHandler(); 
+	}  
+
+	//handle idle
+	else {
+		idleHandler(); 
+	} 
     //get controller input
     controllerInput(controller->getInput());
-
+ 
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -127,23 +152,33 @@ void Player::draw()
 
 	//orient images based on player state/direction
 	orientPlayer(); 
+	 
+		//running drawing handler
+		if (running && !jumpState) { 
+			runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 12, size, size); 
+		}
 
-	if (running && !jumpState) {
-		//running Animation handler 
+		//jump drawing handler
+		else if (jumpState) { 
+			if (abs(getYVelocity()) > 0) {
+				jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 12, size, size);
+				if (ofGetFrameNum() % 25 == 0) {
+					if (jumpNum == jumpAnimation.size() - 1) {
+						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - radius - 12, size, size);
+					}
+				}
+			}
+		}
 
-		runningHandler();
-	}
-
-	//jump handler
-	else if (jumpState) {
-		jumpHandler();
-	}
-
-	//idle handler
-	else {
-		idleHandler();
-	}
-    //playerCollider.get()->draw();
+		//idle drawing handler
+		else { 
+			if (idleNum == 3 && blink > .35) {
+				idleAnimation[0].draw(getX() - radius, getY() - radius - 12, size, size);
+			}
+			else {
+				idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 12, size, size);
+			}
+		}
 
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
@@ -185,20 +220,6 @@ void Player::controllerInput(char key){
 			setVelocity(0, getYVelocity());
 			break;
 		}
-
-
-		//jump
-		case 'c': 
-			if (!inAir) { 
-				jumpNum = 0;
-				jumpState = true;
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-			}
-			if (doubleJump) {
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-				doubleJump = false;
-			}
-			break;  
 			
 			 		
 		//grab items (left button) 
@@ -225,7 +246,32 @@ void Player::controllerInput(char key){
 				throwItem();
 			}
 			break;
+		
+			
+		case 'b':
+			if (portName == "COM3") {
+			GameManager::active = false;
+			GameManager::paused = true;
+			GameManager::createController = true;
+			delete(controller);
+			}
 		}
+
+		//jump
+	if (key == 'c') {
+		if (jumpCount < 2 && !doubleJump) {
+			jumpNum = 0;
+			jumpState = true;
+			doubleJump = true; 
+			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
+		}
+	}
+
+	if (key == 'C' && doubleJump) {
+		doubleJump = false;
+		jumpCount++;
+		
+	}
 
 }
 
@@ -261,7 +307,7 @@ void Player::orientPlayer() {
 }
 
 void Player::runningHandler() {
-		runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 12, size, size);
+		
 		if (ofGetFrameNum() % int(speed *.5) == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
@@ -273,8 +319,7 @@ void Player::jumpHandler() {
 
 	//if in the air 
 	if (abs(getYVelocity()) > 0) {
-		inAir = true;
-		jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 12, size, size);
+		inAir = true; 
 		if (ofGetFrameNum() % 25 == 0) {
 			if (jumpNum == jumpAnimation.size()-1) {
 				jumpAnimation[jumpAnimation.size()-1].draw(getX() - radius, getY() - radius - 12, size, size);
@@ -290,6 +335,7 @@ void Player::jumpHandler() {
 	else {
 		inAir = false; 
 		jumpState = false; 
+		jumpCount = 0;
 		jumpNum = 0;  //reset to first jump images whenever you hit the ground 
 	}
 }
@@ -300,14 +346,6 @@ void Player::idleHandler() {
 		idleNum = idleNum % idleAnimation.size();
 		//deteermines if model blinks or not
 		blink = ofRandom(0, 1);
-	}
-
-	//blinks about half the time  
-	if (idleNum == 3 && blink > .35) {
-		idleAnimation[0].draw(getX() - radius, getY() - radius - 12, size, size);
-	}
-	else {
-		idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 12, size, size);
 	}
 }
 

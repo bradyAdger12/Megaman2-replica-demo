@@ -32,12 +32,12 @@ class ofApp : public ofBaseApp{
 
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background; 
+		ofImage menuBackground;
 		ofImage soccerBall;
-		ofImage block; 
-		ofTrueTypeFont controlFont;
-		static ofxBox2d world;
-
-		map<void*, string> collisionObjects;
+		ofImage block;  
+		ofSoundPlayer TitleScreenMusic;
+		static ofxBox2d world;   
+		static map<void*, string> collisionObjects;
 		map<void*, string>::iterator itr;
 		
 	static vector<Item*> items;
