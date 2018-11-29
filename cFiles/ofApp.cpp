@@ -35,8 +35,6 @@ void ofApp::setup(){
 	soccerBall.load("images/bomb.png");
 	block.load("images/goldBlock.png");
 
-
-    
 	//create circular item
 	i1 = new Item("circle", 300, 300, 20, 0, soccerBall);
 	items.push_back(i1); 

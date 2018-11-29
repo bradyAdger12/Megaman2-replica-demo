@@ -31,9 +31,7 @@ void MultiPlayerManager::assignPorts(){
         cout<<"devicePort: "<<availblePorts[i]<<endl;
         players.push_back(new Player(availblePorts[i], 50 + i*20, ofGetHeight() - 100));
     }
-    
 }
 MultiPlayerManager::MultiPlayerManager(){
     assignPorts();
-    
 }
