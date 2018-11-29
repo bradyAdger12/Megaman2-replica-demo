@@ -24,7 +24,7 @@ public:
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem;
-	bool jumpState;
+	bool jumpState; 
 	void setup();
 	void update();
 	void draw();
@@ -36,7 +36,7 @@ public:
 	void jumpHandler();
 	void orientPlayer();
     void idleHandler();
-    void controllerInput(char key);
+    void controllerInput(char key); 
 
 	//list of players
 	static vector<Player*> playerList;

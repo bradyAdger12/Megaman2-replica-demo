@@ -14,8 +14,9 @@ class Controller{
 public:
     Controller(string port, int baud);
     void update();
-    void setup();
-    char getInput();
+    void setup(); 
+    char getI();
+	static vector<Controller*> controllers; 
 private:
     ofSerial input;
     char i;
