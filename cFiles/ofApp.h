@@ -4,6 +4,8 @@
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "Item.h"
+#include "MultiPlayerManager.h"
+using namespace std;
 class ofApp : public ofBaseApp{
 
 	public:
@@ -21,7 +23,7 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg); 
+		void gotMessage(ofMessage msg);
 		//string getObjectType(void* data);
 
 		// this is the function for contacts
@@ -32,17 +34,17 @@ class ofApp : public ofBaseApp{
 		ofImage background; 
 		ofImage menuBackground;
 		ofImage soccerBall;
-		ofImage block; 
+		ofImage block;  
 		ofSoundPlayer TitleScreenMusic;
 		static ofxBox2d world;   
-
 		static map<void*, string> collisionObjects;
 		map<void*, string>::iterator itr;
+		MultiPlayerManager *mpm;
 		
 	static vector<Item*> items;
+
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);
-
    
-    
+
 };

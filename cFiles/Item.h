@@ -13,6 +13,7 @@
 #include "ofxBox2dCircle.h"
 #include "ofxBox2dRect.h"
 class Player; //foward declaration
+using namespace std;
 class Item{
     
 public:
@@ -37,11 +38,9 @@ public:
 	float multiplier; //increases the force of a throw
 	float tossForce; //set to the value of scale as a default but is increased by the multiplier. Get reset after item is thrown
 	float maxTossForce; //maximum velocity an item can be thrown
-	float scale; //default throwing force 
+	float scale; //default throwing force
 	shared_ptr<ofxBox2dBaseShape> it;
 
-	
-    
 private:
     ofImage image;
 	string shape;

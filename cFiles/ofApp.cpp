@@ -1,8 +1,9 @@
 #include "ofApp.h"  
 #include "collider.h"
 #include <cmath>
-#include "Player.h"
-#include "GameManager.h"
+#include "Player.h" 
+#include "MultiPlayerManager.h"
+#include "GameManager.h" 
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 vector<Player*> GameManager::playerList;
@@ -13,10 +14,11 @@ ofColor color;
 GameManager *gm;
 //--------------------------------------------------------------
 void ofApp::setup(){ 
+
     
-	//world setup
+	//world setup 
 	background.load("images/background.gif"); 
-	menuBackground.load("images/titleBackground.jpg");
+	menuBackground.load("images/titleBackground.jpg"); 
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(60.0); 
@@ -26,6 +28,9 @@ void ofApp::setup(){
 	TitleScreenMusic.load("sounds/TitleScreen.mp3");
 	TitleScreenMusic.setLoop(true);
 
+	//character Management
+	mpm = new MultiPlayerManager();
+	mpm->setup();
 
 	//GameManager
 	gm = new GameManager();
@@ -48,6 +53,7 @@ void ofApp::setup(){
 	i1->setup();
 	collisionObjects.insert(make_pair(i1, "item1"));
 	 
+
 	//create ground
 	collider *ob3 = new collider();
 	ground = ob3->Rectangle(0, ofGetHeight() - 40, ofGetWidth()*2, 20, 0 , 0, 8);  
@@ -60,6 +66,7 @@ void ofApp::update(){
 
 	//game UI
 	gm->update();
+
 	if (!gm->active) {
 		if (!TitleScreenMusic.isPlaying()) {
 			TitleScreenMusic.play();
@@ -67,6 +74,9 @@ void ofApp::update(){
 	}
 
 	if (gm->active) {
+
+		//character management
+		mpm->update();
 
 		//stop title music
 		if (TitleScreenMusic.isPlaying()) {
@@ -79,29 +89,27 @@ void ofApp::update(){
 		for (int i = 0; i < 1; i++) {
 			items[i]->update();
 		}
-
-		//update player(s)
-		for (int i = 0; i < GameManager::playerList.size(); i++) {
-			GameManager::playerList[i]->update();
-		}
-	}
-	
+	}	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
+
 	//title background 
 	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+
 	
-	//draw game UI
-	gm->draw();
+
 
 	if (gm->active || gm->paused) {
 
 		//draw in game background
 		ofSetColor(color);
 		background.draw(0, 0, ofGetWidth(), ofGetHeight());
+
+		//player management
+		mpm->draw();
 		
 		if (gm->paused) {
 			color.set(180);
@@ -109,25 +117,21 @@ void ofApp::draw(){
 		else {
 			color.set(255);
 		}
+
 		//draw world 
-		world.draw();
-
-		//draw player  
-		for (int i = 0; i < GameManager::playerList.size(); i++) {
-			GameManager::playerList[i]->draw();
-		}
-
+		world.draw(); 
 
 		//item draw 
-
 		for (int i = 0; i < 1; i++) {
 			items[i]->draw();
 		}
 	}
+
+	//draw game UI
+	gm->draw();
 }
 
-
-
+ 
 //--------------------------------------------------------------
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
 	if (e.a != NULL && e.b != NULL) {

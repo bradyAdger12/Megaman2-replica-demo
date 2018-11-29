@@ -2,14 +2,15 @@
 #include "Player.h" 
 #include "Controller.h"
 #include "ofApp.h"
-#include "GameManager.h"
-bool GameManager::active;
-bool GameManager::createPlayerController;
-bool GameManager::createController;
-bool GameManager::paused;
-vector<Item*> ofApp::items;
-Player::Player(string portName, int x, int y){
+#include "GameManager.h" 
+bool GameManager::active; 
+bool GameManager::paused; 
+vector<Item*> ofApp::items; 
+b2Timer GameManager::timer;
+
+Player::Player(string portName, int x, int y, bool playerOne){
 	this->portName = portName;
+	this->playerOne = playerOne;
 	this->x = x;
 	this->y = y;
 	playerList.push_back(this);
@@ -73,8 +74,6 @@ void Player::setup()
 	}
 
 	playerCollider->setData(this);
-
-	
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -112,19 +111,8 @@ Item* Player::getItem() {
 
 
 void Player::update()  {
-
-	//get controller input 
-	if (!GameManager::paused) {
-		if (GameManager::createPlayerController) {
-			cout << portName << endl;
-			controller = new Controller("COM3", 9600);
-			controller->setup();
-			GameManager::createPlayerController = false;
-		}
-		controller->update();
-		controllerInput(controller->getI());
-	}
-
+	controller->update();
+	controllerInput(controller->getI());
 	playerCollider.get()->update();	  
 
 	//handle running
@@ -140,10 +128,8 @@ void Player::update()  {
 	//handle idle
 	else {
 		idleHandler(); 
-	}
-	
+	}  
   
-    //NEED TO UPDATE x & y slot positions
 }
 
 void Player::draw() 
@@ -182,94 +168,98 @@ void Player::draw()
 		}
 
 }
-
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
-	switch (key) {  
+	switch (key) {
 
 		//sprint
-		case 's': 
-			if (running && !inAir) {
-				if (getXVelocity() > 0) {
-					setVelocity(speed * speedMultiplier, getYVelocity());
-				}
-				else {
-					setVelocity(-speed * speedMultiplier, getYVelocity());					}		
-				}
-				break;
-		
+	case 's':
+		if (running && !inAir) {
+			if (getXVelocity() > 0) {
+				setVelocity(speed * speedMultiplier, getYVelocity());
+			}
+			else {
+				setVelocity(-speed * speedMultiplier, getYVelocity());
+			}
+		}
+		break;
+
 
 		//run right
-		case 'r': {
-			running = true; 
-			setVelocity(speed, getYVelocity());
-			break;
-		}
-		case 'R': {
-			running = false;
-			setVelocity(0, getYVelocity());
-			break;
-		}
+	case 'r': {
+		running = true;
+		setVelocity(speed, getYVelocity());
+		break;
+	}
+	case 'R': {
+		running = false;
+		setVelocity(0, getYVelocity());
+		break;
+	}
 
-		//run left
-		case 'l': {
-			running = true;
-			setVelocity(-speed, getYVelocity());
-			break;
-		}
-		case 'L': {
-			running = false;
-			setVelocity(0, getYVelocity());
-			break;
-		}
-			
-			 		
-		//grab items (left button) 
-		case 'p':  
-			if (hasItem) {  
-				if (getItem()->style == 0) { 
-					getItem()->tossForce *= getItem()->multiplier;
-					if (getItem()->tossForce >= getItem()->maxTossForce) {
-						getItem()->tossForce = getItem()->maxTossForce;
-					}
-					
-				}
-				else {
-					useItem();
-				}
-			}
-			else {  
-				equipItem(closestUsableItem(getX(), getY()));
-			}
-			break;
+			  //run left
+	case 'l': {
+		running = true;
+		setVelocity(-speed, getYVelocity());
+		break;
+	}
+	case 'L': {
+		running = false;
+		setVelocity(0, getYVelocity());
+		break;
+	}
 
-		case 'P':   
-			if (hasItem && getItem()->tossForce > getItem()->scale + 2) {
-				throwItem();
+
+			  //grab items (left button) 
+	case 'p':
+		if (hasItem) {
+			if (getItem()->style == 0) {
+				getItem()->tossForce *= getItem()->multiplier;
+				if (getItem()->tossForce >= getItem()->maxTossForce) {
+					getItem()->tossForce = getItem()->maxTossForce;
+				}
+
 			}
-			break;
-		
-			
-		case 'b':
-			if (portName == "COM3") {
+			else {
+				useItem();
+			}
+		}
+		else {
+			equipItem(closestUsableItem(getX(), getY()));
+		}
+		break;
+
+	case 'P':
+		if (hasItem && getItem()->tossForce > getItem()->scale + 2) {
+			throwItem();
+		}
+		break;
+
+	case 'b':
+		if (playerOne) {
 			GameManager::active = false;
 			GameManager::paused = true;
-			GameManager::createController = true;
-			delete(controller);
-			}
 		}
+	}
+			 
+
+		
+
 
 		//jump
 	if (key == 'c') {
-		if (jumpCount < 2 && !doubleJump) {
-			jumpNum = 0;
+		if (jumpCount < 2) { 
+			if (!doubleJump) {
+				doubleJump = true;
+				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
+			}
 			jumpState = true;
-			doubleJump = true; 
-			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
+			jumpNum = 0;
+		
 		}
 	}
 
-	if (key == 'C' && doubleJump) {
+	if (key == 'C' && doubleJump) { 
 		doubleJump = false;
 		jumpCount++;
 		
@@ -320,13 +310,10 @@ void Player::runningHandler() {
 void Player::jumpHandler() {
 
 	//if in the air 
-	if (abs(getYVelocity()) > 0) {
+	if (abs(getYVelocity()) > 0) { 
 		inAir = true; 
 		if (ofGetFrameNum() % 25 == 0) {
-			if (jumpNum == jumpAnimation.size()-1) {
-				jumpAnimation[jumpAnimation.size()-1].draw(getX() - radius, getY() - radius - 12, size, size);
-			}
-			else {
+			if (jumpNum != jumpAnimation.size()-1)  { 
 				jumpNum++;
 			}
 			jumpNum = jumpNum % jumpAnimation.size();
@@ -418,3 +405,4 @@ Item* Player::closestUsableItem(int x, int y) {
 double Player::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
+ 

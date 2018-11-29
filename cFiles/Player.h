@@ -10,12 +10,12 @@
 #include "Item.h"
 #include "Controller.h"
 #include <vector>
-
+using namespace std;
 class Player {
 public:
 
 	//constructor
-	Player(string portNumber, int x, int y);
+	Player(string portNumber, int x, int y, bool playerOne);
 
 	//var and methods
 	int getX(), getY(), getRadius(), speed, runningNum, idleNum,jumpNum, radius, size; 
@@ -24,7 +24,8 @@ public:
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem;
-	bool jumpState; 
+	bool jumpState;
+	bool playerOne;
 	void setup();
 	void update();
 	void draw();
@@ -36,6 +37,7 @@ public:
 	void jumpHandler();
 	void orientPlayer();
     void idleHandler();
+	void recreateController(Controller* controller);
     void controllerInput(char key); 
 
 	//list of players
