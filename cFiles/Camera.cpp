@@ -13,14 +13,13 @@ void Camera::setup(){
     camera.begin();
 }
 void Camera::update(){
-    float total_x;
-    float total_y;
+    double total_x;
+    double total_y;
     for(int i =0; i < players.size(); i++){
-        total_x += players[i]->getX();
-        total_y += players[i]->getY();
+        total_x += player[i]->getX();
+        total_y += player[i]->getY();
     }
-    float avgX = total_x/players.size();
-    float avgY = total_y/players.size();
+    double avgX = total_x/players.size();
+    double avgY = total_y/players.size();
     
-    camera.move(avgX, avgY, 0);
 }

@@ -11,13 +11,13 @@ public:
 	void draw();
 	void update();
 	Controller *controller; 
-	static bool paused, active;
-	static b2Timer timer;
-	static vector <Player*> playerList;
+	static bool createController, paused, active, createPlayerController;
+//    static vector <Player*> playerList;
 	Menu *menu;
 
 
 private:   
-	vector<Controller*> controllerList;  
+	vector<Controller*> controllerList; 
+//    void createPlayers(int num);
 	void controllerInput(char key); 
 };

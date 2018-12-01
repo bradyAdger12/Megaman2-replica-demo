@@ -5,7 +5,6 @@
 #include "ofxBox2d.h"
 #include "Item.h"
 #include "MultiPlayerManager.h"
-#include "Camera.h"
 using namespace std;
 class ofApp : public ofBaseApp{
 
@@ -47,6 +46,8 @@ class ofApp : public ofBaseApp{
 
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);
+
+    MultiPlayerManager *mpm;
    
 
 };

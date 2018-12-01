@@ -6,15 +6,15 @@
 #include "GameManager.h" 
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-vector<Player*> GameManager::playerList;
-Player *p1; 
-Player *p2;
-Item *i1;   
+//vector<Player*> GameManager::playerList;
+//Player *p1;
+//Player *p2;
+Item *i1;
 ofColor color;
 GameManager *gm;
 //--------------------------------------------------------------
 void ofApp::setup(){ 
-
+    mpm = new MultiPlayerManager();
     
 	//world setup 
 	background.load("images/background.gif"); 
@@ -67,7 +67,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){ 
-
+    mpm->update();
 	//game UI
 	gm->update();
 
@@ -95,11 +95,13 @@ void ofApp::update(){
 		for (int i = 0; i < 1; i++) {
 			items[i]->update();
 		}
-	}	
+	}
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    mpm->draw();
 
 
 	//title background 
@@ -123,18 +125,14 @@ void ofApp::draw(){
 		else {
 			color.set(255);
 		}
-
 		//draw world 
-		world.draw(); 
+		world.draw();
 
-		//item draw 
+		//item draw
 		for (int i = 0; i < 1; i++) {
 			items[i]->draw();
 		}
 	}
-
-	//draw game UI
-	gm->draw();
 }
 
  

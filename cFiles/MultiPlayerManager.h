@@ -19,10 +19,11 @@ public:
     void setup();
     void update();
     void draw();
-    vector<Player*> getPlayerList();
+    int getPlayerXAvg();
+    int getPlayerYAvg();
+
 private:
     ofSerial ports;
-	bool initialize, isPlayerOne;
     vector<Player*> players;
     vector<string> availblePorts;
 };

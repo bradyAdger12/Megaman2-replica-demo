@@ -17,7 +17,6 @@ public:
     void setup(); 
     char getI();
 	static vector<Controller*> controllers; 
-	ofSerial input;
 private:
     
     char i;
