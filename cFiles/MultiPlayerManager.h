@@ -19,6 +19,7 @@ public:
     void setup();
     void update();
     void draw();
+    vector<Player*> getPlayerList();
 private:
     ofSerial ports;
 	bool initialize, isPlayerOne;

@@ -31,7 +31,11 @@ void ofApp::setup(){
 	//character Management
 	mpm = new MultiPlayerManager();
 	mpm->setup();
-
+    
+    //Setup Camera
+    camera = new Camera(mpm->getPlayerList());
+    camera->setup();
+    
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
@@ -66,6 +70,8 @@ void ofApp::update(){
 
 	//game UI
 	gm->update();
+
+    camera->update();
 
 	if (!gm->active) {
 		if (!TitleScreenMusic.isPlaying()) {

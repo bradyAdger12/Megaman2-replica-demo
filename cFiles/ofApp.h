@@ -5,6 +5,7 @@
 #include "ofxBox2d.h"
 #include "Item.h"
 #include "MultiPlayerManager.h"
+#include "Camera.h"
 using namespace std;
 class ofApp : public ofBaseApp{
 
@@ -40,6 +41,7 @@ class ofApp : public ofBaseApp{
 		static map<void*, string> collisionObjects;
 		map<void*, string>::iterator itr;
 		MultiPlayerManager *mpm;
+        Camera* camera;
 		
 	static vector<Item*> items;
 

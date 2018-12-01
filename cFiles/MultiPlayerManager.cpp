@@ -43,5 +43,8 @@ void MultiPlayerManager::assignPorts(){
 }
 MultiPlayerManager::MultiPlayerManager(){
     assignPorts();
-    
 }
+vector<Player*> MultiPlayerManager::getPlayerList(){
+    return players;
+}
+
