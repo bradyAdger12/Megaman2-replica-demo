@@ -50,7 +50,7 @@ void MultiPlayerManager::assignPorts(){
             ports.close();
         }
     }
-    cout << "ConnectedPorts: " << availblePorts.size() << endl;
+    cout << "ConnectedPorts: " << availblePorts.size() << endl;;
     for(int i =0; i < availblePorts.size(); i++){
         cout << "devicePort: " << availblePorts[i] << endl;
         //setup player and its controller. delete controller so that menu has access to port
