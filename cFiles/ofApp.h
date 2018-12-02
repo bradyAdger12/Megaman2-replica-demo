@@ -32,7 +32,8 @@ class ofApp : public ofBaseApp{
 		void contactEnd(ofxBox2dContactArgs &e);
 
 		vector <shared_ptr<ofxBox2dCircle>> circles;
-		ofImage background; 
+		ofImage background;
+        ofPixels p;
 		ofImage menuBackground;
 		ofImage soccerBall;
 		ofImage block;  

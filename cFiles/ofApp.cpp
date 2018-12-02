@@ -17,10 +17,10 @@ string s;
 //--------------------------------------------------------------
 void ofApp::setup(){ 
 
-    
-	//world setup 
-	background.load("images/bombManStage.png"); 
-	menuBackground.load("images/titleBackground.jpg"); 
+	//world setup
+    //ofLoadImage(p, "images/bombManStage.png");
+	background.load("images/bombManStage.png");
+	menuBackground.load("images/titleBackground.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(60.0); 
@@ -75,7 +75,6 @@ void ofApp::setup(){
 
 	//setup camera 
 	camera.setVFlip(true); 
-	
 }
 
 //--------------------------------------------------------------
@@ -113,14 +112,11 @@ void ofApp::update(){
 		/*for (int i = 0; i < 1; i++) {
 			items[i]->update();
 		}*/
-		 
 	}	
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
-	
 	//title background 
 	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
 	camera.begin();
@@ -129,11 +125,8 @@ void ofApp::draw(){
 
 		//draw in game background 
 
-		
 		ofSetColor(color);
-		background.draw(0, 0, 5134, 1219);
-		
-		
+		background.draw(0, 0, 4355, 1187);
 		
 		//player management
 		mpm->draw();
