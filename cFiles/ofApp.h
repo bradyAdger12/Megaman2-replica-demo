@@ -42,7 +42,7 @@ class ofApp : public ofBaseApp{
 		ofEasyCam camera;
 		static map<void*, string> collisionObjects;
 		ifstream input;
-		vector<Environment*> eList;
+		static vector<Environment*> eList;
 		map<void*, string>::iterator itr;
 		MultiPlayerManager *mpm;
 		

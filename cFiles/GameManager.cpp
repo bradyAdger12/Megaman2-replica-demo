@@ -11,7 +11,7 @@ GameManager::GameManager() {
 void GameManager::setup()
 {
 	
-	active = false; 
+	active = true; 
 	paused = false; 
 	menu = new Menu();
 	menu->setup();
@@ -82,26 +82,4 @@ void GameManager::controllerInput(char key) {
 	if (key == 'a' && menu->controlMenu) {
 		menu->controlMenu = false;
 	}
-}
-
-//void GameManager::createPlayers(int num) {
-//	delete(controller);
-//	if (num == 1) {
-//		Player *player = new Player("COM3", 50, ofGetHeight() - 100);
-//		player->setup();
-//		ofApp::collisionObjects.insert(make_pair(player, "player1"));
-//		playerList.push_back(player);
-//		active = true;
-//	}
-//	else {
-//		Player *player = new Player("COM3", 50, ofGetHeight() - 100);
-//		player->setup();
-//		ofApp::collisionObjects.insert(make_pair(player, "player1"));
-//		playerList.push_back(player);
-//		Player *player2 = new Player("COM5", ofGetWidth() - 100, ofGetHeight() - 100);
-//		player2->setup();
-//		ofApp::collisionObjects.insert(make_pair(player2, "player2"));
-//		playerList.push_back(player2);
-//		active = true;
-//	}
-//}
+} 

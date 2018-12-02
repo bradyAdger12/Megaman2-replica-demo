@@ -23,7 +23,7 @@ public:
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing;
 	bool jumpState;
 	bool playerOne;
 	void setup();

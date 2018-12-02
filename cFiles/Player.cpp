@@ -26,10 +26,11 @@ void Player::setup()
 	isFlipped = false;
 	doubleJump = false;
 	hasItem = false;  
+	climbing = false;
 
 	
 	//setup player attributes
-	speed = 3;  //speed of player
+	speed = 2;  //speed of player
 	speedMultiplier = 1.20; //sprint at 120%
 	jumpCount = 0; //used to keep track of double jump
 	runningNum = 0;  //used to index running sprites
@@ -50,7 +51,7 @@ void Player::setup()
 	count = 0; //used to determine when item is throwable
 
 	//load jumping animation
-	for (int i = 2; i < 3; i++) {
+	for (int i = 1; i < 2; i++) {
 		string file = "images/megamanJumping/jump" + ofToString(i) + ".png";
 		ofImage jump;
 		jump.load(file);
@@ -111,8 +112,13 @@ Item* Player::getItem() {
 
 
 void Player::update()  { 
+
+
+	//controller input
 	controller->update();
 	controllerInput(controller->getI());
+
+	//update collider
 	playerCollider.get()->update();	  
 
 	//handle running
@@ -128,7 +134,14 @@ void Player::update()  {
 	//handle idle
 	else {
 		idleHandler(); 
-	}  
+	} 
+
+	//handle ladder
+	if (Environment::ladder) { 
+		if (climbing) {
+
+		}
+	}
   
 }
 
@@ -145,16 +158,16 @@ void Player::draw()
 	 
 		//running drawing handler
 		if (running && !jumpState) { 
-			runningAnimation[runningNum].draw(getX() - radius, getY() - 15, size, size); 
+			runningAnimation[runningNum].draw(getX() - radius, getY() - 14, size, size); 
 		}
 
 		//jump drawing handler
 		else if (jumpState) { 
 			if (abs(getYVelocity()) > 0) {
-				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 15, size, size);
+				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 14, size, size);
 				if (ofGetFrameNum() % 25 == 0) {
 					if (jumpNum == jumpAnimation.size() - 1) {
-						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 15, size, size);
+						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 14, size, size);
 					}
 				}
 			}
@@ -163,10 +176,10 @@ void Player::draw()
 		//idle drawing handler
 		else { 
 			if (idleNum == 1 && blink > .35) {
-				idleAnimation[0].draw(getX() - radius, getY() - 15, size, size);
+				idleAnimation[0].draw(getX() - radius, getY() - 14, size, size);
 			}
 			else {
-				idleAnimation[idleNum].draw(getX() - radius, getY() - 15, size, size);
+				idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
 			}
 		}
 
@@ -243,15 +256,35 @@ void Player::controllerInput(char key){
 			GameManager::active = false;
 			GameManager::paused = true;
 		}
+		break;
+
+	case 'u':
+		if (Environment::ladder) { 
+			climbing = true;
+			setVelocity(getXVelocity(), -speed/1.6);			
+		}
+		break;
+
+	case 'U': 
+		if (climbing) { 
+			setVelocity(0, 0);
+			climbing = false;
+		} 
+		break;
 	}
 			 
 	//jump
 	if (key == 'c') {
 		if (!inAir) {  
-				jumpForce = (1170 - getY()) / 3.5;  
+				jumpForce = 1.3;  
 				jumpState = true;
 				jumpNum = 0;
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
+				if (!climbing) {
+					playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce); 
+				}
+				else {
+					playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce/1.4);
+				}
 			}
 	} 
 }
@@ -289,7 +322,7 @@ void Player::orientPlayer() {
 
 void Player::runningHandler() {
 		
-		if (ofGetFrameNum() % 7 == 0) {
+		if (ofGetFrameNum() % 7/2 == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
 		}	
@@ -301,7 +334,7 @@ void Player::jumpHandler() {
 	//if in the air 
 	if (abs(getYVelocity()) > 0) { 
 		inAir = true; 
-		if (ofGetFrameNum() % 25 == 0) {
+		if (ofGetFrameNum() % 25/2 == 0) {
 			if (jumpNum != jumpAnimation.size()-1)  { 
 				jumpNum++;
 			}

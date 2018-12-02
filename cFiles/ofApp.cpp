@@ -13,18 +13,21 @@ Item *i1;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
+int cameraY;
 string s;
+vector<Environment*> ofApp::eList;
+
 //--------------------------------------------------------------
 void ofApp::setup(){ 
 
     
 	//world setup 
-	background.load("images/bombManStage.png"); 
+	background.load("images/bombManStage2.png"); 
 	menuBackground.load("images/titleBackground.jpg"); 
 	world.init(); 
 	world.enableEvents();
-	world.setFPS(60.0); 
-	world.setGravity(0, 30);  
+	world.setFPS(30.0); 
+	world.setGravity(0, 7);  
 
 	//sounds
 	TitleScreenMusic.load("sounds/TitleScreen.mp3");
@@ -47,45 +50,36 @@ void ofApp::setup(){
 	ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
 	ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
 
-	//images for items
-	soccerBall.load("images/bomb.png");
-	block.load("images/goldBlock.png");
-
-	////create circular item
-	//i1 = new Item("circle", 300, 300, 10, 0, soccerBall);
-	//items.push_back(i1); 
-	//i1->setup();
-	//collisionObjects.insert(make_pair(i1, "item1"));
-
 	//create Environment Colliders
 	input.open(ofToDataPath("environment/eData.txt").c_str());
 	while (input >> x >> y >> w >> h >> s >> id) { 
 		cout << "(" << x << "," << y << ")" << " Width: " << w << "  Height: " << h << "  Tag: " << s << "  ID: " << id << endl;
- 		Environment *e;/*
-		if (x + w > ofGetWidth()/2 || x > ofGetWidth()/2) {
-			e = new Environment(x+w/2, y + 25, w, h, s, id);
-		}
-		else {*/
+ 		Environment *e;
 		x = x + (w/2);
 		e = new Environment(x, y+9, w, h, s, id);
 		eList.push_back(e);
 		e->setup();
-		collisionObjects.insert(make_pair(e, "ledge"));
+		collisionObjects.insert(make_pair(e, s));
 	}
 
 	//setup camera 
-	camera.setVFlip(true); 
+	camera.setVFlip(true);
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));//
+	cameraY = camera.getPosition().y;
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){   
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 155, MultiPlayerManager::players[0]->getY() - 70, 180));
-	//camera.setPosition(100, 1000, 400);
+
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180));
+	
+	
+	//camera.setPosition(200, 1000, 500);
 	//game UI
 	gm->update();
 
-	if (!gm->active) {
+	if (!gm->active && !gm->paused) {
 		if (!TitleScreenMusic.isPlaying()) {
 			TitleScreenMusic.play(); 
 		}
@@ -109,10 +103,10 @@ void ofApp::update(){
 		//update world
 		world.update();
 		 
-		//item update
-		/*for (int i = 0; i < 1; i++) {
-			items[i]->update();
-		}*/
+		//update environment collider info
+		for (int i = 0; i < eList.size(); i++) {
+			eList[i]->update();
+		}
 		 
 	}	
 }
@@ -168,10 +162,10 @@ void ofApp::draw(){
  
 //--------------------------------------------------------------
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
-	if (e.a != NULL && e.b != NULL) {
+	if (e.a != NULL && e.b != NULL) { 
 		// if we collide with the ground we do not
 		// want to play a sound. this is how you do that
-		if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle) {
+		if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle || e.b->GetType() == b2Shape::e_circle && e.a->GetType() == b2Shape::e_polygon) {
 			string a_type;
 			string b_type;
 
