@@ -146,7 +146,8 @@ void Player::draw()
 	orientPlayer(); 
 	 
 		//running drawing handler
-		if (running && !jumpState) { 
+		if (running && !jumpState) {
+            runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 			runningAnimation[runningNum].draw(getX() - radius, getY() - 15, size, size); 
 		}
 
@@ -156,6 +157,7 @@ void Player::draw()
 				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 15, size, size);
 				if (ofGetFrameNum() % 25 == 0) {
 					if (jumpNum == jumpAnimation.size() - 1) {
+                        jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 15, size, size);
 					}
 				}
@@ -165,9 +167,11 @@ void Player::draw()
 		//idle drawing handler
 		else { 
 			if (idleNum == 1 && blink > .35) {
+                idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 				idleAnimation[0].draw(getX() - radius, getY() - 15, size, size);
 			}
 			else {
+                idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 				idleAnimation[idleNum].draw(getX() - radius, getY() - 15, size, size);
 			}
 		}

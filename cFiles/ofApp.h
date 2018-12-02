@@ -33,7 +33,6 @@ class ofApp : public ofBaseApp{
 
 		vector <shared_ptr<ofxBox2dCircle>> circles;
 		ofImage background;
-        ofPixels p;
 		ofImage menuBackground;
 		ofImage soccerBall;
 		ofImage block;  
