@@ -10,10 +10,8 @@
 #include "ofApp.h"
 vector<Player*> MultiPlayerManager::players;
 void MultiPlayerManager::setup(){
-	initialize = true;
-	isPlayerOne = true;
 }
-void MultiPlayerManager::update(){  
+void MultiPlayerManager::update(){
     for(int i=0; i<players.size(); i ++){
         players[i]->update();
     }
@@ -64,5 +62,5 @@ void MultiPlayerManager::assignPorts(){
 }
 MultiPlayerManager::MultiPlayerManager(){
     assignPorts();
-    
 }
+

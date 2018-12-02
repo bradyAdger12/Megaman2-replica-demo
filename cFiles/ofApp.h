@@ -50,7 +50,6 @@ class ofApp : public ofBaseApp{
 	static vector<Item*> items;
 
     void spawnRandomItem();
-    double distance(int x1,int x2,int y1,int y2);
-   
+    double distance(int x1,int x2,int y1,int y2);   
 
 };

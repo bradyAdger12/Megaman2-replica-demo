@@ -6,15 +6,14 @@
 bool GameManager::active; 
 bool GameManager::paused; 
 vector<Item*> ofApp::items; 
-b2Timer GameManager::timer;
+b2Timer* GameManager::timer;
 
 Player::Player(string portName, int x, int y, bool playerOne){
 	this->portName = portName;
 	this->playerOne = playerOne;
 	this->x = x;
 	this->y = y;
-	playerList.push_back(this);
-
+	//playerList.push_back(this);
 }
 void Player::setup()
 {
@@ -128,8 +127,11 @@ void Player::update()  {
 	//handle idle
 	else {
 		idleHandler(); 
-	}  
-  
+	} 
+    //get controller input
+    controllerInput(controller->getI());
+ 
+    //NEED TO UPDATE x & y slot positions
 }
 
 void Player::draw() 

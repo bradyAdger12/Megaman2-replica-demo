@@ -6,10 +6,10 @@
 #include "GameManager.h"  
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-vector<Player*> GameManager::playerList;
-Player *p1; 
-Player *p2;
-Item *i1;   
+//vector<Player*> GameManager::playerList;
+//Player *p1;
+//Player *p2;
+Item *i1;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
@@ -21,9 +21,10 @@ void ofApp::setup(){
     //ofLoadImage(p, "images/bombManStage.png");
 	background.load("images/bombManStage.png");
 	menuBackground.load("images/titleBackground.jpg");
+
 	world.init(); 
 	world.enableEvents();
-	world.setFPS(60.0); 
+	world.setFPS(30.0);
 	world.setGravity(0, 30);  
 
 	//sounds
@@ -35,7 +36,7 @@ void ofApp::setup(){
 	//character Management
 	mpm = new MultiPlayerManager();
 	mpm->setup();
-
+    
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
@@ -78,7 +79,7 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){   
+void ofApp::update(){
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 155, MultiPlayerManager::players[0]->getY() - 70, 180));
 	//camera.setPosition(100, 1000, 400);
 	//game UI
@@ -112,7 +113,7 @@ void ofApp::update(){
 		/*for (int i = 0; i < 1; i++) {
 			items[i]->update();
 		}*/
-	}	
+	}
 }
 
 //--------------------------------------------------------------
@@ -123,8 +124,7 @@ void ofApp::draw(){
 
 	if (gm->active || gm->paused) {
 
-		//draw in game background 
-
+		//draw in game background
 		ofSetColor(color);
 		background.draw(0, 0, 4355, 1187);
 		
@@ -137,11 +137,10 @@ void ofApp::draw(){
 		else {
 			color.set(255);
 		}
-
 		//draw world 
-		world.draw(); 
+		world.draw();
 
-		//item draw 
+		//item draw
 		/*for (int i = 0; i < 1; i++) {
 			items[i]->draw();
 		}*/
@@ -155,7 +154,6 @@ void ofApp::draw(){
 	camera.end();
 	//draw game UI
 	gm->draw();
-	
 }
 
  
