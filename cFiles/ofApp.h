@@ -5,6 +5,7 @@
 #include "ofxBox2d.h"
 #include "Item.h"
 #include "MultiPlayerManager.h"
+#include "Environment.h"
 using namespace std;
 class ofApp : public ofBaseApp{
 
@@ -36,8 +37,12 @@ class ofApp : public ofBaseApp{
 		ofImage soccerBall;
 		ofImage block;  
 		ofSoundPlayer TitleScreenMusic;
+		ofSoundPlayer inGameSound;
 		static ofxBox2d world;   
+		ofEasyCam camera;
 		static map<void*, string> collisionObjects;
+		ifstream input;
+		vector<Environment*> eList;
 		map<void*, string>::iterator itr;
 		MultiPlayerManager *mpm;
 		

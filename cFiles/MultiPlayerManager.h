@@ -19,10 +19,10 @@ public:
     void setup();
     void update();
     void draw();
+	static vector<Player*> players;
 private:
     ofSerial ports;
 	bool initialize, isPlayerOne;
-    vector<Player*> players;
     vector<string> availblePorts;
 };
 #endif /* MultiPlayerManager_h */

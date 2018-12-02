@@ -29,16 +29,16 @@ void Player::setup()
 
 	
 	//setup player attributes
-	speed = 12;  //speed of player
-	speedMultiplier = 1.60; //sprint at 160%
+	speed = 3;  //speed of player
+	speedMultiplier = 1.20; //sprint at 120%
 	jumpCount = 0; //used to keep track of double jump
 	runningNum = 0;  //used to index running sprites
 	idleNum = 0;  //index idle sprites
 	jumpNum = 0;  //index jump sprites
 	blink = 0;    //random between 0 and 1
-	radius = 65;  //radius of circle collider
-	size = radius * 2.2;  //size of character image is based of size of collider
-	jumpForce = radius * 3.2;   //set jumpForce to size*2 because size adds mass, thus a greater jumpForce is needed
+	radius = 11;  //radius of circle collider
+	jumpForce = 0;
+	size = radius * 2.4;  //size of character image is based of size of collider 
 
 	//create playerCollider 
 	ob = new collider();
@@ -50,24 +50,24 @@ void Player::setup()
 	count = 0; //used to determine when item is throwable
 
 	//load jumping animation
-	for (int i = 1; i < 4; i++) {
-		string file = "images/jump" + ofToString(i) + ".png";
+	for (int i = 2; i < 3; i++) {
+		string file = "images/megamanJumping/jump" + ofToString(i) + ".png";
 		ofImage jump;
 		jump.load(file);
 		jumpAnimation.push_back(jump); 
 	}
 
 	//load idle animation
-	for (int i = 1; i < 5; i++) {
-		string file = "images/idle" + ofToString(i) + ".png";
+	for (int i = 1; i < 4; i++) {
+		string file = "images/megamanIdle/idle" + ofToString(i) + ".png";
 		ofImage idle;
 		idle.load(file);
 		idleAnimation.push_back(idle);
 	}
 
 	//load running animation
-	for (int i = 1; i < 7; i++) {
-		string file = "images/running" + ofToString(i) + ".png";
+	for (int i = 1; i < 4; i++) {
+		string file = "images/megamanRunning/running" + ofToString(i) + ".png";
 		ofImage runner;
 		runner.load(file);
 		runningAnimation.push_back(runner);
@@ -110,7 +110,7 @@ Item* Player::getItem() {
 
 
 
-void Player::update()  {
+void Player::update()  { 
 	controller->update();
 	controllerInput(controller->getI());
 	playerCollider.get()->update();	  
@@ -134,6 +134,9 @@ void Player::update()  {
 
 void Player::draw() 
 { 
+	/*ofSetColor(0, 0, 0, 150);
+	playerCollider.get()->draw();*/
+
 	//set back to white 
 	ofSetColor(255);
 
@@ -142,16 +145,16 @@ void Player::draw()
 	 
 		//running drawing handler
 		if (running && !jumpState) { 
-			runningAnimation[runningNum].draw(getX() - radius, getY() - radius - 12, size, size); 
+			runningAnimation[runningNum].draw(getX() - radius, getY() - 15, size, size); 
 		}
 
 		//jump drawing handler
 		else if (jumpState) { 
 			if (abs(getYVelocity()) > 0) {
-				jumpAnimation[jumpNum].draw(getX() - radius, getY() - radius - 12, size, size);
+				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 15, size, size);
 				if (ofGetFrameNum() % 25 == 0) {
 					if (jumpNum == jumpAnimation.size() - 1) {
-						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - radius - 12, size, size);
+						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 15, size, size);
 					}
 				}
 			}
@@ -159,11 +162,11 @@ void Player::draw()
 
 		//idle drawing handler
 		else { 
-			if (idleNum == 3 && blink > .35) {
-				idleAnimation[0].draw(getX() - radius, getY() - radius - 12, size, size);
+			if (idleNum == 1 && blink > .35) {
+				idleAnimation[0].draw(getX() - radius, getY() - 15, size, size);
 			}
 			else {
-				idleAnimation[idleNum].draw(getX() - radius, getY() - radius - 12, size, size);
+				idleAnimation[idleNum].draw(getX() - radius, getY() - 15, size, size);
 			}
 		}
 
@@ -230,7 +233,7 @@ void Player::controllerInput(char key){
 		break;
 
 	case 'P':
-		if (hasItem && getItem()->tossForce > getItem()->scale + 2) {
+		if (hasItem && getItem()->tossForce > getItem()->scale + .25) {
 			throwItem();
 		}
 		break;
@@ -242,29 +245,15 @@ void Player::controllerInput(char key){
 		}
 	}
 			 
-
-		
-
-
-		//jump
+	//jump
 	if (key == 'c') {
-		if (jumpCount < 2) { 
-			if (!doubleJump) {
-				doubleJump = true;
+		if (!inAir) {  
+				jumpForce = (1170 - getY()) / 3.5;  
+				jumpState = true;
+				jumpNum = 0;
 				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
 			}
-			jumpState = true;
-			jumpNum = 0;
-		
-		}
-	}
-
-	if (key == 'C' && doubleJump) { 
-		doubleJump = false;
-		jumpCount++;
-		
-	}
-
+	} 
 }
 
 
@@ -300,7 +289,7 @@ void Player::orientPlayer() {
 
 void Player::runningHandler() {
 		
-		if (ofGetFrameNum() % int(speed *.5) == 0) {
+		if (ofGetFrameNum() % 7 == 0) {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
 		}	
@@ -387,7 +376,7 @@ void Player::setVelocity(float x, float y)
 Item* Player::closestUsableItem(int x, int y) {
 	Item *closest;
 	double dist;
-	double closest_dist = 120;
+	double closest_dist = radius * 2;
 	if (ofApp::items.size() > 0) {      //if there are items  
 		for (int i = 0; i < ofApp::items.size(); i++) { //check all
 			if (!ofApp::items[i]->hasParent()) {        //without parent

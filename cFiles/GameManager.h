@@ -8,7 +8,7 @@ class GameManager {
 public:
 	GameManager(); 
 	void setup();
-	void draw();
+	void draw(); 
 	void update();
 	Controller *controller; 
 	static bool paused, active;

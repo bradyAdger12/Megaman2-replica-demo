@@ -32,10 +32,10 @@ Item::Item(string shape, int x, int y, int size, int style, ofImage image){
 } 
 
 void Item::setup(){
-	scale = 5;
+	scale = .5;
 	tossForce = scale;
 	multiplier = 1.05;
-	maxTossForce = 70;  
+	maxTossForce = 3.5;  
 	color.set(255, 0, 0);
 }
 void Item::update(){

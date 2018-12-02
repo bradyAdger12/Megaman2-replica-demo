@@ -7,6 +7,8 @@
 
 #include "MultiPlayerManager.h" 
 #include "GameManager.h" 
+#include "ofApp.h"
+vector<Player*> MultiPlayerManager::players;
 void MultiPlayerManager::setup(){
 	initialize = true;
 	isPlayerOne = true;
@@ -34,8 +36,9 @@ void MultiPlayerManager::assignPorts(){
 			cout << "devicePort: " << availblePorts[i] << endl;
 			//setup player and its controller. delete controller so that menu has access to port
 			Player *p;
-			p = new Player(availblePorts[i], 50 + i * 20, ofGetHeight() - 100, isPlayerOne);
+			p = new Player(availblePorts[i], 50, 1150, isPlayerOne);
 			isPlayerOne = false;
+			ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
 			p->setup();  
 			players.push_back(p);
 		}

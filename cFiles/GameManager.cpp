@@ -57,7 +57,7 @@ void GameManager::controllerInput(char key) {
 		menu->isSelected = false;
 	}
 
-	if (key == 'c' && !paused) {
+	if (key == 's' && !paused) {
 		for (menu->selectionI = menu->selectionList.begin(); menu->selectionI != menu->selectionList.end(); menu->selectionI++) {
 			if (menu->selectionI->second == true) {
 				if (menu->selectionI->first == "one player") { 
@@ -67,6 +67,7 @@ void GameManager::controllerInput(char key) {
 					active = true;
 				}
 				if (menu->selectionI->first == "controls") {
+					menu->controlMenu = true;
 					
 				}
 			}
