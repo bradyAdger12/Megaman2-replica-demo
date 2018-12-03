@@ -71,7 +71,11 @@ void Player::setup()
 		runner.load(file);
 		runningAnimation.push_back(runner);
 	}
-
+    
+    //Load Bullet animation
+    //TODO:
+    //Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images
+    shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
@@ -131,6 +135,7 @@ void Player::update()  {
     //get controller input
     controllerInput(controller->getI());
  
+    shootingHandler->update();
     //NEED TO UPDATE x & y slot positions
 }
 
@@ -143,8 +148,8 @@ void Player::draw()
 	ofSetColor(255);
 
 	//orient images based on player state/direction
-	orientPlayer(); 
-	 
+	orientPlayer();
+    
 		//running drawing handler
 		if (running && !jumpState) {
             runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);  //Turn off Anti-Aliasing
@@ -175,12 +180,15 @@ void Player::draw()
 				idleAnimation[idleNum].draw(getX() - radius, getY() - 15, size, size);
 			}
 		}
-
+    
+    //Draw bullets
+    shootingHandler->draw();
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
+    //std::cout << key << endl;
 	switch (key) {
-
+            
 		//sprint
 	case 's':
 		if (running && !inAir) {
@@ -259,7 +267,16 @@ void Player::controllerInput(char key){
 				jumpNum = 0;
 				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce * 1.5);
 			}
-	} 
+	}
+    if(key == 'a'){
+        shooting = true;
+        shootingHandler->setShooting(true);
+    }
+    if(key == 'A'){
+        shooting = false;
+        shootingHandler->setShooting(false);
+        shootingHandler->resetDeltaTime();
+    }
 }
 
 
@@ -402,9 +419,9 @@ double Player::distance(int x1, int x2, int y1, int y2) {
 }
 int Player::getOrientation(){
     if(leftOriented){
-        return 0;
-    }else{
         return 1;
+    }else{
+        return 0;
     }
 }
  

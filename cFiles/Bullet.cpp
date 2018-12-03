@@ -12,7 +12,7 @@ Bullet::Bullet(){
     
 }
 Bullet::~Bullet(){
-    std::cout << "Deleting" << endl;
+    //std::cout << "Deleting" << endl;
 }
 Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>images){
     this->x = x;
@@ -24,10 +24,19 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
 }
 
 void Bullet::update(){
-    y -= speed;
+    switch(dir){
+        case 0:
+            x -= speed;
+            break;
+        case 1:
+            x += speed;
+            break;
+        default:
+            break;
+    }
 }
 void Bullet::draw(){
-    ofSetColor(255, 0, 0);
+    ofSetColor(0, 0, 0);
     ofDrawCircle(x,y,radius);
 }
 int Bullet::getX(){

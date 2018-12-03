@@ -10,6 +10,7 @@
 #include "Item.h"
 #include "Controller.h"
 #include <vector>
+#include "ShootingHandler.h"
 using namespace std;
 class Player {
 public:
@@ -24,6 +25,7 @@ public:
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem;
+    bool shooting = false;
 	bool jumpState;
 	bool playerOne;
 	void setup();
@@ -62,10 +64,12 @@ public:
     
     //Controller Logic
     Controller *controller;
+    ShootingHandler* shootingHandler;
     
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
+    vector<ofImage> bulletAnimation;
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

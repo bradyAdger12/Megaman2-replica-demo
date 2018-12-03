@@ -4,7 +4,7 @@
 //
 //  Created by Jfry on 12/2/18.
 //
-
+#include "Player.h"
 #include "ShootingHandler.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
@@ -13,35 +13,36 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->fireRate = fireRate;
     this->size = size;
     this->images = images;
-    
 }
 void ShootingHandler::update(){
     currentTime = ofGetElapsedTimef();
     deltaTime += currentTime - lastTime;
-    
+
     shootingHandler();
-    boundsControll();
     
     lastTime = currentTime;
 }
 void ShootingHandler::draw(){
     if(bullets.size() != 0){
+        isBullets = true;
         for(bull = bullets.begin(); bull != bullets.end(); bull++){
             (*bull)->draw();
         }
+    }else{
+        isBullets = false;
     }
 }
 void ShootingHandler::shootingHandler(){
-    if(shooting && deltaTime >= fireRate){
+    if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         //int x, int y, int speed, int radius, int dir, vector<ofImage>images
-        bullets.push_back(new Bullet(player->getX() + size/2,player->getY(), 20, 8, player->getOrientation(), images));
+        bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
     }
     
     //Sending off screen bullets to the TRASH!
     if(isBullets){
         for(int i = 0; i < bullets.size(); i++){
-            if(bullets[i]->getY() < 0 || bullets[i]->getY() > 2000 || bullets[i]->getX() < 0 || bullets[i]->getX() > 4355){
+            if(bullets[i]->getX() < player->getX() - 400|| bullets[i]->getX() > player->getX() + 400){
                 indexesToDelete.push_back(i);
             }else{
                 bullets[i]->update();
@@ -56,4 +57,12 @@ void ShootingHandler::deleteBullets(){
         bullets.erase(bullets.begin() + indexesToDelete[i]);
     }
     indexesToDelete.clear();
+}
+
+void ShootingHandler::resetDeltaTime(){
+    deltaTime = 0.0f;
+    lastTime = 0.0f;
+}
+void ShootingHandler::setShooting(bool isShooting){
+    this->isShooting = isShooting;
 }

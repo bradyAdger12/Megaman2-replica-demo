@@ -127,9 +127,6 @@ void ofApp::draw(){
 		ofSetColor(color);
 		background.draw(0, 0, 4355, 1187);
 		
-		//player management
-		mpm->draw();
-		
 		if (gm->paused) {
 			color.set(180);
 		}
@@ -139,6 +136,9 @@ void ofApp::draw(){
 		//draw world 
 		world.draw();
 
+        //player management
+        mpm->draw();
+        
 		//item draw
 		/*for (int i = 0; i < 1; i++) {
 			items[i]->draw();

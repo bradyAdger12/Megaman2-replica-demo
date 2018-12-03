@@ -11,15 +11,16 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "Bullet.h"
-#include "Player.h"
+class Player; //foward declaration
 class ShootingHandler{
 public:
     void update();
     void draw();
     void deleteBullets();
     void shootingHandler();
-    void boundsControll();
-    //Constructor for enemy
+    void resetDeltaTime();
+    void setShooting(bool isShooting);
+    //Need Constructor for enemy
      ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     
 private:
@@ -30,8 +31,7 @@ private:
     vector<Bullet *> bullets;
     vector<Bullet *>::iterator bull;
     vector<int> indexesToDelete;
-    bool isBullets;
-    bool shooting = false;
+    bool isBullets, isShooting;
 };
 
 #endif /* ShootingHandler_h */
