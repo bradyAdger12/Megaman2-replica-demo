@@ -18,7 +18,7 @@ public:
 	Player(string portNumber, int x, int y, bool playerOne);
 
 	//var and methods
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum,jumpNum, radius, size; 
+	int getX(), getY(), getRadius(),getOrientation(), speed, runningNum, idleNum,jumpNum, radius, size; 
 	int x, y;
 	string portName;
 	ofVec2f getPosition();

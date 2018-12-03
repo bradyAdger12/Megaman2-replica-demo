@@ -18,9 +18,7 @@ string s;
 void ofApp::setup(){ 
 
 	//world setup
-    //ofLoadImage(p, "images/bombManStage.png");
-//    background.allocate(4355, 1187, OF_IMAGE_UNDEFINED);
-    background.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+    background.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); //Turn off Anti-Aliasing
 	background.load("images/bombManStage.png");
 	menuBackground.load("images/titleBackground.jpg");
 	world.init();

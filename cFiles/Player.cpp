@@ -147,7 +147,7 @@ void Player::draw()
 	 
 		//running drawing handler
 		if (running && !jumpState) {
-            runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+            runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);  //Turn off Anti-Aliasing
 			runningAnimation[runningNum].draw(getX() - radius, getY() - 15, size, size); 
 		}
 
@@ -157,7 +157,7 @@ void Player::draw()
 				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 15, size, size);
 				if (ofGetFrameNum() % 25 == 0) {
 					if (jumpNum == jumpAnimation.size() - 1) {
-                        jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+                        jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); //Turn off Anti-Aliasing
 						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 15, size, size);
 					}
 				}
@@ -167,11 +167,11 @@ void Player::draw()
 		//idle drawing handler
 		else { 
 			if (idleNum == 1 && blink > .35) {
-                idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+                idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); //Turn off Anti-Aliasing
 				idleAnimation[0].draw(getX() - radius, getY() - 15, size, size);
 			}
 			else {
-                idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+                idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); //Turn off Anti-Aliasing
 				idleAnimation[idleNum].draw(getX() - radius, getY() - 15, size, size);
 			}
 		}
@@ -399,5 +399,12 @@ Item* Player::closestUsableItem(int x, int y) {
 //Returns distance between 2 pts
 double Player::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+}
+int Player::getOrientation(){
+    if(leftOriented){
+        return 0;
+    }else{
+        return 1;
+    }
 }
  
