@@ -22,7 +22,15 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
     this->dir = dir;
     this->images = images;
 }
-
+Bullet::Bullet(int x, int y, int dx,int dy, int radius, int dir, vector<ofImage>images){
+    this->x = x;
+    this->y = y;
+    this->dx = dx;
+    this->dy = dy;
+    this->radius = radius;
+    this->dir = dir;
+    this->images = images;
+}
 void Bullet::update(){
     switch(dir){
         case 0:
@@ -31,6 +39,9 @@ void Bullet::update(){
         case 1:
             x += speed;
             break;
+        case 3:
+            x += dx;
+            y += dy;
         default:
             break;
     }

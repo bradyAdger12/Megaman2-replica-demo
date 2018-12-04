@@ -5,6 +5,7 @@
 //  Created by Jfry on 12/2/18.
 //
 #include "Player.h"
+#include "Enemy.h"
 #include "ShootingHandler.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
@@ -13,6 +14,16 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->fireRate = fireRate;
     this->size = size;
     this->images = images;
+    isPlayer = true;
+}
+ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
+    this->enemy = enemy;
+    this->speed = speed;
+    this->damage = damage;
+    this->fireRate = fireRate;
+    this->size = size;
+    this->images = images;
+    isPlayer = false;
 }
 void ShootingHandler::update(){
     currentTime = ofGetElapsedTimef();
@@ -36,7 +47,11 @@ void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         //int x, int y, int speed, int radius, int dir, vector<ofImage>images
-        bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
+        if(isPlayer){
+            bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
+        }else{
+            
+        }
     }
     
     //Sending off screen bullets to the TRASH!
