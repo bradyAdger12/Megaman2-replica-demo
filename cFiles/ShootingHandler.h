@@ -21,6 +21,7 @@ public:
     void shootingHandler();
     void resetDeltaTime();
     void setShooting(bool isShooting);
+    vector<int> getClosestPlayer();
     //Need Constructor for enemy
      ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);

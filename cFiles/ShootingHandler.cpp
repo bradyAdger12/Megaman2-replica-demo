@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "ShootingHandler.h"
+#include "MultiPlayerManager.h"
+#include "Math.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
     this->speed = speed;
@@ -80,4 +82,21 @@ void ShootingHandler::resetDeltaTime(){
 }
 void ShootingHandler::setShooting(bool isShooting){
     this->isShooting = isShooting;
+}
+vector<int> ShootingHandler::getClosestPlayer(){
+    vector<int> player_XY;
+    double currentDist;
+    double minDist = 99999;
+    int minPlayerIndex = 0;
+    for(int i =0; i< MultiPlayerManager::players.size(); i++){
+        currentDist = sqrt(pow(enemy->getX()-MultiPlayerManager::players[i]->getX(),2) + pow(enemy->getY()- MultiPlayerManager::players[i]->getY(),2));
+        if(currentDist < minDist){
+            minDist = currentDist;
+            minPlayerIndex = i;
+        }
+    }
+    
+    player_XY.push_back(MultiPlayerManager::players[minPlayerIndex]->getX());
+    player_XY.push_back(MultiPlayerManager::players[minPlayerIndex]->getY());
+    return player_XY;
 }
