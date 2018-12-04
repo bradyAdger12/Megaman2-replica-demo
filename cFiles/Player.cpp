@@ -26,8 +26,7 @@ void Player::setup()
 	isFlipped = false;
 	doubleJump = false;
 	hasItem = false;  
-	climbing = false;
-
+	climbing = false; 
 	
 	//setup player attributes
 	speed = 2;  //speed of player
@@ -36,6 +35,7 @@ void Player::setup()
 	runningNum = 0;  //used to index running sprites
 	idleNum = 0;  //index idle sprites
 	jumpNum = 0;  //index jump sprites
+	climbingNum = 0; //index climbing sprites
 	blink = 0;    //random between 0 and 1
 	radius = 11;  //radius of circle collider
 	jumpForce = 0;
@@ -61,9 +61,17 @@ void Player::setup()
 	//load idle animation
 	for (int i = 1; i < 4; i++) {
 		string file = "images/megamanIdle/idle" + ofToString(i) + ".png";
-		ofImage idle;
+		ofImage idle; 
 		idle.load(file);
 		idleAnimation.push_back(idle);
+	}
+
+	//load climbing animation 
+	for (int i = 1; i < 3; i++) {
+		string file = "images/megamanClimbing/climbing" + ofToString(i) + ".png";
+		ofImage climb;
+		climb.load(file);
+		climbingAnimation.push_back(climb);
 	}
 
 	//load running animation
@@ -127,9 +135,13 @@ void Player::update()  {
 	}
 
 	//handle jumping
-	else if (jumpState) {
+	else if (jumpState && !climbing) {
 		jumpHandler(); 
 	}  
+
+	else if (climbing) {
+		climbingHandler();
+	}
 
 	//handle idle
 	else {
@@ -137,12 +149,7 @@ void Player::update()  {
 	} 
 
 	//handle ladder
-	if (Environment::ladder) { 
-		if (climbing) {
-
-		}
-	}
-  
+ 
 }
 
 void Player::draw() 
@@ -156,39 +163,49 @@ void Player::draw()
 	//orient images based on player state/direction
 	orientPlayer(); 
 	 
-		//running drawing handler
-		if (running && !jumpState) { 
-			runningAnimation[runningNum].draw(getX() - radius, getY() - 14, size, size); 
-		}
+	//running drawing handler
+	if (running && !jumpState) {
+		runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		runningAnimation[runningNum].draw(getX() - radius, getY() - 14, size, size);
+	}
 
-		//jump drawing handler
-		else if (jumpState) { 
-			if (abs(getYVelocity()) > 0) {
-				jumpAnimation[jumpNum].draw(getX() - radius, getY() - 14, size, size);
-				if (ofGetFrameNum() % 25 == 0) {
-					if (jumpNum == jumpAnimation.size() - 1) {
-						jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 14, size, size);
-					}
+	//jump drawing handler
+	else if (jumpState && !climbing) {
+		if (abs(getYVelocity()) > 0) {
+			jumpAnimation[jumpNum].draw(getX() - radius, getY() - 14, size, size);
+			if (ofGetFrameNum() % 25 == 0) {
+				if (jumpNum == jumpAnimation.size() - 1) {
+					jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+					jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 14, size, size);
 				}
 			}
 		}
+	}
 
-		//idle drawing handler
-		else { 
-			if (idleNum == 1 && blink > .35) {
-				idleAnimation[0].draw(getX() - radius, getY() - 14, size, size);
-			}
-			else {
-				idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
-			}
+	else if (climbing) {
+		climbingAnimation[climbingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		climbingAnimation[climbingNum].draw(getX() - radius, getY() - 14, size, size);
+	}
+
+	//idle drawing handler
+	else {
+		if (idleNum == 1 && blink > .35) {
+			idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+			idleAnimation[0].draw(getX() - radius, getY() - 14, size, size);
 		}
+		else {
+			idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+			idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
+		}
+	}
 
+	
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
 	switch (key) {
 
-		//sprint
+	//sprint
 	case 's':
 		if (running && !inAir) {
 			if (getXVelocity() > 0) {
@@ -201,7 +218,7 @@ void Player::controllerInput(char key){
 		break;
 
 
-		//run right
+    //run right
 	case 'r': {
 		running = true;
 		setVelocity(speed, getYVelocity());
@@ -213,7 +230,7 @@ void Player::controllerInput(char key){
 		break;
 	}
 
-			  //run left
+    //run left
 	case 'l': {
 		running = true;
 		setVelocity(-speed, getYVelocity());
@@ -226,7 +243,7 @@ void Player::controllerInput(char key){
 	}
 
 
-			  //grab items (left button) 
+    //grab items (left button) 
 	case 'p':
 		if (hasItem) {
 			if (getItem()->style == 0) {
@@ -258,24 +275,27 @@ void Player::controllerInput(char key){
 		}
 		break;
 
-	case 'u':
-		if (Environment::ladder) { 
+
+	//used for climbing
+	case 'u':  
+		if (Environment::ladder && Environment::canClimb) { 
+			jumpState = false;
 			climbing = true;
-			setVelocity(getXVelocity(), -speed/1.6);			
+			if (climbing) {
+				setVelocity(getXVelocity(), -speed / 1.6);
+			}
 		}
 		break;
 
-	case 'U': 
-		if (climbing) { 
-			setVelocity(0, 0);
-			climbing = false;
-		} 
+	case 'U':  
+		climbingNum = 0;
+		climbing = false;
 		break;
 	}
 			 
 	//jump
 	if (key == 'c') {
-		if (!inAir) {  
+		if (!inAir && !climbing) {  
 				jumpForce = 1.3;  
 				jumpState = true;
 				jumpNum = 0;
@@ -326,6 +346,13 @@ void Player::runningHandler() {
 			runningNum++;
 			runningNum = runningNum % runningAnimation.size();
 		}	
+}
+
+void Player::climbingHandler() {
+	if (ofGetFrameNum() % 7 == 0) {
+		climbingNum++;
+		climbingNum = climbingNum % climbingAnimation.size();
+	}
 }
 
 

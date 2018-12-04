@@ -18,7 +18,7 @@ public:
 	Player(string portNumber, int x, int y, bool playerOne);
 
 	//var and methods
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum,jumpNum, radius, size; 
+	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, radius, size; 
 	int x, y;
 	string portName;
 	ofVec2f getPosition();
@@ -35,6 +35,7 @@ public:
 	void flipImages();
 	void runningHandler(); 
 	void jumpHandler();
+	void climbingHandler();
 	void orientPlayer();
     void idleHandler();
 	void recreateController(Controller* controller);
@@ -66,6 +67,7 @@ public:
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
+	vector<ofImage> climbingAnimation;
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

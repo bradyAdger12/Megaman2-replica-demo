@@ -1,14 +1,14 @@
 #include "Environment.h"
-#include "ofApp.h"  
+#include "ofApp.h"   
 bool Environment::ladder;
+bool Environment::canClimb;
 Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	collider *ob = new collider();
 	this->width = w;
 	this->height = h;
 	this->x = x;
 	this->y = y;  
-	this->id = id;
-	ladder = false;
+	this->id = id; 
 	this->tag = tag;
     eCollider = ob->Rectangle(x, y, w, h, 0, 0, 8);
 	ofApp::collisionObjects.insert(make_pair(this, tag));
@@ -17,14 +17,21 @@ Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	}
 } 
 void Environment::setup() {
-
+	ladder = false;
+	canClimb = false;
 }
 void Environment::update() {  
 	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
 		if (tag == "ladder") {
-			if (distance(MultiPlayerManager::players[0]->getX(), x, MultiPlayerManager::players[0]->getY(), y) <= width) {
-				ladder = true;
+			if (distance(MultiPlayerManager::players[i]->getX(), x, MultiPlayerManager::players[i]->getY(), y + height) <= height + (MultiPlayerManager::players[i]->getRadius() * 2)) {
+				canClimb = true;
 			}
+			else {
+				canClimb = false;
+			}
+			if (MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius() > x && MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius() < x + width) {
+				ladder = true; 		
+			}  
 			else {
 				ladder = false;
 			}

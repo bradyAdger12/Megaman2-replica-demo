@@ -9,8 +9,8 @@ public:
 	vector<shared_ptr<ofxBox2dBaseShape>> environmentColliders;
 	void setup();
 	void draw();
-	void update();
-	static bool ladder;
+	void update(); 
+	static bool ladder, canClimb;
 	double distance(int x1, int x2, int y1, int y2);
 	Environment(int x, int y, int w, int h, string tag, int id);
 private:

@@ -13,7 +13,7 @@ Item *i1;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
-int cameraY;
+int cameraY, yChange;
 string s;
 vector<Environment*> ofApp::eList;
 
@@ -21,7 +21,8 @@ vector<Environment*> ofApp::eList;
 void ofApp::setup(){ 
 
     
-	//world setup 
+	//world setup  
+	background.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	background.load("images/bombManStage2.png"); 
 	menuBackground.load("images/titleBackground.jpg"); 
 	world.init(); 
@@ -71,10 +72,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){   
+	
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
 
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180));
-	
-	
 	//camera.setPosition(200, 1000, 500);
 	//game UI
 	gm->update();
@@ -122,8 +122,6 @@ void ofApp::draw(){
 	if (gm->active || gm->paused) {
 
 		//draw in game background 
-
-		
 		ofSetColor(color);
 		background.draw(0, 0, 5134, 1219);
 		
