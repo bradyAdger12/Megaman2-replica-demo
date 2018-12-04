@@ -82,6 +82,7 @@ void Player::setup()
 		runningAnimation.push_back(runner);
 	}
 
+	shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
@@ -125,6 +126,9 @@ void Player::update()  {
 	//controller input
 	controller->update();
 	controllerInput(controller->getI());
+
+	//shooting handler
+	shootingHandler->update();
 
 	//update collider
 	playerCollider.get()->update();	  
@@ -199,6 +203,8 @@ void Player::draw()
 		}
 	}
 
+	//Draw bullets
+	shootingHandler->draw();
 	
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
@@ -307,6 +313,16 @@ void Player::controllerInput(char key){
 				}
 			}
 	} 
+
+	if (key == 'a') {
+		shooting = true;
+		shootingHandler->setShooting(true);
+	}
+	if (key == 'A') {
+		shooting = false;
+		shootingHandler->setShooting(false);
+		shootingHandler->resetDeltaTime();
+	}
 }
 
 
@@ -453,5 +469,14 @@ Item* Player::closestUsableItem(int x, int y) {
 //Returns distance between 2 pts
 double Player::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+}
+
+int Player::getOrientation() {
+	if (leftOriented) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
  

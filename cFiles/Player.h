@@ -8,6 +8,7 @@
 #include "ofxBox2d.h"
 #include "collider.h" 
 #include "Item.h"
+#include "ShootingHandler.h"
 #include "Controller.h"
 #include <vector>
 using namespace std;
@@ -24,6 +25,7 @@ public:
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing;
+	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
 	void setup();
@@ -37,8 +39,8 @@ public:
 	void jumpHandler();
 	void climbingHandler();
 	void orientPlayer();
-    void idleHandler();
-	void recreateController(Controller* controller);
+	int getOrientation();
+    void idleHandler(); 
     void controllerInput(char key); 
 
 	//list of players
@@ -63,11 +65,15 @@ public:
     
     //Controller Logic
     Controller *controller;
+
+	//shooting logic
+	ShootingHandler* shootingHandler;
     
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
 	vector<ofImage> climbingAnimation;
+	vector<ofImage> bulletAnimation;
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

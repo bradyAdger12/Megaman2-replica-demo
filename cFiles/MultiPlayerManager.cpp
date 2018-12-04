@@ -36,7 +36,7 @@ void MultiPlayerManager::assignPorts(){
 			cout << "devicePort: " << availblePorts[i] << endl;
 			//setup player and its controller. delete controller so that menu has access to port
 			Player *p;
-			p = new Player(availblePorts[i], 50, 1150, isPlayerOne);
+			p = new Player(availblePorts[i], 50, 1150 + (i*50), isPlayerOne);
 			isPlayerOne = false;
 			ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
 			p->setup();  

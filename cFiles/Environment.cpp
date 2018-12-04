@@ -29,7 +29,7 @@ void Environment::update() {
 			else {
 				canClimb = false;
 			}
-			if (MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius() > x && MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius() < x + width) {
+			if (MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius()*2 > x && MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius()*2 < x + width) {
 				ladder = true; 		
 			}  
 			else {
