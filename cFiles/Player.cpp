@@ -6,15 +6,14 @@
 bool GameManager::active; 
 bool GameManager::paused; 
 vector<Item*> ofApp::items; 
-b2Timer GameManager::timer;
+b2Timer* GameManager::timer;
 
 Player::Player(string portName, int x, int y, bool playerOne){
 	this->portName = portName;
 	this->playerOne = playerOne;
 	this->x = x;
 	this->y = y;
-	playerList.push_back(this);
-
+	//playerList.push_back(this);
 }
 void Player::setup()
 {
@@ -81,7 +80,11 @@ void Player::setup()
 		runner.load(file);
 		runningAnimation.push_back(runner);
 	}
-
+    
+    //Load Bullet animation
+    //TODO:
+    //Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images
+    shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
@@ -147,9 +150,12 @@ void Player::update()  {
 	else {
 		idleHandler(); 
 	} 
-
-	//handle ladder
+    //get controller input
+    controllerInput(controller->getI());
  
+    shootingHandler->update();
+    //NEED TO UPDATE x & y slot positions
+
 }
 
 void Player::draw() 
@@ -198,14 +204,16 @@ void Player::draw()
 			idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
 		}
 	}
-
-	
+    
+    //Draw bullets
+    shootingHandler->draw();
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
-	switch (key) {
+    //std::cout << key << endl;
+	switch (key) { 
 
-	//sprint
+	//sprint 
 	case 's':
 		if (running && !inAir) {
 			if (getXVelocity() > 0) {
@@ -306,7 +314,16 @@ void Player::controllerInput(char key){
 					playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce/1.4);
 				}
 			}
-	} 
+	}
+    if(key == 'a'){
+        shooting = true;
+        shootingHandler->setShooting(true);
+    }
+    if(key == 'A'){
+        shooting = false;
+        shootingHandler->setShooting(false);
+        shootingHandler->resetDeltaTime();
+    }
 }
 
 
@@ -453,5 +470,12 @@ Item* Player::closestUsableItem(int x, int y) {
 //Returns distance between 2 pts
 double Player::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+}
+int Player::getOrientation(){
+    if(leftOriented){
+        return 1;
+    }else{
+        return 0;
+    }
 }
  

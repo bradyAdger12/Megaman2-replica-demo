@@ -32,7 +32,7 @@ class ofApp : public ofBaseApp{
 		void contactEnd(ofxBox2dContactArgs &e);
 
 		vector <shared_ptr<ofxBox2dCircle>> circles;
-		ofImage background; 
+		ofImage background;
 		ofImage menuBackground;
 		ofImage soccerBall;
 		ofImage block;  
@@ -49,7 +49,6 @@ class ofApp : public ofBaseApp{
 	static vector<Item*> items;
 
     void spawnRandomItem();
-    double distance(int x1,int x2,int y1,int y2);
-   
+    double distance(int x1,int x2,int y1,int y2);   
 
 };

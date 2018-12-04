@@ -6,10 +6,10 @@
 #include "GameManager.h"  
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-vector<Player*> GameManager::playerList;
-Player *p1; 
-Player *p2;
-Item *i1;   
+//vector<Player*> GameManager::playerList;
+//Player *p1;
+//Player *p2;
+Item *i1;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
@@ -39,7 +39,7 @@ void ofApp::setup(){
 	//character Management
 	mpm = new MultiPlayerManager();
 	mpm->setup();
-
+    
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
@@ -63,7 +63,7 @@ void ofApp::setup(){
 		collisionObjects.insert(make_pair(e, s));
 	}
 
-	//setup camera 
+	//setup camera  
 	camera.setVFlip(true);
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));//
 	cameraY = camera.getPosition().y;
@@ -75,7 +75,7 @@ void ofApp::update(){
 	
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
 
-	//camera.setPosition(200, 1000, 500);
+	//camera.setPosition(200, 1000, 500); 
 	//game UI
 	gm->update();
 
@@ -102,33 +102,25 @@ void ofApp::update(){
 		}
 		//update world
 		world.update();
-		 
+		  
 		//update environment collider info
 		for (int i = 0; i < eList.size(); i++) {
 			eList[i]->update();
-		}
-		 
-	}	
+		}	 
+	}	 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
-	
 	//title background 
 	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
 	camera.begin();
 
-	if (gm->active || gm->paused) {
-
-		//draw in game background 
+	if (gm->active || gm->paused) { 
+	
+		//draw in game background  
 		ofSetColor(color);
-		background.draw(0, 0, 5134, 1219);
-		
-		
-		
-		//player management
-		mpm->draw();
+		background.draw(0, 0, 4355, 1187);
 		
 		if (gm->paused) {
 			color.set(180);
@@ -136,11 +128,13 @@ void ofApp::draw(){
 		else {
 			color.set(255);
 		}
-
 		//draw world 
-		world.draw(); 
+		world.draw();
 
-		//item draw 
+        //player management
+        mpm->draw();
+        
+		//item draw
 		/*for (int i = 0; i < 1; i++) {
 			items[i]->draw();
 		}*/
@@ -154,7 +148,6 @@ void ofApp::draw(){
 	camera.end();
 	//draw game UI
 	gm->draw();
-	
 }
 
  
