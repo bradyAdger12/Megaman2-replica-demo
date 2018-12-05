@@ -3,13 +3,15 @@
 #include <cmath>
 #include "Player.h" 
 #include "MultiPlayerManager.h"
-#include "GameManager.h"  
+#include "GameManager.h"
+#include "Enemy.h"
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 //vector<Player*> GameManager::playerList;
 //Player *p1;
 //Player *p2;
 Item *i1;
+Enemy *test_enemy;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
@@ -36,6 +38,9 @@ void ofApp::setup(){
 	mpm = new MultiPlayerManager();
 	mpm->setup();
     
+    //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
+    test_enemy = new Enemy( 100.0, 1100.0,60,0,20,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
+    
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
@@ -47,9 +52,6 @@ void ofApp::setup(){
 	ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
 	ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
 
-	//images for items
-	soccerBall.load("images/bomb.png");
-	block.load("images/goldBlock.png");
 
 	////create circular item
 	//i1 = new Item("circle", 300, 300, 10, 0, soccerBall);
@@ -74,11 +76,13 @@ void ofApp::setup(){
 	}
 
 	//setup camera 
-	camera.setVFlip(true); 
+	camera.setVFlip(true);
+    //test_enemy->setup();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 155, MultiPlayerManager::players[0]->getY() - 70, 180));
 	//camera.setPosition(100, 1000, 400);
 	//game UI
@@ -100,6 +104,7 @@ void ofApp::update(){
 
 		//character management
 		mpm->update();
+        test_enemy->update();
 
 		//stop title music
 		if (TitleScreenMusic.isPlaying()) {
@@ -138,6 +143,7 @@ void ofApp::draw(){
 
         //player management
         mpm->draw();
+        test_enemy->draw();
         
 		//item draw
 		/*for (int i = 0; i < 1; i++) {

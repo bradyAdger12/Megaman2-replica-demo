@@ -8,7 +8,7 @@
 #include "Enemy.h"
 #include "ShootingHandler.h"
 #include "MultiPlayerManager.h"
-#include "Math.h"
+#include "math.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
     this->speed = speed;
@@ -17,6 +17,7 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->size = size;
     this->images = images;
     isPlayer = true;
+    isShooting = false;
 }
 ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->enemy = enemy;
@@ -26,11 +27,13 @@ ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fire
     this->size = size;
     this->images = images;
     isPlayer = false;
+    isShooting = false;
 }
 void ShootingHandler::update(){
     currentTime = ofGetElapsedTimef();
     deltaTime += currentTime - lastTime;
 
+    if(!isPlayer) getClosestPlayer();
     shootingHandler();
     
     lastTime = currentTime;
@@ -52,14 +55,26 @@ void ShootingHandler::shootingHandler(){
         if(isPlayer){
             bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
         }else{
-            
+            //Bullet::Bullet(int x, int y, int dx,int dy, int radius, int dir, vector<ofImage>images){
+            bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],5, 3, images));
+            //bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), -1, 1,5, 3, images));
+            std::cout<<"enemy shooting"<<endl;
         }
     }
     
     //Sending off screen bullets to the TRASH!
-    if(isBullets){
+    if(isBullets && isPlayer){
         for(int i = 0; i < bullets.size(); i++){
             if(bullets[i]->getX() < player->getX() - 400|| bullets[i]->getX() > player->getX() + 400){
+                indexesToDelete.push_back(i);
+            }else{
+                bullets[i]->update();
+            }
+        }
+        deleteBullets();
+    }else if(isBullets){
+        for(int i = 0; i < bullets.size(); i++){
+            if(bullets[i]->getX() < enemy->getX() - 400|| bullets[i]->getX() > enemy->getX() + 400){
                 indexesToDelete.push_back(i);
             }else{
                 bullets[i]->update();
@@ -83,8 +98,7 @@ void ShootingHandler::resetDeltaTime(){
 void ShootingHandler::setShooting(bool isShooting){
     this->isShooting = isShooting;
 }
-vector<int> ShootingHandler::getClosestPlayer(){
-    vector<int> player_XY;
+void ShootingHandler::getClosestPlayer(){
     double currentDist;
     double minDist = 99999;
     int minPlayerIndex = 0;
@@ -95,8 +109,21 @@ vector<int> ShootingHandler::getClosestPlayer(){
             minPlayerIndex = i;
         }
     }
-    
-    player_XY.push_back(MultiPlayerManager::players[minPlayerIndex]->getX());
-    player_XY.push_back(MultiPlayerManager::players[minPlayerIndex]->getY());
-    return player_XY;
+  
+    if(minDist > 400){
+        isShooting = false;
+        player_XY.clear();
+    }else{
+        isShooting = true;
+        player_XY.clear();
+        //Pushes back the dx dy needed to send bullet towards clos
+        double dx_ = enemy->getX() - MultiPlayerManager::players[minPlayerIndex]->getX();
+        double dy_ = enemy->getY() - MultiPlayerManager::players[minPlayerIndex]->getY();
+        double mag = sqrt(pow(dx_,2) + pow(dy_,2));
+        
+        //std::cout<<mag<<" "<<(dx_/mag) * speed * -1<<" "<<(dy_/mag) * speed * -1<<endl;
+        
+        player_XY.push_back((dx_/mag) * speed * -1);
+        player_XY.push_back((dy_/mag) * speed * -1);
+    }
 }

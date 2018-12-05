@@ -21,7 +21,7 @@ public:
     void shootingHandler();
     void resetDeltaTime();
     void setShooting(bool isShooting);
-    vector<int> getClosestPlayer();
+    void getClosestPlayer();
     //Need Constructor for enemy
      ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
@@ -35,6 +35,7 @@ private:
     vector<Bullet *>::iterator bull;
     vector<int> indexesToDelete;
     bool isBullets, isShooting, isPlayer;
+    vector<double> player_XY;
 };
 
 #endif /* ShootingHandler_h */

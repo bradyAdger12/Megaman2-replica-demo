@@ -6,7 +6,7 @@
 //
 
 #include "Enemy.h"
-Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
+Enemy::Enemy(double x, double y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
     this->x =x;
     this->y =y;
     this->range = range;
@@ -14,6 +14,8 @@ Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, st
     this->patrol_path;
     this->hit_path = hit_path;
     this->bullet_path = bullet_path;
+    shootingHandler = new ShootingHandler(this, 10, 8, 0.33, 9, bullet_anim);
+
 }
 void Enemy::setup(){
     //Build Animation Vectors
@@ -42,13 +44,16 @@ void Enemy::setup(){
         bullet_anim.push_back(bull);
     }
     //:ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
-    shootingHandler = new ShootingHandler(this, 10, 8, 0.33, 9, bullet_anim);
 }
 void Enemy::update(){
     patrol();
+    shootingHandler->update();
 }
 void Enemy::draw(){
-    
+    ofSetColor(0,0,0);
+    ofDrawRectangle(x,y, 20,20);
+    shootingHandler->draw();
+
 }
 void Enemy::patrol(){
     

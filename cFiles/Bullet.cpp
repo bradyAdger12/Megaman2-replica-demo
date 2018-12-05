@@ -12,7 +12,7 @@ Bullet::Bullet(){
     
 }
 Bullet::~Bullet(){
-    //std::cout << "Deleting" << endl;
+    std::cout << "Deleting" << endl;
 }
 Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>images){
     this->x = x;
@@ -22,14 +22,15 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
     this->dir = dir;
     this->images = images;
 }
-Bullet::Bullet(int x, int y, int dx,int dy, int radius, int dir, vector<ofImage>images){
-    this->x = x;
-    this->y = y;
+Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, vector<ofImage>images){
+    this->x_ = x_;
+    this->y_ = y_;
     this->dx = dx;
     this->dy = dy;
     this->radius = radius;
     this->dir = dir;
     this->images = images;
+    std::cout<<"Bullet Made"<<endl;
 }
 void Bullet::update(){
     switch(dir){
@@ -40,15 +41,24 @@ void Bullet::update(){
             x += speed;
             break;
         case 3:
-            x += dx;
-            y += dy;
+            x_ += dx;
+            y_ += dy;
+            break;
         default:
             break;
     }
 }
 void Bullet::draw(){
-    ofSetColor(0, 0, 0);
-    ofDrawCircle(x,y,radius);
+    switch(dir){
+        case 3:
+            ofSetColor(0, 0, 0);
+            ofDrawCircle(x_,y_,radius);
+            break;
+        default:
+            ofSetColor(0, 0, 0);
+            ofDrawCircle(x,y,radius);
+            break;
+    }
 }
 int Bullet::getX(){
     return x;
