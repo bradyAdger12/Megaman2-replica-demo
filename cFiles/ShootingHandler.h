@@ -22,9 +22,11 @@ public:
     void resetDeltaTime();
     void setShooting(bool isShooting);
     void getClosestPlayer();
+    
     //Need Constructor for enemy
-     ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
+    ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
+    
 private:
     int speed, damage, size;
     float deltaTime,lastTime,currentTime,fireRate;
@@ -37,5 +39,4 @@ private:
     bool isBullets, isShooting, isPlayer;
     vector<double> player_XY;
 };
-
 #endif /* ShootingHandler_h */

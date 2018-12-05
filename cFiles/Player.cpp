@@ -75,7 +75,7 @@ void Player::setup()
     //Load Bullet animation
     //TODO:
     //Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images
-    shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
+    shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 3, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************

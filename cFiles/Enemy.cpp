@@ -6,15 +6,18 @@
 //
 
 #include "Enemy.h"
-Enemy::Enemy(double x, double y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
+Enemy::Enemy(double x, double y, double range, int dir, double speed, string patrol_path, string hit_path, string bullet_path){
     this->x =x;
     this->y =y;
     this->range = range;
     this->dir = dir;
+    this->speed = speed;
     this->patrol_path;
     this->hit_path = hit_path;
     this->bullet_path = bullet_path;
-    shootingHandler = new ShootingHandler(this, 10, 8, 0.33, 9, bullet_anim);
+    this->y_start = y;
+    //ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
+    shootingHandler = new ShootingHandler(this, 3, 8, 0.66, 4, bullet_anim);
 
 }
 void Enemy::setup(){
@@ -53,14 +56,34 @@ void Enemy::draw(){
     ofSetColor(0,0,0);
     ofDrawRectangle(x,y, 20,20);
     shootingHandler->draw();
-
 }
 void Enemy::patrol(){
-    
+    switch(dir){
+        case 0: //up
+            if(y > y_start - range){
+                y -= speed;
+            }else{
+                dir = 1;
+            }
+            break;
+        case 1: //down
+            if(y < y_start + range){
+                y += speed;
+            }else{
+                dir = 0;
+            }
+            break;
+        default:
+
+            break;
+    }
 }
 int Enemy::getX(){
     return x;
 }
 int Enemy::getY(){
     return y;
+}
+void Enemy::applyDamage(int dmg){
+    health -= dmg;
 }

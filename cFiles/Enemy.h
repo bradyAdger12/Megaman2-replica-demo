@@ -18,14 +18,14 @@ public:
     void setup();
     void update();
     void draw();
-    Enemy(double x, double y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path);
-    void patrol();
+    Enemy(double x, double y, double range, int dir, double speed, string patrol_path, string hit_path, string bullet_path);
+    void patrol(), applyDamage(int dmg);
     int getX(), getY();
     
-    
 private:
-    int range,dir, speed;
-    double x,y;
+    int dir, health;
+    double x,y,range,speed;
+    double y_start;
     vector<ofImage> patrol_anim;
     vector<ofImage> hit_anim;
     vector<ofImage> bullet_anim;

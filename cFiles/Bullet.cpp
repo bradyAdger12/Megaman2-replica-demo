@@ -12,7 +12,7 @@ Bullet::Bullet(){
     
 }
 Bullet::~Bullet(){
-    std::cout << "Deleting" << endl;
+    //std::cout << "Deleting" << endl;
 }
 Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>images){
     this->x = x;
@@ -30,7 +30,7 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->radius = radius;
     this->dir = dir;
     this->images = images;
-    std::cout<<"Bullet Made"<<endl;
+    //std::cout<<"Bullet Made"<<endl;
 }
 void Bullet::update(){
     switch(dir){

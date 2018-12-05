@@ -39,7 +39,7 @@ void ofApp::setup(){
 	mpm->setup();
     
     //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
-    test_enemy = new Enemy( 100.0, 1100.0,60,0,20,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
+    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
     
 	//GameManager
 	gm = new GameManager();

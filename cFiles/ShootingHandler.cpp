@@ -53,12 +53,11 @@ void ShootingHandler::shootingHandler(){
         deltaTime = 0.0f;
         //int x, int y, int speed, int radius, int dir, vector<ofImage>images
         if(isPlayer){
-            bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
+            bullets.push_back(new Bullet(player->getX(),player->getY(), 5, size, player->getOrientation(), images));
         }else{
             //Bullet::Bullet(int x, int y, int dx,int dy, int radius, int dir, vector<ofImage>images){
-            bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],5, 3, images));
-            //bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), -1, 1,5, 3, images));
-            std::cout<<"enemy shooting"<<endl;
+            bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images));
+            //std::cout<<"enemy shooting"<<endl;
         }
     }
     
@@ -74,7 +73,7 @@ void ShootingHandler::shootingHandler(){
         deleteBullets();
     }else if(isBullets){
         for(int i = 0; i < bullets.size(); i++){
-            if(bullets[i]->getX() < enemy->getX() - 400|| bullets[i]->getX() > enemy->getX() + 400){
+            if(bullets[i]->getX() < enemy->getX() - 200|| bullets[i]->getX() > enemy->getX() + 200){
                 indexesToDelete.push_back(i);
             }else{
                 bullets[i]->update();
