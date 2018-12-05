@@ -19,6 +19,7 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     isPlayer = true;
     isShooting = false;
 }
+//Enemy Shooting handler Constuctor
 ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->enemy = enemy;
     this->speed = speed;
@@ -51,13 +52,10 @@ void ShootingHandler::draw(){
 void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
-        //int x, int y, int speed, int radius, int dir, vector<ofImage>images
-        if(isPlayer){
+        if(isPlayer){ //Shoot bullet in same direction as player Orientation
             bullets.push_back(new Bullet(player->getX(),player->getY(), 5, size, player->getOrientation(), images));
-        }else{
-            //Bullet::Bullet(int x, int y, int dx,int dy, int radius, int dir, vector<ofImage>images){
+        }else{ //Shoot bullet in path of closest player, if a player is in range
             bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images));
-            //std::cout<<"enemy shooting"<<endl;
         }
     }
     
@@ -115,13 +113,14 @@ void ShootingHandler::getClosestPlayer(){
     }else{
         isShooting = true;
         player_XY.clear();
-        //Pushes back the dx dy needed to send bullet towards clos
+        //Normalize vector of Enemy to closest player
         double dx_ = enemy->getX() - MultiPlayerManager::players[minPlayerIndex]->getX();
         double dy_ = enemy->getY() - MultiPlayerManager::players[minPlayerIndex]->getY();
         double mag = sqrt(pow(dx_,2) + pow(dy_,2));
         
         //std::cout<<mag<<" "<<(dx_/mag) * speed * -1<<" "<<(dy_/mag) * speed * -1<<endl;
         
+        //Scale vector to bullet speed, player_XY is used when bullet is created in update
         player_XY.push_back((dx_/mag) * speed * -1);
         player_XY.push_back((dy_/mag) * speed * -1);
     }

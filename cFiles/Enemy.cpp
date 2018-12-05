@@ -17,7 +17,7 @@ Enemy::Enemy(double x, double y, double range, int dir, double speed, string pat
     this->bullet_path = bullet_path;
     this->y_start = y;
     //ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
-    shootingHandler = new ShootingHandler(this, 3, 8, 0.66, 4, bullet_anim);
+    shootingHandler = new ShootingHandler(this, 3, 8, 0.66, 4, bullet_anim);//Move to bottom of setup after animations are built.
 
 }
 void Enemy::setup(){
@@ -48,7 +48,7 @@ void Enemy::setup(){
     }
     //:ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 }
-void Enemy::update(){
+void Enemy::update(){ //Cycle animations in here
     patrol();
     shootingHandler->update();
 }
@@ -57,7 +57,7 @@ void Enemy::draw(){
     ofDrawRectangle(x,y, 20,20);
     shootingHandler->draw();
 }
-void Enemy::patrol(){
+void Enemy::patrol(){ //Move up and down.
     switch(dir){
         case 0: //up
             if(y > y_start - range){
@@ -84,6 +84,7 @@ int Enemy::getX(){
 int Enemy::getY(){
     return y;
 }
-void Enemy::applyDamage(int dmg){
+void Enemy::applyDamage(int dmg){ //On Collision with player Bullet
     health -= dmg;
 }
+//void Enenmy::die(){}
