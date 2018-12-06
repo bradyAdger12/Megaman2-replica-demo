@@ -12,6 +12,7 @@
 #include "Controller.h"
 #include "Environment.h"
 #include <vector>
+#include "ShootingHandler.h"
 using namespace std;
 class Player {
 public:
@@ -19,14 +20,14 @@ public:
 	//constructor
 	Player(string portNumber, int x, int y, bool playerOne);
 
-	//var and methods
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount; 
+	//var and methods 
+	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, radius, size, getOrientation();
 	int x, y;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition;
-	bool shooting = false;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing;
+    bool shooting = false; 
 	bool jumpState;
 	bool playerOne;
 	void setup();
@@ -73,20 +74,14 @@ public:
     
     //Controller Logic
     Controller *controller;
-
-	//shooting logic
-	ShootingHandler* shootingHandler;
+    ShootingHandler* shootingHandler;
     
 	//images
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
-	vector<ofImage> jumpAnimation;
+	vector<ofImage> jumpAnimation; 
 	vector<ofImage> climbingAnimation;
-	vector<ofImage> shootingAnimation;
-	vector<ofImage> bulletAnimation;
-	ofImage idleShoot;
-
-
+    vector<ofImage> bulletAnimation; 
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

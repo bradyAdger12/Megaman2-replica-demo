@@ -6,15 +6,14 @@
 bool GameManager::active; 
 bool GameManager::paused; 
 vector<Item*> ofApp::items; 
-b2Timer shootingTimer;
+b2Timer* GameManager::timer;
 
 Player::Player(string portName, int x, int y, bool playerOne){
 	this->portName = portName;
 	this->playerOne = playerOne;
 	this->x = x;
 	this->y = y;
-	playerList.push_back(this);
-
+	//playerList.push_back(this);
 }
 void Player::setup()
 {
@@ -96,12 +95,11 @@ void Player::setup()
 		runner.load(file);
 		runningAnimation.push_back(runner);
 	}
-
-	//idle shoot animation
-	idleShoot.load("images/megamanShooting/shoot1.png");
-	idleShoot.mirror(false, true);
-
-	shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
+    
+    //Load Bullet animation
+    //TODO:
+    //Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images
+    shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 3, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
@@ -194,9 +192,12 @@ void Player::update()  {
 	else {
 		idleHandler(); 
 	} 
-
-	//handle ladder
+    //get controller input
+    controllerInput(controller->getI());
  
+    shootingHandler->update();
+    //NEED TO UPDATE x & y slot positions
+
 }
 
 void Player::draw() 
@@ -274,14 +275,26 @@ void Player::draw()
 			idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
 		}
 	}
-
-	//Draw bullets
-	shootingHandler->draw();
-	
+    
+    //Draw bullets
+    shootingHandler->draw();
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){
-	switch (key) {
+    //std::cout << key << endl;
+	switch (key) { 
+
+	//sprint 
+	case 's':
+		if (running && !inAir) {
+			if (getXVelocity() > 0) {
+				setVelocity(speed * speedMultiplier, getYVelocity());
+			}
+			else {
+				setVelocity(-speed * speedMultiplier, getYVelocity());
+			}
+		}
+		break;
 
 
 		//run right
@@ -402,189 +415,16 @@ void Player::controllerInput(char key){
 					playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce/1.4);
 				}
 			}
-	} 
-
-	else if (key == 'a') {
-		shooting = true;
-		shootingHandler->setShooting(true);
 	}
-	else if (key == 'A') {
-		shooting = false;
-		shootingHandler->setShooting(false);
-		shootingHandler->resetDeltaTime();
-	} 
-
-	if (!eLadder->ladder) { 
-		climbingPaused = false;
-	}
-}
-
-
-
-//KEY PRESSED
-void Player::keyPressed(int key) {
-	switch (key) {
-
-    //run right
-	case 'd': { 
-		playerCollider.get()->body->SetActive(true);
-		running = true;
-		setVelocity(speed, getYVelocity());
-		break;
-	} 
-
-			  //run left
-	case 'a' : {
-		playerCollider.get()->body->SetActive(true);
-		running = true;
-		setVelocity(-speed, getYVelocity());
-		break;
-	} 
-
-			  //grab items (left button) 
-	case 'x':
-		playerCollider.get()->body->SetActive(true);
-		if (hasItem) {
-			if (getItem()->style == 0) {
-				getItem()->tossForce *= getItem()->multiplier;
-				if (getItem()->tossForce >= getItem()->maxTossForce) {
-					getItem()->tossForce = getItem()->maxTossForce;
-				}
-
-			}
-			else {
-				useItem();
-			}
-		}
-		else {
-			equipItem(closestUsableItem(getX(), getY()));
-		}
-		break;
-		 
-
-	case 'p':
-		playerCollider.get()->body->SetActive(true);
-		if (playerOne && pauseCount == 0) {
-			GameManager::active = false;
-			GameManager::paused = true;
-			pauseCount++;
-		}
-		else {
-			GameManager::active = true;
-			GameManager::paused = false;
-			pauseCount = 0;
-		}
-		break;
-
-
-		//used for climbing
-	case 'w':
-		if (eLadder->ladder && eLadder->canClimb) {
-			cout << eLadder->getId() << endl;
-			jumpState = false;
-			climbing = true;
-			if (climbing) {
-				playerCollider.get()->body->SetActive(true);
-				setVelocity(getXVelocity(), -speed / 1.6); 
-			}
-		}
-		break;
-
-	case 's':
-		if (eLadder->ladder && eLadder->canClimb) {
-			jumpState = false;
-			climbing = true;
-			if (climbing) {
-				playerCollider.get()->body->SetActive(true);
-				playerCollider.get()->addForce(ofVec2f(0, 500), -1.7);
-				setVelocity(getXVelocity(), speed / 1.6); 
-			}
-		}
-		break;
-		 
-
-	}
-
-	//jump
-	if (key == 32) { 
-		if (!inAir && !climbing) { 
-			jumpForce = (1165 - getY()*.5)  / 449.230769; //this weird number is to adjust for the force of gravity as you climb up the level
-			cout << getY() << endl;
-			jumpState = true;
-			jumpNum = 0; 
-			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-		}
-	}
-
-	else if (key == 'f' && !eLadder->ladder) { 
-		shootingTimer.Reset();
-		shooting = true;
-		firingPosition = true;
-		shootingHandler->setShooting(true);
-	} 
-
-	if (!eLadder->ladder) {
-		climbingPaused = false;
-
-	}
-}
-
-
-//KEY RELEASED 
-void Player::keyReleased(int key) {
-	switch (key) {
-
-		//run right 
-	case 'd' : {
-		running = false;
-		setVelocity(0, getYVelocity());
-		break;
-	}
-
-			  //run left
-	case 'a': {
-		running = false;
-		setVelocity(0, getYVelocity());
-		break;
-	}
-
-
-			  //grab items (left button) 
-	case 'x':
-		playerCollider.get()->body->SetActive(true);
-		if (hasItem && getItem()->tossForce > getItem()->scale + .25) {
-			throwItem();
-		}
-		break; 
-
-
-	case 'w' :
-		if (eLadder->ladder) {
-			climbing = false;
-			climbingPaused = true;
-			climbingNum = 0;
-			playerCollider.get()->body->SetActive(false);
-		}
-		break;
-
-	case 's':
-		if (eLadder->ladder) {
-			climbing = false;
-			climbingPaused = true;
-			climbingNum = 0;
-			playerCollider.get()->body->SetActive(false);
-		}
-		break;
-
-	}
-
-	//jump 
-	if (key == 'f') {
-		shooting = false;
-		shootingNum = 0;
-		shootingHandler->setShooting(false);
-		shootingHandler->resetDeltaTime();
-	}
+    if(key == 'a'){
+        shooting = true;
+        shootingHandler->setShooting(true);
+    }
+    if(key == 'A'){
+        shooting = false;
+        shootingHandler->setShooting(false);
+        shootingHandler->resetDeltaTime();
+    }
 }
 
 
@@ -742,44 +582,11 @@ Item* Player::closestUsableItem(int x, int y) {
 double Player::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
-
-int Player::getOrientation() {
-	if (leftOriented) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
+int Player::getOrientation(){
+    if(leftOriented){
+        return 1;
+    }else{
+        return 0;
+    }
 }
-
-void Player::bubbleSort() {
-	for (int i = 0; i < Environment::ladders.size()-1; i++) {
-		if (Environment::ladders[i]->distanceFromPlayer > Environment::ladders[i+1]->distanceFromPlayer) {
-			Environment* temp = Environment::ladders[i];
-			Environment::ladders[i] = Environment::ladders[i + 1];
-			Environment::ladders[i + 1] = temp;
-		}
-	}
-
-	if (!isSorted()) {
-		bubbleSort();
-	}
-	else {
-		for (int i = 0; i < Environment::ladders.size(); i++) {
-			Environment::ladders[i]->distanceFromPlayer = 0;
-		}
-		eLadder = Environment::ladders[0];
-	}
-}
-
-bool Player::isSorted() {
-	bool check = true;
-	for (int i = 0; i < Environment::ladders.size()-1; i++) {
-		if (Environment::ladders[i]->distanceFromPlayer > Environment::ladders[i + 1]->distanceFromPlayer) {
-			check = false;
-		}
-	}
-	return check;
-}
-
  

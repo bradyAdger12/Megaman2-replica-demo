@@ -83,3 +83,4 @@ void GameManager::controllerInput(char key) {
 		menu->controlMenu = false;
 	}
 } 
+
