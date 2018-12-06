@@ -3,13 +3,15 @@
 #include <cmath>
 #include "Player.h" 
 #include "MultiPlayerManager.h"
-#include "GameManager.h"  
+#include "GameManager.h"
+#include "Enemy.h"
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
 //vector<Player*> GameManager::playerList;
 //Player *p1;
 //Player *p2;
 Item *i1;
+Enemy *test_enemy;
 ofColor color;
 GameManager *gm;
 int x, y, w, h, id;
@@ -40,6 +42,9 @@ void ofApp::setup(){
 	mpm = new MultiPlayerManager();
 	mpm->setup();
     
+    //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
+    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
+    
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
@@ -50,6 +55,7 @@ void ofApp::setup(){
 	// register the listener so that we get the events
 	ofAddListener(world.contactStartEvents, this, &ofApp::contactStart);
 	ofAddListener(world.contactEndEvents, this, &ofApp::contactEnd);
+
 
 	//create Environment Colliders
 	input.open(ofToDataPath("environment/eData.txt").c_str());
@@ -63,7 +69,7 @@ void ofApp::setup(){
 		collisionObjects.insert(make_pair(e, s));
 	}
 
-	//setup camera  
+	//setup camera
 	camera.setVFlip(true);
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));//
 	cameraY = camera.getPosition().y;
@@ -75,7 +81,7 @@ void ofApp::update(){
 	
 	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
 
-	//camera.setPosition(200, 1000, 500); 
+	//camera.setPosition(200, 1000, 500);
 	//game UI
 	gm->update();
 
@@ -95,6 +101,7 @@ void ofApp::update(){
 
 		//character management
 		mpm->update();
+        test_enemy->update();
 
 		//stop title music
 		if (TitleScreenMusic.isPlaying()) {
@@ -133,6 +140,7 @@ void ofApp::draw(){
 
         //player management
         mpm->draw();
+        test_enemy->draw();
         
 		//item draw
 		/*for (int i = 0; i < 1; i++) {
