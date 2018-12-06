@@ -10,6 +10,7 @@
 #include "Item.h"
 #include "ShootingHandler.h"
 #include "Controller.h"
+#include "Environment.h"
 #include <vector>
 using namespace std;
 class Player {
@@ -19,12 +20,12 @@ public:
 	Player(string portNumber, int x, int y, bool playerOne);
 
 	//var and methods
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, radius, size; 
+	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount; 
 	int x, y;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition;
 	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
@@ -38,14 +39,21 @@ public:
 	void runningHandler(); 
 	void jumpHandler();
 	void climbingHandler();
+	void shootingAnimationHandler();
 	void orientPlayer();
 	int getOrientation();
-    void idleHandler(); 
+    void idleHandler();
+	void keyPressed(int key);
+	void keyReleased(int key);
     void controllerInput(char key); 
 
 	//list of players
 	static vector<Player*> playerList;
     
+	//ladder logic
+	void bubbleSort();
+	bool isSorted();
+	Environment *eLadder; 
 
     //Item vars and methods
     int x_Slot;
@@ -69,11 +77,16 @@ public:
 	//shooting logic
 	ShootingHandler* shootingHandler;
     
+	//images
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation;
 	vector<ofImage> climbingAnimation;
+	vector<ofImage> shootingAnimation;
 	vector<ofImage> bulletAnimation;
+	ofImage idleShoot;
+
+
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

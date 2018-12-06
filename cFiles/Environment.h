@@ -10,10 +10,17 @@ public:
 	void setup();
 	void draw();
 	void update(); 
-	static bool ladder, canClimb;
+	int getX();
+	int getY();
+	int getHeight();
+	int getId();
+	bool ladder, canClimb;
+	ofTrueTypeFont ledgeId;
 	double distance(int x1, int x2, int y1, int y2);
+	static vector<Environment*> ladders;
+	float distanceFromPlayer;
 	Environment(int x, int y, int w, int h, string tag, int id);
 private:
-	int x, y, width, height, id;
+	int x, y, width, height, id, ladderId;
 	
 };

@@ -1,7 +1,6 @@
 #include "Environment.h"
 #include "ofApp.h"   
-bool Environment::ladder;
-bool Environment::canClimb;
+vector<Environment*> Environment::ladders;
 Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	collider *ob = new collider();
 	this->width = w;
@@ -11,39 +10,65 @@ Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	this->id = id; 
 	this->tag = tag;
     eCollider = ob->Rectangle(x, y, w, h, 0, 0, 8);
+	ledgeId.load("fonts/controlFont.ttf", 10);
 	ofApp::collisionObjects.insert(make_pair(this, tag));
 	if (tag == "ladder") {
 		eCollider.get()->body->SetActive(false);
+		ladders.push_back(this);
 	}
 } 
 void Environment::setup() {
 	ladder = false;
-	canClimb = false;
+	canClimb = false; 
+	distanceFromPlayer = 0;
 }
-void Environment::update() {  
+void Environment::update() {
 	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
 		if (tag == "ladder") {
-			if (distance(MultiPlayerManager::players[i]->getX(), x, MultiPlayerManager::players[i]->getY(), y + height) <= height + (MultiPlayerManager::players[i]->getRadius() * 2)) {
+			if (MultiPlayerManager::players[i]->getY() >= (y - height/2) + MultiPlayerManager::players[i]->getRadius() && MultiPlayerManager::players[i]->getY() <= y + height) {
 				canClimb = true;
 			}
 			else {
 				canClimb = false;
 			}
-			if (MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius()*2 > x && MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i]->getRadius()*2 < x + width) {
-				ladder = true; 		
-			}  
+			if (MultiPlayerManager::players[i]->getX() > x - width && MultiPlayerManager::players[i]->getX() < x + width) { 
+				
+				ladder = true;
+			}
 			else {
 				ladder = false;
 			}
+			 
 		}
-	} 
+	}	
 }
-void Environment::draw() {  /*
+	
+
+	
+void Environment::draw() {  
 		ofSetColor(0, 0, 0, 150);
-		eCollider.get()->draw();*/
+		eCollider.get()->draw();
+		ofSetColor(255, 0, 0);
+		ledgeId.drawString(ofToString(id), x, y + 5);
 
 }
 
 double Environment::distance(int x1, int x2, int y1, int y2) {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+}
+
+int Environment::getX() {
+	return x;
+}
+
+int Environment::getY() {
+	return y;
+}
+
+int Environment::getHeight() {
+	return height;
+}
+
+int Environment::getId() {
+	return id;
 }

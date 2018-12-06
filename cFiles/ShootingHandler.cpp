@@ -35,7 +35,12 @@ void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         //int x, int y, int speed, int radius, int dir, vector<ofImage>images
-        bullets.push_back(new Bullet(player->getX(),player->getY(), 5, 3, player->getOrientation(), images));
+		if (player->getOrientation() == 1) {
+			bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+		}
+		else {
+			bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+		}
     }
     
     //Sending off screen bullets to the TRASH!
