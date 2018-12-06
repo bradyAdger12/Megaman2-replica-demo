@@ -61,6 +61,7 @@ void ShootingHandler::shootingHandler(){
         
         }else{ //Shoot bullet in path of closest player, if a player is in range
             bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images));
+            //std::cout<<"enemy shooting"<<endl;
         }
     }
     

@@ -129,8 +129,9 @@ void ofApp::draw(){
 	
 		//draw in game background  
 		ofSetColor(color);
-		background.draw(0, 0, 4355, 1187);
-		
+        background.draw(0, 0, 5134, 1219);
+        
+
 		if (gm->paused) {
 			color.set(180);
 		}
