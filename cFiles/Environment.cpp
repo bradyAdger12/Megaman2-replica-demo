@@ -18,6 +18,6 @@ void Environment::update() {
 	
 }
 void Environment::draw() {  
-		/*ofSetColor(0, 0, 0, 150);
-		eCollider.get()->draw();*/
+		ofSetColor(0, 0, 0, 150);
+		eCollider.get()->draw();
 }
