@@ -39,7 +39,7 @@ void ofApp::setup(){
 	inGameSound.setLoop(true);
 
 	//character Management
-	mpm = new MultiPlayerManager();
+	mpm = new MultiPlayerManager(true);
 	mpm->setup();
     
     //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
@@ -59,11 +59,10 @@ void ofApp::setup(){
 
 	//create Environment Colliders
 	input.open(ofToDataPath("environment/eData.txt").c_str());
-	while (input >> x >> y >> w >> h >> s >> id) { 
-		cout << "(" << x << "," << y << ")" << " Width: " << w << "  Height: " << h << "  Tag: " << s << "  ID: " << id << endl;
+	while (input >> x >> y >> w >> h >> s >> id) {  
  		Environment *e;
 		x = x + (w/2);
-		e = new Environment(x, y+9, w, h, s, id);
+		e = new Environment(x, y, w, h, s, id);
 		eList.push_back(e);
 		e->setup();
 		collisionObjects.insert(make_pair(e, s));
@@ -71,17 +70,20 @@ void ofApp::setup(){
 
 	//setup camera
 	camera.setVFlip(true);
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));//
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));
 	cameraY = camera.getPosition().y;
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){   
-	
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
+	//not track y pos camera
+	//camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
 
-	//camera.setPosition(200, 1000, 500);
+	//tracking y pos camera
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));
+
+	//camera.setPosition(2200, 800, 450);
 	//game UI
 	gm->update();
 
@@ -198,10 +200,16 @@ void ofApp::contactEnd(ofxBox2dContactArgs &e) {
 	}
 }
 void ofApp::keyPressed(int key) { 
+	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
+		MultiPlayerManager::players[i]->keyPressed(key);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
+		MultiPlayerManager::players[i]->keyReleased(key);
+	}
 }
 
 //--------------------------------------------------------------

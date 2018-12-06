@@ -14,12 +14,13 @@
 using namespace std;
 class MultiPlayerManager{
 public:
-    MultiPlayerManager();
+    MultiPlayerManager(bool keyboard);
     void assignPorts();
     void setup();
     void update();
     void draw();
 	static vector<Player*> players;
+	static bool keyboard;
 private:
     ofSerial ports;
 	bool initialize, isPlayerOne;
