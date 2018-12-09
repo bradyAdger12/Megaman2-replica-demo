@@ -14,6 +14,7 @@ public:
 	ofImage controllerImage;
 	ofTrueTypeFont controls;
 	ofTrueTypeFont onePlayer;
+	ofTrueTypeFont enableKeyboard;
 	ofTrueTypeFont twoPlayer;
 	ofTrueTypeFont controlFont;
 	map<string, bool> selectionList;

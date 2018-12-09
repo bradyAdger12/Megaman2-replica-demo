@@ -12,18 +12,21 @@ void Menu::setup() {
 	isSelected = false;
 
 	//images
-	//controllerImage.load("images/controller.png");
+	controllerImage.load("images/controller.png");
 
 	//menu options
 	controls.load("fonts/controlFont.ttf", 60);
 	onePlayer.load("fonts/controlFont.ttf", 60);
+	enableKeyboard.load("fonts/controlFont.ttf", 60);
 	twoPlayer.load("fonts/controlFont.ttf", 60);
 	selectionList["one player"] = true;
 	selectionList["two player"] = false;
 	selectionList["controls"] = false;
+	selectionList["enableKeyboard"] = false;
 	determineSelection.push_back("one player");
 	determineSelection.push_back("two player");
 	determineSelection.push_back("controls");
+	determineSelection.push_back("enableKeyboard");
 	controlFont.load("fonts/controlFont.ttf", 60);
 }
 
@@ -59,6 +62,10 @@ void Menu::draw() {
 				}
 				if (selectionI->first == "controls") {
 					controls.drawString("Controls", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 100);
+					continue;
+				}
+				if (selectionI->first == "enableKeyboard") {
+					enableKeyboard.drawString("Enable Keyboard", ofGetWidth() / 2 - 300, ofGetHeight() / 2 + 180);
 					continue;
 				}
 

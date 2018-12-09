@@ -4,11 +4,11 @@
 //
 //  Created by Jfry on 12/2/18.
 //
-#include "Player.h"
-#include "Enemy.h"
+#include "Player.h" 
 #include "ShootingHandler.h"
 #include "MultiPlayerManager.h"
 #include "math.h"
+#include "Enemy.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
     this->speed = speed;
@@ -18,6 +18,8 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->images = images;
     isPlayer = true;
     isShooting = false;
+	//load blaster sound
+	blaster.load("sounds/Blaster.wav");
 }
 //Enemy Shooting handler Constuctor
 ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
@@ -28,7 +30,7 @@ ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fire
     this->size = size;
     this->images = images;
     isPlayer = false;
-    isShooting = false;
+    isShooting = false; 
 }
 void ShootingHandler::update(){
     currentTime = ofGetElapsedTimef();
@@ -52,6 +54,7 @@ void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         if(isPlayer){ //Shoot bullet in same direction as player Orientation
+			blaster.play();
             if (player->getOrientation() == 1) {
                 bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images));
             }
@@ -88,7 +91,7 @@ void ShootingHandler::shootingHandler(){
 }
 void ShootingHandler::deleteBullets(){
     for(int i = 0; i < indexesToDelete.size(); i++){
-        delete bullets[indexesToDelete[i]];
+        delete bullets[indexesToDelete[i]];//
         bullets.erase(bullets.begin() + indexesToDelete[i]);
     }
     indexesToDelete.clear();
