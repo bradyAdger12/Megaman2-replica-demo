@@ -32,6 +32,7 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->images = images;
     //std::cout<<"Bullet Made"<<endl;
 }
+
 void Bullet::update(){
     switch(dir){
         case 0:
@@ -44,6 +45,7 @@ void Bullet::update(){
             x_ += dx;
             y_ += dy;
             break;
+
         default:
             break;
     }

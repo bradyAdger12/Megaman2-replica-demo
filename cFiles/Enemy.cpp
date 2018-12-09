@@ -78,10 +78,10 @@ void Enemy::patrol(){ //Move up and down.
             break;
     }
 }
-int Enemy::getX(){
+double Enemy::getX(){
     return x;
 }
-int Enemy::getY(){
+double Enemy::getY(){
     return y;
 }
 void Enemy::applyDamage(int dmg){ //On Collision with player Bullet

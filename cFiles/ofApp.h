@@ -42,6 +42,11 @@ class ofApp : public ofBaseApp{
 		ofEasyCam camera;
 		static map<void*, string> collisionObjects;
 		ifstream input;
+		ifstream badLedges;
+		vector<int> itemsToDelete; 
+		ofSoundPlayer coinSound; 
+		void handleCamera();
+		void deleteItems();
 		static vector<Environment*> eList;
 		map<void*, string>::iterator itr;
 		MultiPlayerManager *mpm;

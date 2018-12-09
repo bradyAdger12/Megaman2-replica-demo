@@ -20,14 +20,17 @@ public:
 	//constructor
 	Player(string portNumber, int x, int y, bool playerOne);
 
-	//var and methods 
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, radius, size, getOrientation();
+
+	//var and methods
+	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount, getOrientation(), score;
 	int x, y;
+	b2Timer shootingTimer;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing;
-    bool shooting = false; 
+	double speed;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder;
+	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
 	void setup();
@@ -42,7 +45,6 @@ public:
 	void climbingHandler();
 	void shootingAnimationHandler();
 	void orientPlayer();
-	int getOrientation();
     void idleHandler();
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -51,10 +53,11 @@ public:
 	//list of players
 	static vector<Player*> playerList;
     
-	//ladder logic
-	void bubbleSort();
-	bool isSorted();
-	Environment *eLadder; 
+	//ladder logic 
+	Environment *eLadder;  
+	void getLadderSpecs(Environment *e);
+	void findClosestLadder();
+	
 
     //Item vars and methods
     int x_Slot;
@@ -62,26 +65,24 @@ public:
 	int count;
     bool hasItem;
     int getX_Slot();
-    int getY_Slot(); 
-	Item *item;
-	//Consumable *consumable;
-    void useItem();
-    void throwItem();
-	Item* closestUsableItem(int x, int y);
-	double distance(int x1, int x2, int y1, int y2);
-	Item* getItem();
-    void equipItem(Item *item);
+    int getY_Slot();  
+	double distance(int x1, int x2, int y1, int y2); 
+
     
     //Controller Logic
     Controller *controller;
-    ShootingHandler* shootingHandler;
+	//shooting logic
+	ShootingHandler* shootingHandler;
     
 	//images
 	vector<ofImage> runningAnimation;
 	vector<ofImage> idleAnimation;
 	vector<ofImage> jumpAnimation; 
 	vector<ofImage> climbingAnimation;
-    vector<ofImage> bulletAnimation; 
+	vector<ofImage> shootingAnimation;
+	vector<ofImage> bulletAnimation;
+	ofImage idleShoot;
+
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 

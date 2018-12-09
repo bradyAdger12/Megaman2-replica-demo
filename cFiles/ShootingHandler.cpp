@@ -4,11 +4,11 @@
 //
 //  Created by Jfry on 12/2/18.
 //
-#include "Player.h"
-#include "Enemy.h"
+#include "Player.h" 
 #include "ShootingHandler.h"
 #include "MultiPlayerManager.h"
 #include "math.h"
+#include "Enemy.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
     this->speed = speed;
@@ -18,6 +18,8 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->images = images;
     isPlayer = true;
     isShooting = false;
+	//load blaster sound
+	blaster.load("sounds/Blaster.wav");
 }
 //Enemy Shooting handler Constuctor
 ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
@@ -28,7 +30,7 @@ ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fire
     this->size = size;
     this->images = images;
     isPlayer = false;
-    isShooting = false;
+    isShooting = false; 
 }
 void ShootingHandler::update(){
     currentTime = ofGetElapsedTimef();
@@ -36,7 +38,6 @@ void ShootingHandler::update(){
 
     if(!isPlayer) getClosestPlayer();
     shootingHandler();
-    
     lastTime = currentTime;
 }
 void ShootingHandler::draw(){
@@ -53,7 +54,14 @@ void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         if(isPlayer){ //Shoot bullet in same direction as player Orientation
-            bullets.push_back(new Bullet(player->getX(),player->getY(), 5, size, player->getOrientation(), images));
+			blaster.play();
+            if (player->getOrientation() == 1) {
+                bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+            }
+            else {
+                bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+            }
+        
         }else{ //Shoot bullet in path of closest player, if a player is in range
             bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images));
         }
@@ -82,7 +90,7 @@ void ShootingHandler::shootingHandler(){
 }
 void ShootingHandler::deleteBullets(){
     for(int i = 0; i < indexesToDelete.size(); i++){
-        delete bullets[indexesToDelete[i]];
+        delete bullets[indexesToDelete[i]];//
         bullets.erase(bullets.begin() + indexesToDelete[i]);
     }
     indexesToDelete.clear();
@@ -125,3 +133,4 @@ void ShootingHandler::getClosestPlayer(){
         player_XY.push_back((dy_/mag) * speed * -1);
     }
 }
+

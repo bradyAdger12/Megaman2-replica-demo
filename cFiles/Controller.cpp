@@ -14,7 +14,7 @@ void Controller::setup(){
     //input.listDevices();
 }
 void Controller::update(){
-    if(input.available() > 0){
+    if(input.available()){
         i = input.readByte();
         //std::cout << i << endl;
     }

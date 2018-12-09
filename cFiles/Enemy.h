@@ -20,17 +20,17 @@ public:
     void draw();
     Enemy(double x, double y, double range, int dir, double speed, string patrol_path, string hit_path, string bullet_path);
     void patrol(), applyDamage(int dmg);
-    int getX(), getY();
+    double getX(), getY();
     
 private:
     int dir, health;
     double x,y,range,speed;
     double y_start;
-    vector<ofImage> patrol_anim;
-    vector<ofImage> hit_anim;
-    vector<ofImage> bullet_anim;
-    string patrol_path, hit_path, bullet_path;
-    
-    ShootingHandler* shootingHandler;
+	vector<ofImage> patrol_anim;
+	vector<ofImage> hit_anim;
+	vector<ofImage> bullet_anim;
+	string patrol_path, hit_path, bullet_path;
+	ShootingHandler* shootingHandler;
+   
 };
 #endif /* Enemy_h */

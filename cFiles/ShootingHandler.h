@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "Bullet.h"
+
 class Player; //foward declaration
 class Enemy;
 class ShootingHandler{
@@ -26,12 +27,17 @@ public:
     //Need Constructor for enemy
     ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
+
     
 private:
     int speed, damage, size;
     float deltaTime,lastTime,currentTime,fireRate;
     Player* player;
     Enemy* enemy;
+
+	//sounds
+	ofSoundPlayer blaster;
+
     vector<ofImage> images;
     vector<Bullet *> bullets;
     vector<Bullet *>::iterator bull;

@@ -5,28 +5,64 @@
 #include "b2Timer.h"
 vector<Controller*> Controller::controllers;
 map<void*, string> ofApp::collisionObjects;  
+b2Timer GameManager::beginGame; 
+bool GameManager::go;
+bool GameManager::active;
+bool GameManager::paused;
+bool GameManager::onePlayer;
+Menu* menu;
 GameManager::GameManager() {
 
 }
 void GameManager::setup()
 {
 	
-	active = true; 
+	active = false; 
 	paused = false; 
+	usingKeyboard = false;
+	go = false;
+	onePlayer = false;
+
+	//fonts
+	countdownFont.load("fonts/controlFont.ttf", 300);
+	scoreFont.load("fonts/Bit-Lazy.ttf", 25);
+
+	//menu setup
 	menu = new Menu();
-	menu->setup();
+	menu->setup(); 
 
 }
 
 void GameManager::draw()
 {
+	if (!active && !menu->controlMenu && !paused) {
+		if (usingKeyboard) {
+			menu->controlFont.drawString("enabled", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 260);
+			MultiPlayerManager::keyboard = true;
+		}
+		if (!usingKeyboard) {
+			menu->controlFont.drawString("disabled", ofGetWidth() / 2 - 120, ofGetHeight() / 2 + 260);
+			MultiPlayerManager::keyboard = false;
+		}
+	} 
+
+	ofSetColor(255);
+	//counter to begin game
+	drawGameCountDown();
+	
+	//draw menu
 	menu->draw();
+
+	//draw scores
+	handleScores();
 }
 
 void GameManager::update()
 {   
-		Controller::controllers[0]->update();  
+	if (!active) {
+		Controller::controllers[0]->update();
 		controllerInput(Controller::controllers[0]->getI());
+	}
 }
 
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
@@ -57,18 +93,26 @@ void GameManager::controllerInput(char key) {
 		menu->isSelected = false;
 	}
 
-	if (key == 's' && !paused) {
+	if (key == 'c' && !paused && !active) {
 		for (menu->selectionI = menu->selectionList.begin(); menu->selectionI != menu->selectionList.end(); menu->selectionI++) {
 			if (menu->selectionI->second == true) {
 				if (menu->selectionI->first == "one player") { 
+					beginGame.Reset();
+					onePlayer = true;
 					active = true;		
+					
 				}
 				if (menu->selectionI->first == "two player") {
-					active = true;
+					if (MultiPlayerManager::players.size() > 1) {
+						beginGame.Reset();
+						active = true;
+					}		
 				}
 				if (menu->selectionI->first == "controls") {
-					menu->controlMenu = true;
-					
+					menu->controlMenu = true;		
+				}
+				if (menu->selectionI->first == "enableKeyboard") { 
+					usingKeyboard = true;
 				}
 			}
 		}
@@ -83,4 +127,30 @@ void GameManager::controllerInput(char key) {
 		menu->controlMenu = false;
 	}
 } 
+
+void GameManager::drawGameCountDown() {
+	if (beginGame.GetMilliseconds() <= 4000) {  
+			if (3 - ((int(beginGame.GetMilliseconds())) / 1000) == 0) {
+				countdownFont.drawString("GO!", (ofGetWidth() / 2) - 300, ofGetHeight() / 2); 
+				go = true;
+			}
+			else {
+				countdownFont.drawString(ofToString(3 - ((int(beginGame.GetMilliseconds())) / 1000)), (ofGetWidth() / 2) - 300, ofGetHeight() / 2);
+			}
+		} 
+}
+
+void GameManager::handleScores() { 
+	if (active) {
+		if (MultiPlayerManager::players.size() > 1) {
+			ofSetColor(255);
+			scoreFont.drawString("P1  SCORE:   " + ofToString(MultiPlayerManager::players[0]->score), 100, 100);
+			scoreFont.drawString("P2  SCORE:   " + ofToString(MultiPlayerManager::players[1]->score), ofGetWidth() - 325, 100);
+		}
+		else {
+			scoreFont.drawString("SCORE:   " + ofToString(MultiPlayerManager::players[0]->score), ofGetWidth()/2 - 25, 100);
+		}
+	}
+}
+
 

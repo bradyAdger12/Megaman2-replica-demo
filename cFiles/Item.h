@@ -12,43 +12,41 @@
 #include <stdio.h>
 #include "ofxBox2dCircle.h"
 #include "ofxBox2dRect.h"
+#include "GameManager.h"
 class Player; //foward declaration
 using namespace std;
 class Item{
     
 public:
     
-    Item(string shape, int x, int y, int size, int style, ofImage image); 
+    Item(string shape, int x, int y, int size, int style, int id); 
     void setup();
     void update();
-    void draw();
-	void recreateCollider();
-    
-    //Ability
-    void use();
-    void toss();
-    void setParent(Player *parent);
-    bool hasParent();
+    void draw(); 
+	int dx;
+	int dy;
+	int id;
+	bool contact;
     int getX();
     int getY();
+	int getSize();
 	int style;
+	void updateAnimation(int frameRate, vector<ofImage> &im);   
+	double distance(int x1,int y1);
 	int density;
+
 	
-	//used to throw item further
-	float multiplier; //increases the force of a throw
-	float tossForce; //set to the value of scale as a default but is increased by the multiplier. Get reset after item is thrown
-	float maxTossForce; //maximum velocity an item can be thrown
-	float scale; //default throwing force
-	shared_ptr<ofxBox2dBaseShape> it;
+	
+	
 
 private:
-    ofImage image;
-	string shape;
+	//coin animation
+	vector<ofImage> coinAnimation;
+	int coinNum;
+    ofImage image; 
+	string type;
 	int x, y, size;
-	ofColor color;
-    bool hasPlayer, isThrown, armed;
-    Player *parent;
-	collider *collide;
+	ofColor color;  
 	 
 };
 #endif /* Item_h */
