@@ -36,7 +36,6 @@ void ShootingHandler::update(){
 
     if(!isPlayer) getClosestPlayer();
     shootingHandler();
-    
     lastTime = currentTime;
 }
 void ShootingHandler::draw(){
@@ -53,9 +52,16 @@ void ShootingHandler::shootingHandler(){
     if(deltaTime >= fireRate && isShooting){
         deltaTime = 0.0f;
         if(isPlayer){ //Shoot bullet in same direction as player Orientation
-            bullets.push_back(new Bullet(player->getX(),player->getY(), 5, size, player->getOrientation(), images));
+            if (player->getOrientation() == 1) {
+                bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images));
+            }
+            else {
+                bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images));
+            }
+        
         }else{ //Shoot bullet in path of closest player, if a player is in range
             bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images));
+            //std::cout<<"enemy shooting"<<endl;
         }
     }
     
@@ -125,3 +131,4 @@ void ShootingHandler::getClosestPlayer(){
         player_XY.push_back((dy_/mag) * speed * -1);
     }
 }
+

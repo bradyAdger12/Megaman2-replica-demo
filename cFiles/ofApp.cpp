@@ -26,7 +26,7 @@ void ofApp::setup(){
 	//world setup  
 	background.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	background.load("images/bombManStage2.png"); 
-	menuBackground.load("images/titleBackground.jpg"); 
+	//menuBackground.load("images/titleBackground.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(30.0); 
@@ -39,11 +39,12 @@ void ofApp::setup(){
 	inGameSound.setLoop(true);
 
 	//character Management
-	mpm = new MultiPlayerManager();
+	mpm = new MultiPlayerManager(true);
 	mpm->setup();
     
     //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
-    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
+    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/spider/spider_","images/megamanJumping/jump","images/spider_bullet");
+    test_enemy->setup();
     
 	//GameManager
 	gm = new GameManager();
@@ -59,11 +60,10 @@ void ofApp::setup(){
 
 	//create Environment Colliders
 	input.open(ofToDataPath("environment/eData.txt").c_str());
-	while (input >> x >> y >> w >> h >> s >> id) { 
-		cout << "(" << x << "," << y << ")" << " Width: " << w << "  Height: " << h << "  Tag: " << s << "  ID: " << id << endl;
+	while (input >> x >> y >> w >> h >> s >> id) {  
  		Environment *e;
 		x = x + (w/2);
-		e = new Environment(x, y+9, w, h, s, id);
+		e = new Environment(x, y, w, h, s, id);
 		eList.push_back(e);
 		e->setup();
 		collisionObjects.insert(make_pair(e, s));
@@ -71,17 +71,20 @@ void ofApp::setup(){
 
 	//setup camera
 	camera.setVFlip(true);
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));//
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));
 	cameraY = camera.getPosition().y;
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){   
-	
-	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
+	//not track y pos camera
+	//camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, cameraY, 180)); 
 
-	//camera.setPosition(200, 1000, 500);
+	//tracking y pos camera
+	camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, MultiPlayerManager::players[0]->getY() - 50, 180));
+
+	//camera.setPosition(2200, 800, 450);
 	//game UI
 	gm->update();
 
@@ -120,15 +123,16 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	//title background 
-	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+	//menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
 	camera.begin();
 
 	if (gm->active || gm->paused) { 
 	
 		//draw in game background  
 		ofSetColor(color);
-		background.draw(0, 0, 4355, 1187);
-		
+        background.draw(0, 0, 5134, 1219);
+        
+
 		if (gm->paused) {
 			color.set(180);
 		}
@@ -164,7 +168,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 	if (e.a != NULL && e.b != NULL) { 
 		// if we collide with the ground we do not
 		// want to play a sound. this is how you do that
-		if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle || e.b->GetType() == b2Shape::e_circle && e.a->GetType() == b2Shape::e_polygon) {
+//        if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle || e.b->GetType() == b2Shape::e_circle && e.a->GetType() == b2Shape::e_polygon) {
 			string a_type;
 			string b_type;
 
@@ -182,7 +186,13 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 			else {
 				b_type = itr->second;
 			}
-
+        if(a_type == "enemy"){
+            if(b_type =="player"){
+                Player*p = (Player*)e.b->GetBody()->GetUserData();
+                p->applyDamage(50);
+            }
+        }
+        
 			std::cout << e.a->GetBody()->GetUserData() << endl;
 			std::cout << e.b->GetBody()->GetUserData() << endl;
 
@@ -190,7 +200,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 			std::cout << b_type << endl;
 
 		}
-	}
+	//}
 }
 //--------------------------------------------------------------
 void ofApp::contactEnd(ofxBox2dContactArgs &e) {
@@ -198,10 +208,16 @@ void ofApp::contactEnd(ofxBox2dContactArgs &e) {
 	}
 }
 void ofApp::keyPressed(int key) { 
+	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
+		MultiPlayerManager::players[i]->keyPressed(key);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
+		MultiPlayerManager::players[i]->keyReleased(key);
+	}
 }
 
 //--------------------------------------------------------------

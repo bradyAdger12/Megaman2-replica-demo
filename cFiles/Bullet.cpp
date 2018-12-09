@@ -32,7 +32,12 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->images = images;
     //std::cout<<"Bullet Made"<<endl;
 }
+
 void Bullet::update(){
+    frame ++;
+    if(frame%5 == 0){
+        anim_count ++;
+    }
     switch(dir){
         case 0:
             x -= speed;
@@ -44,6 +49,7 @@ void Bullet::update(){
             x_ += dx;
             y_ += dy;
             break;
+
         default:
             break;
     }
@@ -51,12 +57,15 @@ void Bullet::update(){
 void Bullet::draw(){
     switch(dir){
         case 3:
-            ofSetColor(0, 0, 0);
-            ofDrawCircle(x_,y_,radius);
+//            ofSetColor(0, 0, 0);
+//            ofDrawCircle(x_,y_,radius);
+            images[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+            images[0].draw(x_, y_, radius, radius);
             break;
         default:
-            ofSetColor(0, 0, 0);
-            ofDrawCircle(x,y,radius);
+            int index = anim_count%images.size();
+            images[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+            images[index].draw(x, y, radius, radius);
             break;
     }
 }
