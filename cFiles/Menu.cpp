@@ -12,7 +12,7 @@ void Menu::setup() {
 	isSelected = false;
 
 	//images
-	controllerImage.load("images/controller.png");
+	//controllerImage.load("images/controller.png");
 
 	//menu options
 	controls.load("fonts/controlFont.ttf", 60);

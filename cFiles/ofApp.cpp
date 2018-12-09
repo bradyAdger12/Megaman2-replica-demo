@@ -26,7 +26,7 @@ void ofApp::setup(){
 	//world setup  
 	background.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	background.load("images/bombManStage2.png"); 
-	menuBackground.load("images/titleBackground.jpg"); 
+	//menuBackground.load("images/titleBackground.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(30.0); 
@@ -43,7 +43,8 @@ void ofApp::setup(){
 	mpm->setup();
     
     //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
-    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/megamanJumping/jump","images/megamanJumping/jump","images/megamanJumping/jump");
+    test_enemy = new Enemy( 100.0, 1100.0,100.0,0,0.5,"images/spider/spider_","images/megamanJumping/jump","images/spider_bullet");
+    test_enemy->setup();
     
 	//GameManager
 	gm = new GameManager();
@@ -122,7 +123,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	//title background 
-	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+	//menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
 	camera.begin();
 
 	if (gm->active || gm->paused) { 
@@ -167,7 +168,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 	if (e.a != NULL && e.b != NULL) { 
 		// if we collide with the ground we do not
 		// want to play a sound. this is how you do that
-		if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle || e.b->GetType() == b2Shape::e_circle && e.a->GetType() == b2Shape::e_polygon) {
+//        if (e.a->GetType() == b2Shape::e_circle && e.b->GetType() == b2Shape::e_circle || e.b->GetType() == b2Shape::e_circle && e.a->GetType() == b2Shape::e_polygon) {
 			string a_type;
 			string b_type;
 
@@ -185,7 +186,13 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 			else {
 				b_type = itr->second;
 			}
-
+        if(a_type == "enemy"){
+            if(b_type =="player"){
+                Player*p = (Player*)e.b->GetBody()->GetUserData();
+                p->applyDamage(50);
+            }
+        }
+        
 			std::cout << e.a->GetBody()->GetUserData() << endl;
 			std::cout << e.b->GetBody()->GetUserData() << endl;
 
@@ -193,7 +200,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 			std::cout << b_type << endl;
 
 		}
-	}
+	//}
 }
 //--------------------------------------------------------------
 void ofApp::contactEnd(ofxBox2dContactArgs &e) {

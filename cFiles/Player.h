@@ -23,7 +23,7 @@ public:
 
 	//var and methods
 	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount, getOrientation();
-	int x, y;
+	int x, y, health;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
@@ -46,7 +46,8 @@ public:
     void idleHandler();
 	void keyPressed(int key);
 	void keyReleased(int key);
-    void controllerInput(char key); 
+    void controllerInput(char key);
+    void applyDamage(int dmg);
 
 	//list of players
 	static vector<Player*> playerList;

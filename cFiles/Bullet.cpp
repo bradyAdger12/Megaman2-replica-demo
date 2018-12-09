@@ -53,8 +53,10 @@ void Bullet::update(){
 void Bullet::draw(){
     switch(dir){
         case 3:
-            ofSetColor(0, 0, 0);
-            ofDrawCircle(x_,y_,radius);
+//            ofSetColor(0, 0, 0);
+//            ofDrawCircle(x_,y_,radius);
+            images[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+            images[0].draw(x_, y_, radius, radius);
             break;
         default:
             ofSetColor(0, 0, 0);

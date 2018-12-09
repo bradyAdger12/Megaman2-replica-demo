@@ -84,7 +84,6 @@ void ShootingHandler::shootingHandler(){
             }
         }
         deleteBullets();
-
     }
 }
 void ShootingHandler::deleteBullets(){

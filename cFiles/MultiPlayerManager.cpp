@@ -60,7 +60,7 @@ void MultiPlayerManager::assignPorts(){
         Player *p;
         p = new Player(availblePorts[i], 50, 1150, isPlayerOne);
         isPlayerOne = false;
-        ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
+//        ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
         p->setup();
         players.push_back(p);
     }
@@ -70,7 +70,7 @@ void MultiPlayerManager::assignPorts(){
         //p = new Player("COM3", 1737, 870, isPlayerOne);
         //starting spawn
         p = new Player("COM3", 50, 1150, isPlayerOne);
-        ofApp::collisionObjects.insert(make_pair(this, "player1"));
+//        ofApp::collisionObjects.insert(make_pair(this, "player1"));
         p->setup();
         players.push_back(p);
     }

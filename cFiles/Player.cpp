@@ -13,7 +13,9 @@ Player::Player(string portName, int x, int y, bool playerOne){
 	this->playerOne = playerOne;
 	this->x = x;
 	this->y = y;
+    this->health = 100;
 	//playerList.push_back(this);
+    ofApp::collisionObjects.insert(make_pair(this, "player"));
 }
 void Player::setup()
 {
@@ -782,4 +784,10 @@ bool Player::isSorted() {
 		}
 	}
 	return check;
+}
+void Player::applyDamage(int dmg){
+    health -= dmg;
+    if(health < 0){
+        std::cout<<"Player died =("<<endl;
+    }
 }
