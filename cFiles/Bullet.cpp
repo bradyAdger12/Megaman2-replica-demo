@@ -34,6 +34,10 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
 }
 
 void Bullet::update(){
+    frame ++;
+    if(frame%5 == 0){
+        anim_count ++;
+    }
     switch(dir){
         case 0:
             x -= speed;
@@ -59,8 +63,9 @@ void Bullet::draw(){
             images[0].draw(x_, y_, radius, radius);
             break;
         default:
-            ofSetColor(0, 0, 0);
-            ofDrawCircle(x,y,radius);
+            int index = anim_count%images.size();
+            images[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+            images[index].draw(x, y, radius, radius);
             break;
     }
 }

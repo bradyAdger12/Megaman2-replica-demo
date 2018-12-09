@@ -53,10 +53,10 @@ void ShootingHandler::shootingHandler(){
         deltaTime = 0.0f;
         if(isPlayer){ //Shoot bullet in same direction as player Orientation
             if (player->getOrientation() == 1) {
-                bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+                bullets.push_back(new Bullet(player->getX() + player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images));
             }
             else {
-                bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 2, 5, 3, player->getOrientation(), images));
+                bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images));
             }
         
         }else{ //Shoot bullet in path of closest player, if a player is in range

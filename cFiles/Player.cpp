@@ -97,12 +97,20 @@ void Player::setup()
 		runner.load(file);
 		runningAnimation.push_back(runner);
 	}
+    //load Bullet animation
+    for (int i = 1; i < 4; i++) {
+        string file = "images/megamanBullet/mm_shoot_" + ofToString(i) + ".png";
+        ofImage bull;
+        bull.load(file);
+        bulletAnimation.push_back(bull);
+    }
 
 	//idle shoot animation
 	idleShoot.load("images/megamanShooting/shoot1.png");
 	idleShoot.mirror(false, true);
 
-	shootingHandler = new ShootingHandler(this, 20, 5, 0.2, 8, bulletAnimation);
+    //ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
+	shootingHandler = new ShootingHandler(this, 3, 25, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
 }
 //********************** ITEM LOGIC **********************************************
