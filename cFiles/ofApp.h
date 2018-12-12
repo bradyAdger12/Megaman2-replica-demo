@@ -25,6 +25,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+        void placeEnemies(int count);
 		//string getObjectType(void* data);
 
 		// this is the function for contacts
@@ -42,12 +43,23 @@ class ofApp : public ofBaseApp{
 		ofEasyCam camera;
 		static map<void*, string> collisionObjects;
 		ifstream input;
+		ifstream badLedges;
+		vector<int> itemsToDelete; 
+		ofSoundPlayer coinSound; 
+		void handleCamera();
+		void deleteItems();
 		static vector<Environment*> eList;
 		map<void*, string>::iterator itr;
 		MultiPlayerManager *mpm;
 		
-	static vector<Item*> items;
 
+    
+	static vector<Item*> items;
+    
+    int enemyCount;
+    vector<Enemy*> enemies;
+    static vector<int> enemiesToDelete;
+    
     void spawnRandomItem();
     double distance(int x1,int x2,int y1,int y2);   
 

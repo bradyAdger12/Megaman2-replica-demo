@@ -9,15 +9,26 @@ public:
     GameManager();
     void setup();
     void draw();
-    void update();
-    Controller* controller;
-    static bool paused, active;
+    void update(); 
+    static bool paused, active, onePlayer;
+	bool usingKeyboard;
+	static b2Timer beginGame;
     static b2Timer* timer;
-    static vector <Player*> playerList;
-    Menu *menu;
+	static bool go;
+
     
     
 private:
     vector<Controller*> controllerList;
     void controllerInput(char key);
+
+	//countdown logic
+	void drawGameCountDown();
+
+	//fonts
+	ofTrueTypeFont countdownFont;
+	ofTrueTypeFont scoreFont;
+
+	//score logic
+	void handleScores();
 };

@@ -17,38 +17,18 @@ Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 		ladders.push_back(this);
 	}
 } 
-void Environment::setup() {
-	ladder = false;
-	canClimb = false; 
-	distanceFromPlayer = 0;
+void Environment::setup() {  
+
 }
-void Environment::update() {
-	for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
-		if (tag == "ladder") {
-			if (MultiPlayerManager::players[i]->getY() >= (y - height/2) + MultiPlayerManager::players[i]->getRadius() && MultiPlayerManager::players[i]->getY() <= y + height) {
-				canClimb = true;
-			}
-			else {
-				canClimb = false;
-			}
-			if (MultiPlayerManager::players[i]->getX() > x - width && MultiPlayerManager::players[i]->getX() < x + width) { 
-				
-				ladder = true;
-			}
-			else {
-				ladder = false;
-			}
-			 
-		}
-	}	
+void Environment::update() { 
 }
 	
 
 	
-void Environment::draw() {  
-		ofSetColor(0, 0, 0, 150);
-		eCollider.get()->draw();
-		ofSetColor(255, 0, 0);
+void Environment::draw() {
+        ofSetColor(0, 0, 0, 150);
+        eCollider.get()->draw();
+        ofSetColor(255, 0, 0);
 		ledgeId.drawString(ofToString(id), x, y + 5);
 
 }
@@ -69,6 +49,14 @@ int Environment::getHeight() {
 	return height;
 }
 
+int Environment::getWidth() {
+	return width;
+}
+
 int Environment::getId() {
 	return id;
+}
+
+string Environment::getTag() {
+	return tag;
 }

@@ -16,8 +16,17 @@ void MultiPlayerManager::setup(){
 
 }
 void MultiPlayerManager::update(){
+	if (initialize && GameManager::onePlayer && players.size() > 1) {
+		delete players[1];
+		players.erase(players.begin() + 1);
+		initialize = false;
+	}
     for(int i=0; i<players.size(); i ++){
-        players[i]->update();
+        if(players[i]->getHealth() <= 0){
+            players.erase(players.begin() + i);
+        }else{
+            players[i]->update();
+        }
     }
 }
 void MultiPlayerManager::draw(){
@@ -26,7 +35,7 @@ void MultiPlayerManager::draw(){
     }
 }
 
-void MultiPlayerManager::assignPorts(){
+void MultiPlayerManager::assignPorts() {
     if (!keyboard) {
     vector <ofSerialDeviceInfo> deviceList = ports.getDeviceList();
     for(int i =0; i<deviceList.size();i++){
@@ -58,18 +67,16 @@ void MultiPlayerManager::assignPorts(){
         cout << "devicePort: " << availblePorts[i] << endl;
         //setup player and its controller. delete controller so that menu has access to port
         Player *p;
-        p = new Player(availblePorts[i], 50, 1150, isPlayerOne);
+        p = new Player(availblePorts[i], 150, 1150, isPlayerOne);
         isPlayerOne = false;
 //        ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
         p->setup();
         players.push_back(p);
     }
-    }else {
-        Player *p;
-        //test player spawn
-        //p = new Player("COM3", 1737, 870, isPlayerOne);
+        }else {
+        Player *p; 
         //starting spawn
-        p = new Player("COM3", 50, 1150, isPlayerOne);
+        p = new Player("COM3", 150, 1150, isPlayerOne);
 //        ofApp::collisionObjects.insert(make_pair(this, "player1"));
         p->setup();
         players.push_back(p);

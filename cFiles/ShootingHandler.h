@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "Bullet.h"
+
 class Player; //foward declaration
 class Enemy;
 class ShootingHandler{
@@ -33,6 +34,9 @@ private:
     float deltaTime,lastTime,currentTime,fireRate;
     Player* player;
     Enemy* enemy;
+
+	//sounds
+	ofSoundPlayer blaster;
 
     vector<ofImage> images;
     vector<Bullet *> bullets;

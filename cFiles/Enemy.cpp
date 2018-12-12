@@ -20,19 +20,19 @@ Enemy::Enemy(double x, double y, double range, int dir, double speed, string pat
     this->frame = 0;
     this->patrol_count =0;
     this->health = 100;
-    
+    this->hit = false;
+    ofApp::collisionObjects.insert(make_pair(this, "enemy"));
     string file = "images/spider_bullet.png";
             ofImage bull;
             bull.load(file);
     bullet_anim.push_back(bull);
     //ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
-    shootingHandler = new ShootingHandler(this, 2, 8, 0.8, 4, bullet_anim);//Move to bottom of setup after animations are built.
+    shootingHandler = new ShootingHandler(this, 2, 8, 5.0, 4, bullet_anim);//Move to bottom of setup after animations are built.
     
     //create collider
     ob = new collider();
-    enemyCollider = ob->Rectangle(x, y, 10, 35, 0, 0, 0);
+    enemyCollider = ob->Circle(x, y, 12, 35, 0, 1000);
     enemyCollider->setData(this);
-    ofApp::collisionObjects.insert(make_pair(this, "enemy"));
 }
 void Enemy::setup(){
     //Build Animation Vectors
@@ -64,6 +64,10 @@ void Enemy::setup(){
     //:ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 }
 void Enemy::update(){ //Cycle animations in here
+    if(hit){
+        hit = false;
+        ofSetColor(255, 0, 0, 150);
+    }
     patrol();
     shootingHandler->update();
     frame ++;
@@ -76,7 +80,6 @@ void Enemy::update(){ //Cycle animations in here
 void Enemy::draw(){
 //    ofSetColor(0, 0, 0, 150);
 //    enemyCollider.get()->draw();
-
     int index = patrol_count%patrol_anim.size();
     patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
     patrol_anim[index].draw(x-10,y-35, 20, 40);
@@ -86,14 +89,14 @@ void Enemy::patrol(){ //Move up and down.
     switch(dir){
         case 0: //up
             if(y > y_start - range){
-                y -= speed;
+                //y -= speed;
             }else{
                 dir = 1;
             }
             break;
         case 1: //down
             if(y < y_start + range){
-                y += speed;
+                //y += speed;
             }else{
                 dir = 0;
             }
@@ -109,7 +112,19 @@ double Enemy::getX(){
 double Enemy::getY(){
     return y;
 }
+int Enemy::getHealth(){
+    return health;
+}
 void Enemy::applyDamage(int dmg){ //On Collision with player Bullet
     health -= dmg;
+    if(health <= 0){
+        die();
+    }
 }
-//void Enenmy::die(){}
+void Enemy::isHit(bool hit){
+    this->hit = hit;
+}
+void Enemy::die(){
+    //delete this;
+    //Begin deat
+}

@@ -10,7 +10,6 @@
 
 #include "ShootingHandler.h"
 #include "ofMain.h"
-#include "ofxBox2dRect.h"
 #include "ofxBox2dCircle.h"
 #include "ofxBox2d.h"
 #include "collider.h"
@@ -22,19 +21,22 @@ public:
     void setup();
     void update();
     void draw();
+    void isHit(bool hit), die();
     Enemy(double x, double y, double range, int dir, double speed, string patrol_path, string hit_path, string bullet_path);
     void patrol(), applyDamage(int dmg);
     double getX(), getY();
+    int getHealth();
     
 private:
     int dir, health, frame, patrol_count;
     double x,y,range,speed;
     double y_start;
+    bool hit;
     vector<ofImage> patrol_anim;
     vector<ofImage> hit_anim;
     vector<ofImage> bullet_anim;
     string patrol_path, hit_path, bullet_path;
-    shared_ptr<ofxBox2dRect> enemyCollider;
+    shared_ptr<ofxBox2dCircle> enemyCollider;
     collider *ob;
     
     ShootingHandler* shootingHandler;

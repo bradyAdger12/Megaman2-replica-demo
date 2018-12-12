@@ -8,21 +8,29 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "Bullet.h"
+#include "ofApp.h"
 Bullet::Bullet(){
     
 }
 Bullet::~Bullet(){
     //std::cout << "Deleting" << endl;
 }
-Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>images){
+Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>images, string tag){
     this->x = x;
     this->y = y;
     this->speed = speed;
     this->radius = radius;
     this->dir = dir;
     this->images = images;
+    this->tag = tag;
+    
+    //create collider
+    ob = new collider();
+    bullCollider = ob->Circle(x + radius /2, y + radius /2, radius/2, 0, 0, 0);
+    bullCollider->setData(this);
+    ofApp::collisionObjects.insert(make_pair(this, tag));
 }
-Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, vector<ofImage>images){
+Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, vector<ofImage>images, string tag){
     this->x_ = x_;
     this->y_ = y_;
     this->dx = dx;
@@ -30,7 +38,14 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->radius = radius;
     this->dir = dir;
     this->images = images;
+    this->tag = tag;
     //std::cout<<"Bullet Made"<<endl;
+
+    //create collider
+    ob = new collider();
+    bullCollider = ob->Circle(x_ + radius /2,y_ + radius /2, radius/2, 0, 0, 0);
+    bullCollider->setData(this);
+    ofApp::collisionObjects.insert(make_pair(this, tag));
 }
 
 void Bullet::update(){
@@ -41,24 +56,27 @@ void Bullet::update(){
     switch(dir){
         case 0:
             x -= speed;
+            bullCollider.get()->update();
+            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
             break;
         case 1:
             x += speed;
+            bullCollider.get()->update();
+            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
             break;
         case 3:
             x_ += dx;
             y_ += dy;
+            bullCollider.get()->update();
+            bullCollider.get()->setPosition(x_ + radius /2, y_ + radius/2);
             break;
-
-        default:
-            break;
+//        default:
+//            break;
     }
 }
 void Bullet::draw(){
     switch(dir){
         case 3:
-//            ofSetColor(0, 0, 0);
-//            ofDrawCircle(x_,y_,radius);
             images[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
             images[0].draw(x_, y_, radius, radius);
             break;
@@ -68,6 +86,8 @@ void Bullet::draw(){
             images[index].draw(x, y, radius, radius);
             break;
     }
+//        ofSetColor(0, 0, 0, 150);
+//        bullCollider.get()->draw();
 }
 int Bullet::getX(){
     return x;
@@ -75,3 +95,11 @@ int Bullet::getX(){
 int Bullet::getY(){
     return y;
 }
+double Bullet::getX_() {
+    return x_;
+}
+
+double Bullet::getY_() {
+    return y_;
+}
+

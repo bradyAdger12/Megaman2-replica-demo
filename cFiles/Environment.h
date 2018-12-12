@@ -13,12 +13,12 @@ public:
 	int getX();
 	int getY();
 	int getHeight();
+	int getWidth();
 	int getId();
-	bool ladder, canClimb;
+	string getTag(); 
 	ofTrueTypeFont ledgeId;
 	double distance(int x1, int x2, int y1, int y2);
-	static vector<Environment*> ladders;
-	float distanceFromPlayer;
+	static vector<Environment*> ladders; 
 	Environment(int x, int y, int w, int h, string tag, int id);
 private:
 	int x, y, width, height, id, ladderId;

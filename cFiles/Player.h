@@ -22,12 +22,14 @@ public:
 
 
 	//var and methods
-	int getX(), getY(), getRadius(), speed, runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount, getOrientation();
+	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount, getOrientation(), score, getHealth();
 	int x, y, health;
+	b2Timer shootingTimer;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition;
+	double speed;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder;
 	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
@@ -52,10 +54,11 @@ public:
 	//list of players
 	static vector<Player*> playerList;
     
-	//ladder logic
-	void bubbleSort();
-	bool isSorted();
-	Environment *eLadder; 
+	//ladder logic 
+	Environment *eLadder;  
+	void getLadderSpecs(Environment *e);
+	void findClosestLadder();
+	
 
     //Item vars and methods
     int x_Slot;
@@ -63,15 +66,9 @@ public:
 	int count;
     bool hasItem;
     int getX_Slot();
-    int getY_Slot(); 
-	Item *item;
-	//Consumable *consumable;
-    void useItem();
-    void throwItem();
-	Item* closestUsableItem(int x, int y);
-	double distance(int x1, int x2, int y1, int y2);
-	Item* getItem();
-    void equipItem(Item *item);
+    int getY_Slot();  
+	double distance(int x1, int x2, int y1, int y2); 
+
     
     //Controller Logic
     Controller *controller;
@@ -87,7 +84,6 @@ public:
 	vector<ofImage> bulletAnimation;
 	ofImage idleShoot;
 
-	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 
     
