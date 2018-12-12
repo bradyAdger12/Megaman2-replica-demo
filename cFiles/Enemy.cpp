@@ -64,23 +64,26 @@ void Enemy::setup(){
     //:ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 }
 void Enemy::update(){ //Cycle animations in here
-    patrol();
-    shootingHandler->update();
-    frame ++;
-    if(frame%10 ==0){
-        patrol_count ++;
-    } 
-    enemyCollider.get()->update();
-    enemyCollider.get()->setPosition(x, y - 15);
+	if (GameManager::go) {
+		patrol();
+		shootingHandler->update();
+		frame++;
+		if (frame % 10 == 0) {
+			patrol_count++;
+		}
+		enemyCollider.get()->update();
+		enemyCollider.get()->setPosition(x, y - 15);
+	}
 }
 void Enemy::draw(){
 //    ofSetColor(0, 0, 0, 150);
 //    enemyCollider.get()->draw();
-
-    int index = patrol_count%patrol_anim.size();
-    patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-    patrol_anim[index].draw(x-10,y-35, 20, 40);
-    shootingHandler->draw();
+	if (GameManager::go) {
+		int index = patrol_count % patrol_anim.size();
+		patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		patrol_anim[index].draw(x - 10, y - 35, 20, 40);
+		shootingHandler->draw();
+	}
 }
 void Enemy::patrol(){ //Move up and down.
     switch(dir){

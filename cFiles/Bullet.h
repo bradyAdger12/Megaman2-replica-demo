@@ -13,16 +13,15 @@ public:
     void update();
     void draw();
     int getX(), getY();
+	double getX_(), getY_();
     Bullet();
     Bullet(int x, int y, int speed, int radius,int dir, vector<ofImage> images);
     Bullet(double x_, double y_, double dx,double dy, int radius,int dir, vector<ofImage> images);
-
     ~Bullet();
 private:
     int x, y,speed, radius, dir, frame, anim_count;//dir = 0 left =1 right =2 toward nearest player
     vector<ofImage> images;
-    double x_,y_,dx,dy;
-
+    double x_,y_,dx,dy; 
     
 };
 

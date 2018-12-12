@@ -1,6 +1,7 @@
 #include "Environment.h"
 #include "ofApp.h"   
 vector<Environment*> Environment::ladders;
+vector<Environment*> Environment::spikes;
 Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	collider *ob = new collider();
 	this->width = w;
@@ -11,10 +12,14 @@ Environment::Environment(int x, int y, int w, int h, string tag, int id) {
 	this->tag = tag;
     eCollider = ob->Rectangle(x, y, w, h, 0, 0, 8);
 	ledgeId.load("fonts/controlFont.ttf", 10);
+	eCollider->setData(this);
 	ofApp::collisionObjects.insert(make_pair(this, tag));
 	if (tag == "ladder") {
 		eCollider.get()->body->SetActive(false);
 		ladders.push_back(this);
+	}
+	if (tag == "spikes") { 
+		spikes.push_back(this);
 	}
 } 
 void Environment::setup() {  

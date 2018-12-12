@@ -20,7 +20,7 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
     this->speed = speed;
     this->radius = radius;
     this->dir = dir;
-    this->images = images;
+    this->images = images; 
 }
 Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, vector<ofImage>images){
     this->x_ = x_;
@@ -29,8 +29,7 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->dy = dy;
     this->radius = radius;
     this->dir = dir;
-    this->images = images;
-    //std::cout<<"Bullet Made"<<endl;
+    this->images = images;  
 }
 
 void Bullet::update(){
@@ -45,7 +44,7 @@ void Bullet::update(){
         case 1:
             x += speed;
             break;
-        case 3:
+        case 3: 
             x_ += dx;
             y_ += dy;
             break;
@@ -74,4 +73,12 @@ int Bullet::getX(){
 }
 int Bullet::getY(){
     return y;
+}
+
+double Bullet::getX_() {
+	return x_;
+}
+
+double Bullet::getY_() {
+	return y_;
 }

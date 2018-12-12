@@ -22,14 +22,14 @@ public:
 
 
 	//var and methods
-	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, radius, size, pauseCount, getOrientation(), score;
+	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, spawningNum, radius, size, pauseCount, getOrientation(), score;
 	int x, y, health;
 	b2Timer shootingTimer;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	double speed;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder, dead, justDied, spawning;
 	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
@@ -42,6 +42,7 @@ public:
 	void flipImages();
 	void runningHandler(); 
 	void jumpHandler();
+	void spawnHandler();
 	void climbingHandler();
 	void shootingAnimationHandler();
 	void orientPlayer();
@@ -82,6 +83,7 @@ public:
 	vector<ofImage> climbingAnimation;
 	vector<ofImage> shootingAnimation;
 	vector<ofImage> bulletAnimation;
+	vector<ofImage> spawnAnimation;
 	ofImage idleShoot;
 
 	vector<shared_ptr<ofxBox2dBaseShape>> playerColliders;
