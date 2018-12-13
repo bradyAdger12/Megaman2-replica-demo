@@ -238,9 +238,23 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             Player* player = (Player*)e.a->GetBody()->GetUserData();
             player->applyDamage(5);
         }
+
+		if (a_type == "player") {
+			if (b_type == "spikes") {
+				Player*p = (Player*)e.b->GetBody()->GetUserData();
+				p->applyDamage(100);
+			}
+		}
+		if (a_type == "spikes") {
+			if (b_type == "player") {
+				Player*p = (Player*)e.b->GetBody()->GetUserData();
+				p->applyDamage(100);
+			}
+		}
         
 //            std::cout << a_type << endl;
 //            std::cout << b_type << endl;
+
 
 		}
 }
@@ -403,8 +417,7 @@ void ofApp::handleCamera() {
 			MultiPlayerManager::players[0]->jumpForce = 7; 
 			camera.setPosition(ofVec3f(4205, startingY - 940, 180));
 		}
-		if (camera.getX() <= 160) {
-			MultiPlayerManager::players[0]->jumpForce = 7; 
+		if (camera.getX() <= 160) { 
 			camera.setPosition(ofVec3f(160, startingY, 180));
 		}
 	}

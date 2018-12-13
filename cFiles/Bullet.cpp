@@ -64,7 +64,7 @@ void Bullet::update(){
             bullCollider.get()->update();
             bullCollider.get()->setPosition(x + radius /2, y + radius /2);
             break;
-        case 3:
+        case 3: 
             x_ += dx;
             y_ += dy;
             bullCollider.get()->update();

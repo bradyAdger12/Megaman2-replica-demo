@@ -20,7 +20,6 @@ public:
     Bullet();
     Bullet(int x, int y, int speed, int radius,int dir, vector<ofImage> images, string tag);
     Bullet(double x_, double y_, double dx,double dy, int radius,int dir, vector<ofImage> images, string tag);
-
     ~Bullet();
 private:
     int x, y,speed, radius, dir, frame, anim_count;//dir = 0 left =1 right =2 toward nearest player
@@ -30,6 +29,7 @@ private:
     
     shared_ptr<ofxBox2dCircle> bullCollider;
     collider *ob; 
+
     
 };
 

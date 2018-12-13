@@ -12,7 +12,7 @@ public:
     void update(); 
     static bool paused, active, onePlayer;
 	bool usingKeyboard;
-	static b2Timer beginGame;
+	static b2Timer beginGame, spawnTimer;
     static b2Timer* timer;
 	static bool go;
 
@@ -23,12 +23,12 @@ private:
     void controllerInput(char key);
 
 	//countdown logic
-	void drawGameCountDown();
+	void drawGameCountDown(); 
 
 	//fonts
 	ofTrueTypeFont countdownFont;
 	ofTrueTypeFont scoreFont;
 
 	//score logic
-	void handleScores();
+	void inGameUI();
 };

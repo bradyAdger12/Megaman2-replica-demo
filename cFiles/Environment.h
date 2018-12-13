@@ -19,6 +19,7 @@ public:
 	ofTrueTypeFont ledgeId;
 	double distance(int x1, int x2, int y1, int y2);
 	static vector<Environment*> ladders; 
+	static vector<Environment*> spikes;
 	Environment(int x, int y, int w, int h, string tag, int id);
 private:
 	int x, y, width, height, id, ladderId;

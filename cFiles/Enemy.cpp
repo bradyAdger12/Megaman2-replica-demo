@@ -64,18 +64,20 @@ void Enemy::setup(){
     //:ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 }
 void Enemy::update(){ //Cycle animations in here
-    if(hit){
-        hit = false;
-        ofSetColor(255, 0, 0, 150);
+    if (GameManager::go) {
+        if(hit){
+            hit = false;
+            ofSetColor(255, 0, 0, 150);
+        }
+        patrol();
+        shootingHandler->update();
+        frame ++;
+        if(frame%10 ==0){
+            patrol_count ++;
+        }
+        enemyCollider.get()->update();
+        enemyCollider.get()->setPosition(x, y - 15);
     }
-    patrol();
-    shootingHandler->update();
-    frame ++;
-    if(frame%10 ==0){
-        patrol_count ++;
-    } 
-    enemyCollider.get()->update();
-    enemyCollider.get()->setPosition(x, y - 15);
 }
 void Enemy::draw(){
     ofSetColor(0, 0, 0, 150);

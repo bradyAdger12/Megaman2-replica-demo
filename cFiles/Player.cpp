@@ -30,6 +30,9 @@ void Player::setup()
 	climbingPaused = false;
 	firingPosition = false; 
 	randClimbPic = false;
+	dead = false;
+	justDied = false;
+	spawning = true;
 	
 	//setup player attributes
 	score = 0; //player score
@@ -39,6 +42,7 @@ void Player::setup()
 	runningNum = 0;  //used to index running sprites
 	idleNum = 0;  //index idle sprites
 	jumpNum = 0;  //index jump sprites
+	spawningNum = 0; //spawn sprites
 	climbingNum = 0; //index climbing sprites
 	shootingNum = 0; //index shhoting sprites
 	blink = 0;    //random between 0 and 1
@@ -77,6 +81,14 @@ void Player::setup()
 		shootingAnimation.push_back(shoot);
 	}
 
+	//spawn animation 
+	for (int i = 1; i < 4; i++) {
+		string file = "images/megamanSpawning/spawn" + ofToString(i) + ".png";
+		ofImage spawn;
+		spawn.load(file); 
+		spawnAnimation.push_back(spawn);
+	}
+	 
 	//load idle animation
 	for (int i = 1; i < 4; i++) {
 		string file = "images/megamanIdle/idle" + ofToString(i) + ".png";
@@ -115,6 +127,7 @@ void Player::setup()
     //ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 	shootingHandler = new ShootingHandler(this, 3, 25, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
+
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -132,6 +145,16 @@ int Player::getY_Slot(){
 void Player::update()  {  
 
 
+	//players dies
+	if (dead && justDied) {	
+		playerCollider.get()->addForce(ofVec2f(ofRandom(-2, 2), 300), -6);
+		justDied = false;
+		playerCollider.get()->body->SetActive(false);
+	}
+
+	
+
+
 	//correct players speed if going too fast
 	if (abs(getXVelocity()) > 2) {
 		if (getXVelocity() > 0) {
@@ -142,11 +165,14 @@ void Player::update()  {
 		}
 	}
 
+
+	//find ladder closest to player
 	findClosestLadder();
 
+	
 	//if player is using an arduino. open up port for streaming
 	if (!MultiPlayerManager::keyboard) {
-		if (GameManager::go) { 
+		if (GameManager::go && !dead) { 
 			controller->update();
 			controllerInput(controller->getI());
 		}
@@ -160,130 +186,154 @@ void Player::update()  {
 		}
 	}
 
-	//shooting handler
-	shootingHandler->update();
 
-	//update collider
-	playerCollider.get()->update();	  
+	if (!dead) {
+		//shooting handler
+		shootingHandler->update();
 
-	//handle running
-	if (running && !jumpState && !shooting) { 
-		if (shootingTimer.GetMilliseconds() < 1500) {
+		//update collider
+		playerCollider.get()->update();
+
+		//spawn handler
+		if (!GameManager::go && GameManager::spawnTimer.GetMilliseconds() < 600) {
+			spawnHandler();
+		}
+
+		//handle running
+		if (running && !jumpState && !shooting) {
+			if (shootingTimer.GetMilliseconds() < 1500) {
+				shootingAnimationHandler();
+			}
+			else {
+				runningHandler();
+			}
+		}
+
+		//handle jumping
+		else if (jumpState && !climbing) {
+			jumpHandler();
+		}
+
+		else if (shooting && running) {
 			shootingAnimationHandler();
 		}
-		else {
-			runningHandler();
+
+		else if (!shooting && running && shootingTimer.GetMilliseconds() < 1500) {
+			shootingAnimationHandler();
 		}
+
+		else if (climbing) {
+			climbingHandler();
+		}
+
+		//handle idle
+		else {
+			idleHandler();
+		}
+
 	}
-
-	//handle jumping
-	else if (jumpState && !climbing) {
-		jumpHandler(); 
-	} 
-
-	else if (shooting && running) {
-		shootingAnimationHandler();
-	}
-
-	else if (!shooting && running && shootingTimer.GetMilliseconds() < 1500) {
-		shootingAnimationHandler();
-	} 
-
-	else if (climbing) {
-		climbingHandler();
-	}
-
-	//handle idle
-	else {
-		idleHandler(); 
-	} 
-
-	//handle ladder
  
 }
 
 void Player::draw() 
 { 
 
-	//set back to white 
-	ofSetColor(255);
+	//if player dies
+	if (dead) { 
+		exit(0);
+	}
 
-	//orient images based on player state/direction
-	orientPlayer(); 
-	 
-	//running drawing handler
-	if (running && !jumpState && !shooting) {
-		if (shootingTimer.GetMilliseconds() < 1500) {
-			shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-			shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
+	else {
+
+		//set back to white 
+		ofSetColor(255);
+
+		//orient images based on player state/direction
+		orientPlayer();
+
+		if (!GameManager::go && GameManager::spawnTimer.GetMilliseconds() < 600) {
+			spawnAnimation[spawningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+			spawnAnimation[spawningNum].draw(getX() - radius, getY() - 14, size, size);
 		}
+
 		else {
-			runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-			runningAnimation[runningNum].draw(getX() - radius, getY() - 14, size, size);
-		}
-	}
+
+			//running drawing handler
+			if (running && !jumpState && !shooting) {
+				if (shootingTimer.GetMilliseconds() < 1500) {
+					shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+					shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
+				}
+				else {
+					runningAnimation[runningNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+					runningAnimation[runningNum].draw(getX() - radius, getY() - 14, size, size);
+				}
+			}
 
 
-	//running shooting drawing
-	else if (shooting && running) {
-		shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
-	}
+			//running shooting drawing
+			else if (shooting && running) {
+				shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
+			}
 
-	else if (!shooting && running && shootingTimer.GetMilliseconds() < 1500) {
-		shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
-	}
+			else if (!shooting && running && shootingTimer.GetMilliseconds() < 1500) {
+				shootingAnimation[shootingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				shootingAnimation[shootingNum].draw(getX() - radius, getY() - 14, size, size);
+			}
 
 
-	//idle shooting drawing
-	else if (shooting && !running) {
-		idleShoot.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		idleShoot.draw(getX() - radius, getY() - 14, size, size);
-	}
+			//idle shooting drawing
+			else if (shooting && !running) {
+				idleShoot.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				idleShoot.draw(getX() - radius, getY() - 14, size, size);
+			}
 
-	else if (!shooting && !running && shootingTimer.GetMilliseconds() < 1500 && !climbing) {
-		idleShoot.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		idleShoot.draw(getX() - radius, getY() - 14, size, size);
-	}
+			else if (!shooting && !running && shootingTimer.GetMilliseconds() < 1500 && !climbing) {
+				idleShoot.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				idleShoot.draw(getX() - radius, getY() - 14, size, size);
+			}
 
-	//jump drawing handler
-	else if (jumpState && !climbing) {
-		if (abs(getYVelocity()) > 0) {
-			jumpAnimation[jumpNum].draw(getX() - radius, getY() - 14, size, size);
-			if (ofGetFrameNum() % 25 == 0) {
-				if (jumpNum == jumpAnimation.size() - 1) {
-					jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-					jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 14, size, size);
+			//jump drawing handler
+			else if (jumpState && !climbing) {
+				if (abs(getYVelocity()) > 0) {
+					jumpAnimation[jumpNum].draw(getX() - radius, getY() - 14, size, size);
+					if (ofGetFrameNum() % 25 == 0) {
+						if (jumpNum == jumpAnimation.size() - 1) {
+							jumpAnimation[jumpAnimation.size() - 1].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+							jumpAnimation[jumpAnimation.size() - 1].draw(getX() - radius, getY() - 14, size, size);
+						}
+					}
+				}
+			}
+
+			else if (climbing) {
+				climbingAnimation[climbingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				climbingAnimation[climbingNum].draw(getX() - radius, getY() - 14, size, size);
+			}
+
+
+			else if (climbingPaused && ladder) {
+				climbingAnimation[climbingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+				climbingAnimation[climbingNum].draw(getX() - radius, getY() - 14, size, size);
+			}
+
+			//idle drawing handler
+			else {
+				if (idleNum == 1 && blink > .35) {
+					idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+					idleAnimation[0].draw(getX() - radius, getY() - 14, size, size);
+				}
+				else {
+					idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+					idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
 				}
 			}
 		}
+
+		//Draw bullets
+		shootingHandler->draw();
 	}
-
-	else if (climbing) {
-		climbingAnimation[climbingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		climbingAnimation[climbingNum].draw(getX() - radius, getY() - 14, size, size);
-	} 
-
-	else if (climbingPaused && ladder) {
-		climbingAnimation[climbingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-		climbingAnimation[climbingNum].draw(getX() - radius, getY() - 14, size, size);
-	}
-
-	//idle drawing handler
-	else {
-		if (idleNum == 1 && blink > .35) {
-			idleAnimation[0].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-			idleAnimation[0].draw(getX() - radius, getY() - 14, size, size);
-		}
-		else {
-			idleAnimation[idleNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-			idleAnimation[idleNum].draw(getX() - radius, getY() - 14, size, size);
-		}
-	}
-
-	//Draw bullets
-	shootingHandler->draw();
 	
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
@@ -393,7 +443,7 @@ void Player::controllerInput(char key){
 	
 
 
-	if (key == 'a' && !climbingPaused) {
+	if (key == 'a' && !climbingPaused) { 
 		shooting = true;
 		shootingTimer.Reset();
 		shootingHandler->setShooting(true);
@@ -636,6 +686,13 @@ void Player::idleHandler() {
 	}
 }
 
+void Player::spawnHandler() {
+	if (ofGetFrameNum() % 10 == 0) {
+		spawningNum++;
+		spawningNum = spawningNum % spawnAnimation.size();
+	}
+}
+
 
 int Player::getX()
 {
@@ -730,6 +787,8 @@ void Player::applyDamage(int dmg){
     health -= dmg;
     if(health <= 0){
         std::cout<<"Player died =("<<endl;
+		dead = true;
+		justDied = true;
     }
 }
 int Player::getHealth(){

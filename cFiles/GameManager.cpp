@@ -10,6 +10,7 @@ bool GameManager::go;
 bool GameManager::active;
 bool GameManager::paused;
 bool GameManager::onePlayer;
+b2Timer GameManager::spawnTimer;
 Menu* menu;
 GameManager::GameManager() {
 
@@ -20,7 +21,7 @@ void GameManager::setup()
 	active = false; 
 	paused = false; 
 	usingKeyboard = false;
-	go = false;
+	go = false; 
 	onePlayer = false;
 
 	//fonts
@@ -47,19 +48,20 @@ void GameManager::draw()
 	} 
 
 	ofSetColor(255);
+
 	//counter to begin game
 	drawGameCountDown();
 	
 	//draw menu
 	menu->draw();
 
-	//draw scores
-	handleScores();
+	//draw user interface
+	inGameUI();
 }
 
 void GameManager::update()
 {   
-	if (!active) {
+	if (!active && !MultiPlayerManager::keyboard) {
 		Controller::controllers[0]->update();
 		controllerInput(Controller::controllers[0]->getI());
 	}
@@ -99,7 +101,8 @@ void GameManager::controllerInput(char key) {
 				if (menu->selectionI->first == "one player") { 
 					beginGame.Reset();
 					onePlayer = true;
-					active = true;		
+					active = true;
+					spawnTimer.Reset();
 					
 				}
 				if (menu->selectionI->first == "two player") {
@@ -140,7 +143,7 @@ void GameManager::drawGameCountDown() {
 		} 
 }
 
-void GameManager::handleScores() { 
+void GameManager::inGameUI() { 
 	if (active) {
 		if (MultiPlayerManager::players.size() > 1) {
 			ofSetColor(255);
@@ -148,9 +151,14 @@ void GameManager::handleScores() {
 			scoreFont.drawString("P2  SCORE:   " + ofToString(MultiPlayerManager::players[1]->score), ofGetWidth() - 325, 100);
 		}
 		else {
-			scoreFont.drawString("SCORE:   " + ofToString(MultiPlayerManager::players[0]->score), ofGetWidth()/2 - 25, 100);
+			scoreFont.drawString("SCORE:   " + ofToString(MultiPlayerManager::players[0]->score), ofGetWidth() / 2 - 25, 100);
+			ofSetColor(0, 255, 0);
+			ofSetLineWidth(15);
+			ofDrawLine(ofVec2f(50, 50), ofVec2f(50*2 + MultiPlayerManager::players[0]->health*2, 50));
 		}
 	}
+	ofSetColor(255);
 }
+ 
 
 
