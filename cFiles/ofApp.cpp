@@ -224,7 +224,6 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
 				b_type = itr->second;
 			}
         
-        
         if(a_type == "p_bull" && b_type == "enemy"){
             Enemy* enemy = (Enemy*)e.b->GetBody()->GetUserData();
             enemy->applyDamage(100);

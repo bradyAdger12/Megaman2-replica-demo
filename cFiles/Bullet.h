@@ -15,6 +15,7 @@ public:
     
     void update();
     void draw();
+    void checkCollisons();
     int getX(), getY();
     double getX_(),getY_();
     Bullet();
@@ -27,8 +28,8 @@ private:
     double x_,y_,dx,dy;
     string tag;
     
-    shared_ptr<ofxBox2dCircle> bullCollider;
-    collider *ob; 
+//    shared_ptr<ofxBox2dCircle> bullCollider;
+//    collider *ob; 
 
     
 };

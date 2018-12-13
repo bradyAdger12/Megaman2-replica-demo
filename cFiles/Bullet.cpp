@@ -9,6 +9,7 @@
 #include "ofMain.h"
 #include "Bullet.h"
 #include "ofApp.h"
+#include "MultiPlayerManager.h"
 Bullet::Bullet(){
     
 }
@@ -25,9 +26,9 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
     this->tag = tag;
     
     //create collider
-    ob = new collider();
-    bullCollider = ob->Circle(x + radius /2, y + radius /2, radius/2, 0, 0, 0);
-    bullCollider->setData(this);
+//    ob = new collider();
+//    bullCollider = ob->Circle(x + radius /2, y + radius /2, radius/2, 0, 0, 0);
+//    bullCollider->setData(this);
     ofApp::collisionObjects.insert(make_pair(this, tag));
 }
 Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, vector<ofImage>images, string tag){
@@ -42,9 +43,9 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     //std::cout<<"Bullet Made"<<endl;
 
     //create collider
-    ob = new collider();
-    bullCollider = ob->Circle(x_ + radius /2,y_ + radius /2, radius/2, 0, 0, 0);
-    bullCollider->setData(this);
+//    ob = new collider();
+//    bullCollider = ob->Circle(x_ + radius /2,y_ + radius /2, radius/2, 0, 0, 0);
+//    bullCollider->setData(this);
     ofApp::collisionObjects.insert(make_pair(this, tag));
 }
 
@@ -56,19 +57,19 @@ void Bullet::update(){
     switch(dir){
         case 0:
             x -= speed;
-            bullCollider.get()->update();
-            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
+//            bullCollider.get()->update();
+//            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
             break;
         case 1:
             x += speed;
-            bullCollider.get()->update();
-            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
+//            bullCollider.get()->update();
+//            bullCollider.get()->setPosition(x + radius /2, y + radius /2);
             break;
         case 3: 
             x_ += dx;
             y_ += dy;
-            bullCollider.get()->update();
-            bullCollider.get()->setPosition(x_ + radius /2, y_ + radius/2);
+//            bullCollider.get()->update();
+//            bullCollider.get()->setPosition(x_ + radius /2, y_ + radius/2);
             break;
 //        default:
 //            break;
@@ -101,5 +102,14 @@ double Bullet::getX_() {
 
 double Bullet::getY_() {
     return y_;
+}
+void Bullet::checkCollisons(){
+    if(tag == "enemy"){
+        for(int i = 0; i<MultiPlayerManager::players.size(); i++){
+            double dist = sqrt(pow(MultiPlayerManager::players[i]->getX() - x,2) + pow(MultiPlayerManager::players[i]->getY() - y,2));
+        }
+    }else{
+        
+    }
 }
 

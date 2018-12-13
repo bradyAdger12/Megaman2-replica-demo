@@ -238,6 +238,7 @@ void Player::update()  {
 void Player::draw() 
 { 
 
+    
 	//if player dies
 	if (dead) { 
 		exit(0);
@@ -334,7 +335,7 @@ void Player::draw()
 		//Draw bullets
 		shootingHandler->draw();
 	}
-	
+    
 }
 //b = UP, c = DOWN, p = LEFT, a = RIGHT
 void Player::controllerInput(char key){ 
