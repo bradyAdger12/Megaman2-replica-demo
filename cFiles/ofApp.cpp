@@ -233,10 +233,10 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             enemy->applyDamage(100);
         }else if(a_type == "e_bull" && b_type == "player"){
             Player* player = (Player*)e.b->GetBody()->GetUserData();
-            player->applyDamage(25);
+            player->applyDamage(5);
         }else if(b_type == "e_bull" && a_type == "player" ){
             Player* player = (Player*)e.a->GetBody()->GetUserData();
-            player->applyDamage(25);
+            player->applyDamage(5);
         }
         
 //            std::cout << a_type << endl;

@@ -78,8 +78,8 @@ void Enemy::update(){ //Cycle animations in here
     enemyCollider.get()->setPosition(x, y - 15);
 }
 void Enemy::draw(){
-//    ofSetColor(0, 0, 0, 150);
-//    enemyCollider.get()->draw();
+    ofSetColor(0, 0, 0, 150);
+    enemyCollider.get()->draw();
     int index = patrol_count%patrol_anim.size();
     patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
     patrol_anim[index].draw(x-10,y-35, 20, 40);
