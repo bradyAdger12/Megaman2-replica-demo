@@ -437,6 +437,7 @@ void ofApp::placeEnemies(int count){
         e->setup();
         enemies.push_back(e);
     }
+    
 }
 
 

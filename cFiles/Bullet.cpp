@@ -104,9 +104,13 @@ double Bullet::getY_() {
     return y_;
 }
 void Bullet::checkCollisons(){
-    if(tag == "enemy"){
+    if(tag == "e_bull"){
         for(int i = 0; i<MultiPlayerManager::players.size(); i++){
             double dist = sqrt(pow(MultiPlayerManager::players[i]->getX() - x,2) + pow(MultiPlayerManager::players[i]->getY() - y,2));
+            
+            if(dist < 10){
+                MultiPlayerManager::players[i]->applyDamage(10);
+            }
         }
     }else{
         
