@@ -30,11 +30,11 @@ void Environment::update() {
 	
 
 	
-void Environment::draw() {
+void Environment::draw() {/*
         ofSetColor(0, 0, 0, 150);
         eCollider.get()->draw();
         ofSetColor(255, 0, 0);
-		ledgeId.drawString(ofToString(id), x, y + 5);
+		ledgeId.drawString(ofToString(id), x, y + 5);*/
 
 }
 

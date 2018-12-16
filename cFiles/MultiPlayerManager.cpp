@@ -22,12 +22,20 @@ void MultiPlayerManager::update(){
 		initialize = false;
 	}
     for(int i=0; i<players.size(); i ++){
-        if(players[i]->getHealth() <= 0){
-            players.erase(players.begin() + i);
-        }else{
-            players[i]->update();
+        if(players[i]->reset){
+			players[i]->playerCollider.get()->destroy();
+            players.erase(players.begin() + i); 	
         }
+		else{
+			players[i]->update();
+        }	
     }
+	if (players.size() == 1) {
+		if (players[0]->reset) {
+			GameManager::active = false;
+		}
+	}
+	
 }
 void MultiPlayerManager::draw(){
     for(int i=0; i<players.size(); i ++){
@@ -67,16 +75,15 @@ void MultiPlayerManager::assignPorts() {
         cout << "devicePort: " << availblePorts[i] << endl;
         //setup player and its controller. delete controller so that menu has access to port
         Player *p;
-        p = new Player(availblePorts[i], 150, 1150, isPlayerOne);
-        isPlayerOne = false;
-//        ofApp::collisionObjects.insert(make_pair(this, "player" + ofToString(i+1)));
+        p = new Player(availblePorts[i], 150 + (i*50), 1150, isPlayerOne, i+1);
+        isPlayerOne = false; 
         p->setup();
         players.push_back(p);
     }
         }else {
         Player *p; 
         //starting spawn
-        p = new Player("COM3", 150, 1150, isPlayerOne);
+        p = new Player("COM3", 150, 1150, isPlayerOne, 1);
 //        ofApp::collisionObjects.insert(make_pair(this, "player1"));
         p->setup();
         players.push_back(p);

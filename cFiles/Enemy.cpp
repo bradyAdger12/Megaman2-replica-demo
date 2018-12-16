@@ -20,22 +20,20 @@ Enemy::Enemy(double x, double y, double range, int dir, double speed, string pat
     this->frame = 0;
     this->patrol_count =0;
     this->health = 100;
-    this->hit = false;
-    ofApp::collisionObjects.insert(make_pair(this, "enemy"));
+    this->hit = false; 
     string file = "images/spider_bullet.png";
             ofImage bull;
             bull.load(file);
     bullet_anim.push_back(bull);
     //ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
-    shootingHandler = new ShootingHandler(this, 2, 8, 5.0, 4, bullet_anim);//Move to bottom of setup after animations are built.
-    
-    //create collider
-    ob = new collider();
-    enemyCollider = ob->Circle(x, y, 12, 35, 0, 1000);
-    enemyCollider->setData(this);
+    shootingHandler = new ShootingHandler(this, 2, 8, 3.0, 4, bullet_anim);//Move to bottom of setup after animations are built. 
+	
+   
 }
 void Enemy::setup(){
-    //Build Animation Vectors
+    //computer centers
+	centerX = x + (20/2);
+	centerY = y + (40/2) - 5;
     
     //load Patrol animation
     for (int i = 0; i < 4; i++) {
@@ -74,31 +72,32 @@ void Enemy::update(){ //Cycle animations in here
         frame ++;
         if(frame%10 ==0){
             patrol_count ++;
-        }
-        enemyCollider.get()->update();
-        enemyCollider.get()->setPosition(x, y - 15);
+        } 
     }
 }
-void Enemy::draw(){
-    ofSetColor(0, 0, 0, 150);
-    enemyCollider.get()->draw();
-    int index = patrol_count%patrol_anim.size();
-    patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
-    patrol_anim[index].draw(x-10,y-35, 20, 40);
-    shootingHandler->draw();
+void Enemy::draw(){ 
+	if (GameManager::go) {
+		int index = patrol_count % patrol_anim.size();
+		patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		patrol_anim[index].draw(x, y, 20, 40);
+		shootingHandler->draw();  
+		
+	}
 }
 void Enemy::patrol(){ //Move up and down.
     switch(dir){
         case 0: //up
             if(y > y_start - range){
-                //y -= speed;
+                y -= speed;
+				centerY -= speed;
             }else{
                 dir = 1;
             }
             break;
         case 1: //down
             if(y < y_start + range){
-                //y += speed;
+                y += speed;
+				centerY += speed;
             }else{
                 dir = 0;
             }
@@ -113,6 +112,12 @@ double Enemy::getX(){
 }
 double Enemy::getY(){
     return y;
+}
+double Enemy::getCX() {
+	return centerX;
+}
+double Enemy::getCY() {
+	return centerY;
 }
 int Enemy::getHealth(){
     return health;

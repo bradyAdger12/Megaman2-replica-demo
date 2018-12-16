@@ -24,12 +24,12 @@ public:
     void isHit(bool hit), die();
     Enemy(double x, double y, double range, int dir, double speed, string patrol_path, string hit_path, string bullet_path);
     void patrol(), applyDamage(int dmg);
-    double getX(), getY();
+    double getX(), getY(), getCX(), getCY();
     int getHealth();
     
 private:
     int dir, health, frame, patrol_count;
-    double x,y,range,speed;
+    double x,y,range,speed,centerX,centerY;
     double y_start;
     bool hit;
     vector<ofImage> patrol_anim;

@@ -36,14 +36,21 @@ void Item::setup(){
 }
 void Item::update(){  
 	 
-	if (distance(MultiPlayerManager::players[0]->getX(), MultiPlayerManager::players[0]->getY()) <= MultiPlayerManager::players[0]->getRadius()) {
-		contact = true;
-		if (type == "coin") {
-			MultiPlayerManager::players[0]->score += 250;
+	if (MultiPlayerManager::players.size() == 1) {
+		if (distance(MultiPlayerManager::players[0]->getX(), MultiPlayerManager::players[0]->getY()) <= MultiPlayerManager::players[0]->getRadius()) {
+			contact = true;
+			if (type == "coin") {
+				MultiPlayerManager::players[0]->score += 250;
+			}
 		}
-	}
-
-	else if (MultiPlayerManager::players.size() > 1) {
+	} 
+	if (MultiPlayerManager::players.size() > 1) {
+		if (distance(MultiPlayerManager::players[0]->getX(), MultiPlayerManager::players[0]->getY()) <= MultiPlayerManager::players[0]->getRadius()) {
+			contact = true;
+			if (type == "coin") {
+				MultiPlayerManager::players[0]->score += 250;
+			}
+		}
 		if (distance(MultiPlayerManager::players[1]->getX(), MultiPlayerManager::players[1]->getY()) <= MultiPlayerManager::players[1]->getRadius()) {
 			contact = true;
 			if (type == "coin") {
@@ -51,15 +58,13 @@ void Item::update(){
 			}
 		}
 	}
-	else {
-		contact = false;
+	
 		updateAnimation(7, coinAnimation);
-	}
+	
 }
 void Item::draw() { 
 		ofSetColor(255); 
-		coinAnimation[coinNum].draw(x,y,size,size);
-		  
+		coinAnimation[coinNum].draw(x,y,size,size);		  
 } 
   
 int Item::getX(){

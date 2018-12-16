@@ -2,19 +2,18 @@
 #include "Player.h" 
 #include "Controller.h"
 #include "ofApp.h"
-#include "GameManager.h"   
-
-
-Player::Player(string portName, int x, int y, bool playerOne){
+#include "GameManager.h"     
+Player::Player(string portName, int x, int y, bool playerOne, int id){
 	this->portName = portName;
 	this->playerOne = playerOne;
+	this->id = id;
 	this->x = x;
 	this->y = y;
     this->health = 100;
 	//playerList.push_back(this);
     ofApp::collisionObjects.insert(make_pair(this, "player"));
 	playerList.push_back(this);
-    std::cout<<"Player Inited"<<endl;
+    std::cout<<"Player Inited with ID " << id <<endl; 
 }
 
 void Player::setup()
@@ -33,6 +32,10 @@ void Player::setup()
 	dead = false;
 	justDied = false;
 	spawning = true;
+	reset = false;
+	win = false;
+	justWon = false;
+	canJump = true;
 	
 	//setup player attributes
 	score = 0; //player score
@@ -41,17 +44,20 @@ void Player::setup()
 	jumpCount = 0; //used to keep track of double jump
 	runningNum = 0;  //used to index running sprites
 	idleNum = 0;  //index idle sprites
+	dyingNum = 0; //index dying sprites
 	jumpNum = 0;  //index jump sprites
 	spawningNum = 0; //spawn sprites
 	climbingNum = 0; //index climbing sprites
 	shootingNum = 0; //index shhoting sprites
 	blink = 0;    //random between 0 and 1
-	radius = 11;  //radius of circle collider
-	jumpForce = 0; 
+	radius = 11;  //radius of circle collider 
 	size = radius * 2.4;  //size of character image is based of size of collider 
 
 	//pause logic
 	pauseCount = 0;
+
+	//sounds
+	playerDeath.load("sounds/deathSound.mp3"); 
 
 	//create playerCollider 
 	ob = new collider();
@@ -66,15 +72,15 @@ void Player::setup()
 
 	//load jumping animation
 	for (int i = 1; i < 2; i++) {
-		string file = "images/megamanJumping/jump" + ofToString(i) + ".png";
+		string file = "images/megaman" + ofToString(id) + "Jumping/jump" + ofToString(i) + ".png";
 		ofImage jump;
 		jump.load(file);
-		jumpAnimation.push_back(jump); 
+		jumpAnimation.push_back(jump);
 	}
 
 	//load shooting animation
 	for (int i = 2; i < 5; i++) {
-		string file = "images/megamanShooting/shoot" + ofToString(i) + ".png";
+		string file = "images/megaman" + ofToString(id) + "Shooting/shoot" + ofToString(i) + ".png";
 		ofImage shoot;
 		shoot.load(file);
 		shoot.mirror(false, true);
@@ -83,51 +89,58 @@ void Player::setup()
 
 	//spawn animation 
 	for (int i = 1; i < 4; i++) {
-		string file = "images/megamanSpawning/spawn" + ofToString(i) + ".png";
+		string file = "images/megaman" + ofToString(id) + "Spawning/spawn" + ofToString(i) + ".png";
 		ofImage spawn;
-		spawn.load(file); 
+		spawn.load(file);
 		spawnAnimation.push_back(spawn);
 	}
-	 
+
 	//load idle animation
 	for (int i = 1; i < 4; i++) {
-		string file = "images/megamanIdle/idle" + ofToString(i) + ".png";
-		ofImage idle; 
+		string file = "images/megaman" + ofToString(id) + "Idle/idle" + ofToString(i) + ".png";
+		ofImage idle;
 		idle.load(file);
 		idleAnimation.push_back(idle);
 	}
 
 	//load climbing animation 
 	for (int i = 1; i < 3; i++) {
-		string file = "images/megamanClimbing/climbing" + ofToString(i) + ".png";
+		string file = "images/megaman" + ofToString(id) + "Climbing/climbing" + ofToString(i) + ".png";
 		ofImage climb;
 		climb.load(file);
 		climbingAnimation.push_back(climb);
 	}
 
+	//load dying animation 
+	for (int i = 1; i < 6; i++) {
+		string file = "images/megamanDying/death" + ofToString(i) + ".png";
+		ofImage die;
+		die.load(file);
+		dyingAnimation.push_back(die);
+	}
+
 	//load running animation
 	for (int i = 1; i < 4; i++) {
-		string file = "images/megamanRunning/running" + ofToString(i) + ".png";
+		string file = "images/megaman" + ofToString(id) + "Running/running" + ofToString(i) + ".png";
 		ofImage runner;
 		runner.load(file);
 		runningAnimation.push_back(runner);
 	}
-    //load Bullet animation
-    for (int i = 1; i < 4; i++) {
-        string file = "images/megamanBullet/mm_shoot_" + ofToString(i) + ".png";
-        ofImage bull;
-        bull.load(file);
-        bulletAnimation.push_back(bull);
-    }
+	//load Bullet animation
+	for (int i = 1; i < 4; i++) {
+		string file = "images/megamanBullet/mm_shoot_" + ofToString(i) + ".png";
+		ofImage bull;
+		bull.load(file);
+		bulletAnimation.push_back(bull);
+	}
 
 	//idle shoot animation
-	idleShoot.load("images/megamanShooting/shoot1.png");
+	idleShoot.load("images/megaman" + ofToString(id) + "Shooting/shoot1.png");
 	idleShoot.mirror(false, true);
 
-    //ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
+	//ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
 	shootingHandler = new ShootingHandler(this, 3, 25, 0.2, 8, bulletAnimation);
 	playerCollider->setData(this);
-
 }
 //********************** ITEM LOGIC **********************************************
 int Player::getX_Slot(){
@@ -144,15 +157,38 @@ int Player::getY_Slot(){
 
 void Player::update()  {  
 
-
-	//players dies
-	if (dead && justDied) {	
-		playerCollider.get()->addForce(ofVec2f(ofRandom(-2, 2), 300), -6);
-		justDied = false;
-		playerCollider.get()->body->SetActive(false);
+	if (getY() > 1400) {
+		applyDamage(100);
 	}
 
-	
+	if (justDied) {
+		deathTimer.Reset();
+		playerDeath.play(); 
+		cout << "player death music" << endl;
+		justDied = false;
+	}
+
+	if (dead && deathTimer.GetMilliseconds() > 3500) { 
+		reset = true;
+		delete controller;
+	}
+
+	if (!justWon && win) {
+		winTimer.Reset();
+		 
+		justWon = true;
+	}
+
+	if (win && winTimer.GetMilliseconds() >= 6000) {   
+		for (int i = 0; i < MultiPlayerManager::players.size(); i++) {
+			MultiPlayerManager::players[i]->health = 0;
+			MultiPlayerManager::players[i]->reset = true;
+		}
+	}
+
+
+	//determine if player made it to the end
+	isWin();
 
 
 	//correct players speed if going too fast
@@ -195,7 +231,7 @@ void Player::update()  {
 		playerCollider.get()->update();
 
 		//spawn handler
-		if (!GameManager::go && GameManager::spawnTimer.GetMilliseconds() < 600) {
+		if (!GameManager::go && GameManager::spawnTimer.GetMilliseconds() < 500) {
 			spawnHandler();
 		}
 
@@ -232,6 +268,10 @@ void Player::update()  {
 		}
 
 	}
+
+	else {
+		dyingHandler();
+	}
  
 }
 
@@ -240,11 +280,13 @@ void Player::draw()
 
     
 	//if player dies
-	if (dead) { 
-		exit(0);
+	if (dead && deathTimer.GetMilliseconds() < 1000) {  
+		setVelocity(0, 0);
+		dyingAnimation[dyingNum].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+		dyingAnimation[dyingNum].draw(getX() - radius*2, getY() - 14 - radius, size*2, size*2);
 	}
 
-	else {
+	if(!dead) { 
 
 		//set back to white 
 		ofSetColor(255);
@@ -366,8 +408,6 @@ void Player::controllerInput(char key){
 		break;
 	}
 
-
-
 	case 'b':
 		playerCollider.get()->body->SetActive(true);
 		if (playerOne) {
@@ -432,13 +472,14 @@ void Player::controllerInput(char key){
 
 		//jump
 	case 'c':
-		if (!inAir && !ladder) {
+		if (!inAir) {
 			jumpNum = 0;
-			playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-			jumpState = true;
-			cout << getYVelocity() << endl;
+			if (getYVelocity() != 0) {
+				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+			}
+			jumpState = true; 	
 		}
-		break;
+		break; 
 	}
 
 	
@@ -656,11 +697,12 @@ void Player::climbingHandler() {
 }
 
 
+
 void Player::jumpHandler() {
 
 	//if in the air 
 	if (abs(getYVelocity()) > 0) {
-		inAir = true;
+		inAir = true; 
 		if (ofGetFrameNum() % 25 / 2 == 0) {
 			if (jumpNum != jumpAnimation.size() - 1) {
 				jumpNum++;
@@ -691,6 +733,13 @@ void Player::spawnHandler() {
 	if (ofGetFrameNum() % 10 == 0) {
 		spawningNum++;
 		spawningNum = spawningNum % spawnAnimation.size();
+	}
+}
+
+void Player::dyingHandler() {
+	if (ofGetFrameNum() % 12 == 0) {
+		dyingNum++;
+		dyingNum = dyingNum % dyingAnimation.size();
 	}
 }
 
@@ -786,13 +835,20 @@ void Player::getLadderSpecs(Environment *e) {
 }
 void Player::applyDamage(int dmg){
     health -= dmg;
-    if(health <= 0){
+    if((health <= 0) && !dead){
         std::cout<<"Player died =("<<endl;
-		dead = true;
+		dead = true; 
 		justDied = true;
     }
 }
+
 int Player::getHealth(){
     return health;
+}
+
+void Player::isWin() {
+	if (getX() - getRadius() >= 4108) { 
+		win = true; 
+	} 
 }
 

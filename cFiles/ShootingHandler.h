@@ -28,9 +28,13 @@ public:
     ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images);
     ShootingHandler(Enemy* enemy, int speed, int damage, float fireRate, int size, vector<ofImage> images);
 
+
+	void checkCollisions();
+
+	
     
 private:
-    int speed, damage, size;
+    int speed, damage, size, playerIndex;
     float deltaTime,lastTime,currentTime,fireRate;
     Player* player;
     Enemy* enemy;
@@ -41,7 +45,7 @@ private:
     vector<ofImage> images;
     vector<Bullet *> bullets;
     vector<Bullet *>::iterator bull;
-    vector<int> indexesToDelete;
+	vector<int> indexesToDelete;
     bool isBullets, isShooting, isPlayer;
     vector<double> player_XY;
 };

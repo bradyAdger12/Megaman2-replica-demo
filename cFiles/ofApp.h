@@ -33,34 +33,48 @@ class ofApp : public ofBaseApp{
 		void contactEnd(ofxBox2dContactArgs &e);
 
 		vector <shared_ptr<ofxBox2dCircle>> circles;
+
+		//images
 		ofImage background;
 		ofImage menuBackground;
 		ofImage soccerBall;
 		ofImage block;  
-		ofSoundPlayer TitleScreenMusic;
-		ofSoundPlayer inGameSound;
-		static ofxBox2d world;   
+
+		//camera
 		ofEasyCam camera;
-		static map<void*, string> collisionObjects;
-		ifstream input;
-		ifstream badLedges;
-		vector<int> itemsToDelete; 
-		ofSoundPlayer coinSound; 
 		void handleCamera();
-		void deleteItems();
+
+		//miscellaneous
+		static map<void*, string> collisionObjects;
 		static vector<Environment*> eList;
 		map<void*, string>::iterator itr;
-		MultiPlayerManager *mpm;
-		
+		static MultiPlayerManager *mpm;
+		static ofxBox2d world;
 
+		//items
+		vector<int> itemsToDelete;
+		ofSoundPlayer coinSound;
+		void deleteItems();
+		static vector<Item*> items;
+ 
+		//enemy 
+        int enemyCount;
+        static vector<Enemy*> enemies;
+        static vector<int> enemiesToDelete;
+		static bool spawnEnemies;
     
-	static vector<Item*> items;
-    
-    int enemyCount;
-    vector<Enemy*> enemies;
-    static vector<int> enemiesToDelete;
-    
-    void spawnRandomItem();
-    double distance(int x1,int x2,int y1,int y2);   
+		//items
+        void spawnRandomItem();
+        double distance(int x1,int x2,int y1,int y2);   
+
+		//environment
+		int x, y, w, h, id;
+		int startingX, startingY;
+		int cameraY, yChange;
+		int ledgeIndex;
+		vector<int> badId;
+        vector<int> takenId; 
+		ifstream input;
+		ifstream badLedges;
 
 };

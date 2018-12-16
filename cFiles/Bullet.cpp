@@ -23,7 +23,7 @@ Bullet::Bullet(int x, int y, int speed, int radius, int dir, vector<ofImage>imag
     this->radius = radius;
     this->dir = dir;
     this->images = images;
-    this->tag = tag;
+    this->tag = tag; 
     
     //create collider
 //    ob = new collider();
@@ -35,11 +35,11 @@ Bullet::Bullet(double x_, double y_, double dx,double dy, int radius, int dir, v
     this->x_ = x_;
     this->y_ = y_;
     this->dx = dx;
-    this->dy = dy;
+    this->dy = dy; 
     this->radius = radius;
     this->dir = dir;
     this->images = images;
-    this->tag = tag;
+    this->tag = tag; 
     //std::cout<<"Bullet Made"<<endl;
 
     //create collider
@@ -74,6 +74,8 @@ void Bullet::update(){
 //        default:
 //            break;
     }
+
+	checkCollisons();
 }
 void Bullet::draw(){
     switch(dir){
@@ -104,9 +106,12 @@ double Bullet::getY_() {
     return y_;
 }
 void Bullet::checkCollisons(){
-    if(tag == "enemy"){
+    if(tag == "e_bull"){ 
         for(int i = 0; i<MultiPlayerManager::players.size(); i++){
-            double dist = sqrt(pow(MultiPlayerManager::players[i]->getX() - x,2) + pow(MultiPlayerManager::players[i]->getY() - y,2));
+            double dist = sqrt(pow(MultiPlayerManager::players[i]->getX() - x_,2) + pow(MultiPlayerManager::players[i]->getY() - y_,2));
+			if (dist <= MultiPlayerManager::players[i]->getRadius()) { 
+				cout << "player hit" << endl; 
+			}
         }
     }else{
         

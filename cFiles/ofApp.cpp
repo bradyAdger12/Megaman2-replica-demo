@@ -7,19 +7,16 @@
 #include "Enemy.h"
 shared_ptr<ofxBox2dRect> ground;
 vector<shared_ptr<ofxBox2dBaseShape>> collider::objectList;
-//vector<Player*> GameManager::playerList;
-//Player *p1;
-//Player *p2;
+vector<Enemy*> ofApp::enemies;
+bool ofApp::spawnEnemies;
+MultiPlayerManager* ofApp::mpm;
 Enemy *test_enemy;
 ofColor color;
 GameManager *gm;
-int x, y, w, h, id;
-int startingX, startingY;
-int cameraY, yChange;
-int ledgeIndex;
 string s;
 vector<Environment*> ofApp::eList;
-vector<Item*> ofApp::items;
+vector<Item*> ofApp::items; 
+
 
 //--------------------------------------------------------------
 void ofApp::setup(){ 
@@ -28,29 +25,20 @@ void ofApp::setup(){
 	//world setup  
 	background.getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	background.load("images/bombManStage2.png"); 
-	menuBackground.load("images/titleBackground.jpg");
+	menuBackground.load("images/titleScreen.jpg");
 	world.init(); 
 	world.enableEvents();
 	world.setFPS(30.0); 
 	world.setGravity(0, 7);  
 
-	//sounds
-	TitleScreenMusic.load("sounds/TitleScreen.mp3");
-	TitleScreenMusic.setLoop(true);
-	inGameSound.load("sounds/inGame.mp3");
-	inGameSound.setLoop(true);
-
 	//GameManager
 	gm = new GameManager();
 	gm->setup();
 
-
 	//character Management
 	mpm = new MultiPlayerManager(false);
 	mpm->setup();
-    
-    enemyCount = 15;
-    placeEnemies(enemyCount);
+
     
 	//color
 	color.set(255);
@@ -79,6 +67,11 @@ void ofApp::setup(){
 	}
 	input.close();
 
+	//make enemies
+	enemyCount = 30;
+	spawnEnemies = true;
+	
+
 	//spawn items
 	spawnRandomItem();
 
@@ -92,31 +85,19 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){ 
 	
-
-	 
-	
 	handleCamera();
 
 	//game UI
 	gm->update();
 
-	if (!gm->active && !gm->paused) {
-		if (!TitleScreenMusic.isPlaying()) {
-			TitleScreenMusic.play(); 
-		}
-	}
-
 	if (gm->active) {
 		 
-
-		//in game sound
-		if (!inGameSound.isPlaying()) {
-			inGameSound.play();
+		//spawn enemies
+		if (spawnEnemies) {
+			placeEnemies(enemyCount);
+			spawnEnemies = false;
 		}
 
-		//character management
-		mpm->update();
-        
         //enemy update
         for(int i =0; i< enemies.size(); i++){
             if(enemies[i]->getHealth() <= 0){ //remove dead enemies
@@ -142,10 +123,7 @@ void ofApp::update(){
  
 		
 
-		//stop title music
-		if (TitleScreenMusic.isPlaying()) {
-			TitleScreenMusic.stop();
-		}
+		
 
 		//update world
 		world.update();
@@ -155,13 +133,18 @@ void ofApp::update(){
 		for (int i = 0; i < eList.size(); i++) {
 			eList[i]->update();
 		}	 
+
+		//character management
+		mpm->update();
 	}	 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	//title background 
-	menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+	if (!gm->active) {
+		menuBackground.draw(0, 0, ofGetWidth(), ofGetHeight());
+	}
 	camera.begin();
 
 	if (gm->active || gm->paused) { 
@@ -263,8 +246,7 @@ void ofApp::spawnRandomItem() {
     ofstream takenLedges;
     takenLedges.open(ofToDataPath("environment/takenLedges.txt").c_str());
     int bad;
-    vector<int> badId;
-    vector<int> takenId;
+    
     while (badLedges >> bad) {
         badId.push_back(bad);
     }
@@ -282,7 +264,7 @@ void ofApp::spawnRandomItem() {
             e = eList[ledgeIndex];
         }
         else {
-            if (e->getTag() != "ladder") {
+            if (e->getTag() != "ladder" && e->getTag() != "spikes") {
                 //takenLedges << ofToString(e->getId()) << endl;
                 takenId.push_back(e->getId());
                 int ledgeX = e->getX();
@@ -295,8 +277,7 @@ void ofApp::spawnRandomItem() {
             }
         }
     }
-    
-    badId.clear();
+   
     takenId.clear();
     takenLedges.close();
     badLedges.close();
@@ -335,7 +316,7 @@ void ofApp::handleCamera() {
 			if (MultiPlayerManager::players[0]->getY() < 990) {
 				MultiPlayerManager::players[i]->jumpForce = 1.8;
 				MultiPlayerManager::players[i + 1]->jumpForce = 1.8;
-				camera.setPosition(ofVec3f((MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i + 1]->getX()) / 2, startingY - 250, 180));
+				camera.setPosition(ofVec3f((MultiPlayerManager::players[i]->getX() + MultiPlayerManager::players[i + 1]->getX()) / 2, startingY - 230, 180));
 			}
 			if (MultiPlayerManager::players[0]->getY() < 740) {
 				MultiPlayerManager::players[i]->jumpForce = 2.4;
@@ -381,62 +362,77 @@ void ofApp::handleCamera() {
 
 	else {
 
-		if (MultiPlayerManager::players[0]->getY() > 990) {
-			MultiPlayerManager::players[0]->jumpForce = 1.3; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, startingY, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 990) {
-			MultiPlayerManager::players[0]->jumpForce = 1.8; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 120, startingY - 250, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 740) {
-			MultiPlayerManager::players[0]->jumpForce = 2.4; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 465, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 518) {
-			MultiPlayerManager::players[0]->jumpForce = 3; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 120, startingY - 700, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 280) {
-			MultiPlayerManager::players[0]->jumpForce = 7; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 940, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 200) {
-			MultiPlayerManager::players[0]->jumpForce = 9; 
-		}
-		if (MultiPlayerManager::players[0]->getY() < 88) {
-			MultiPlayerManager::players[0]->jumpForce = 20; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 990, 180));
-		}
-		if (MultiPlayerManager::players[0]->getY() < 45) {
-			MultiPlayerManager::players[0]->jumpForce = 30; 
-			camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 990, 180));
-		}
-		else if (camera.getX() >= 4205) {
-			MultiPlayerManager::players[0]->jumpForce = 7; 
-			camera.setPosition(ofVec3f(4205, startingY - 940, 180));
-		}
-		if (camera.getX() <= 160) { 
-			camera.setPosition(ofVec3f(160, startingY, 180));
+		if (MultiPlayerManager::players.size() > 0) {
+
+			if (MultiPlayerManager::players[0]->getY() > 990) {//
+				MultiPlayerManager::players[0]->jumpForce = 1.3;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90, startingY, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 990) {
+				MultiPlayerManager::players[0]->jumpForce = 1.8;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 120, startingY - 230, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 740) {
+				MultiPlayerManager::players[0]->jumpForce = 2.4;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 465, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 518) {
+				MultiPlayerManager::players[0]->jumpForce = 3;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 120, startingY - 700, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 280) {
+				MultiPlayerManager::players[0]->jumpForce = 7;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 940, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 200) {
+				MultiPlayerManager::players[0]->jumpForce = 9;
+			}
+			if (MultiPlayerManager::players[0]->getY() < 88) {
+				MultiPlayerManager::players[0]->jumpForce = 20;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 990, 180));
+			}
+			if (MultiPlayerManager::players[0]->getY() < 45) {
+				MultiPlayerManager::players[0]->jumpForce = 30;
+				camera.setPosition(ofVec3f(MultiPlayerManager::players[0]->getX() + 90 - 20, startingY - 990, 180));
+			}
+			else if (camera.getX() >= 4205) {
+				MultiPlayerManager::players[0]->jumpForce = 7;
+				camera.setPosition(ofVec3f(4205, startingY - 940, 180));
+			}
+			if (camera.getX() <= 160) {
+				camera.setPosition(ofVec3f(160, startingY, 180));
+			}
 		}
 	}
 }
 
 //generate enemies accross the level
 void ofApp::placeEnemies(int count){
-    for(int i = 0; i<count;i++){
-        //Enemy::Enemy(int x, int y, int range, int dir, int speed, string patrol_path, string hit_path, string bullet_path){
-        
-        //make randoms for constructor
-        double x = 200.0 + i * 75.0;
-        double y = 1150.0 - i * 20.0;
-        double patrolDist = 100.0;
-        double speed = 0.5;
-        
-        Enemy* e = new Enemy(x ,y,patrolDist,0,0.2,"images/spider/spider_","images/megamanJumping/jump","images/spider_bullet");
-        e->setup();
-        enemies.push_back(e);
-    }
+	for (int i = 0; i < count; i++) {
+		    Environment *e; 
+			int ledgeIndex = ofRandom(0, eList.size());
+			e = eList[ledgeIndex];
+			if (find(badId.begin(), badId.end(), e->getId()) != badId.end()) {
+				int ledgeIndex = ofRandom(0, eList.size());
+				e = eList[ledgeIndex];
+			}
+			else if (find(takenId.begin(), takenId.end(), e->getId()) != takenId.end()) {
+				int ledgeIndex = ofRandom(0, eList.size());
+				e = eList[ledgeIndex];
+			}
+			else { 
+				if (e->tag != "ladder") { 
+					takenId.push_back(e->getId());
+					int ledgeX = e->getX();
+					int ledgeY = e->getY() - (e->getHeight() / 2);
+					int randLoc = ofRandom(ledgeX - e->getWidth() / 2, ledgeX + e->getWidth() / 2); 
+					Enemy* e = new Enemy(ledgeX, ledgeY - (ofRandom(0, 50)), 100, 0, 0.5, "images/spider/spider_", "images/megamanJumping/jump", "images/spider_bullet");
+					e->setup();
+					enemies.push_back(e);
+				}
+		}
+	}
+	badId.clear();
 }
 
 

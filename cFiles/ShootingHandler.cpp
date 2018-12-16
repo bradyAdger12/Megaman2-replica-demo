@@ -8,7 +8,8 @@
 #include "ShootingHandler.h"
 #include "MultiPlayerManager.h"
 #include "math.h"
-#include "Enemy.h"
+#include "Enemy.h" 
+#include "ofApp.h"
 ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fireRate, int size,vector<ofImage> images){
     this->player = player;
     this->speed = speed;
@@ -18,6 +19,7 @@ ShootingHandler::ShootingHandler(Player* player, int speed, int damage, float fi
     this->images = images;
     isPlayer = true;
     isShooting = false;
+	playerIndex++;
 	//load blaster sound
 	blaster.load("sounds/Blaster.wav");
 }
@@ -33,6 +35,11 @@ ShootingHandler::ShootingHandler(Enemy* enemy, int speed, int damage, float fire
     isShooting = false; 
 }
 void ShootingHandler::update(){
+
+	//check for enemy/player bullet collisions
+	checkCollisions();
+
+
     currentTime = ofGetElapsedTimef();
     deltaTime += currentTime - lastTime;
 
@@ -64,8 +71,8 @@ void ShootingHandler::shootingHandler(){
                 bullets.push_back(new Bullet(player->getX() - player->getRadius(), player->getY() - 6, speed, size, player->getOrientation(), images, "p_bull"));
             }
         
-        }else{ //Shoot bullet in path of closest player, if a player is in range
-            bullets.push_back(new Bullet(enemy->getX(),enemy->getY(), player_XY[0], player_XY[1],size, 3, images, "e_bull"));
+        }else{ //Shoot bullet in path of closest player, if a player is in range 
+			bullets.push_back(new Bullet(enemy->getX(), enemy->getY(), player_XY[0], player_XY[1], size, 3, images, "e_bull"));
             //std::cout<<"enemy shooting"<<endl;
         }
     }
@@ -90,10 +97,11 @@ void ShootingHandler::shootingHandler(){
         }
         deleteBullets();
     }
+
 }
 void ShootingHandler::deleteBullets(){
     for(int i = 0; i < indexesToDelete.size(); i++){
-        delete bullets[indexesToDelete[i]];//
+        delete bullets[indexesToDelete[i]];
         bullets.erase(bullets.begin() + indexesToDelete[i]);
     }
     indexesToDelete.clear();
@@ -136,4 +144,49 @@ void ShootingHandler::getClosestPlayer(){
         player_XY.push_back((dy_/mag) * speed * -1);
     }
 }
+
+void ShootingHandler::checkCollisions() {
+	bool playerHit = false;
+	bool enemyHit = false;
+	for (int i = 0; i < bullets.size(); i++) { 
+			double dist = sqrt(pow(MultiPlayerManager::players[0]->getX() - bullets[i]->getX_(), 2) + pow(MultiPlayerManager::players[0]->getY() - bullets[i]->getY_(), 2));
+			if (MultiPlayerManager::players.size() > 1) {
+			     double distp2 = sqrt(pow(MultiPlayerManager::players[1]->getX() - bullets[i]->getX_(), 2) + pow(MultiPlayerManager::players[1]->getY() - bullets[i]->getY_(), 2));
+				 if (distp2 <= MultiPlayerManager::players[1]->getRadius() && !playerHit) {
+					playerHit = true;
+					MultiPlayerManager::players[1]->applyDamage(20);
+					indexesToDelete.push_back(i);
+				 }
+			} 
+			if (dist <= MultiPlayerManager::players[0]->getRadius() && !playerHit) {
+				playerHit = true;
+				MultiPlayerManager::players[0]->applyDamage(20);
+				indexesToDelete.push_back(i);
+			}
+			
+
+		
+
+		for (int e = 0; e < ofApp::enemies.size(); e++) {
+			double dist2 = sqrt(pow(ofApp::enemies[e]->getCX() - bullets[i]->getX(), 2) + pow(ofApp::enemies[e]->getCY() - bullets[i]->getY(), 2));
+			if (dist2 <= 10 && !enemyHit) {
+				enemyHit = true;
+				ofApp::enemies[e]->applyDamage(100);
+				indexesToDelete.push_back(i);
+				if (MultiPlayerManager::players.size() == 1) { 
+					MultiPlayerManager::players[0]->score += 500;
+				}
+				else {
+					if (player->playerOne) {
+						MultiPlayerManager::players[0]->score += 500;
+					}
+					else {
+						MultiPlayerManager::players[1]->score += 500;
+					}
+				}
+			}
+		}
+	}
+}
+
 

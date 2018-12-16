@@ -31,4 +31,14 @@ private:
 
 	//score logic
 	void inGameUI();
+	void resetGame();
+
+	//health
+	ofColor critical;
+	ofColor healthy;
+
+	//sounds
+	ofSoundPlayer victory;
+	ofSoundPlayer TitleScreenMusic;
+	ofSoundPlayer inGameSound;
 };

@@ -18,21 +18,23 @@ class Player {
 public:
 
 	//constructor
-	Player(string portNumber, int x, int y, bool playerOne);
+	Player(string portNumber, int x, int y, bool playerOne, int id);
 
 
 	//var and methods
-	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, spawningNum, radius, size, pauseCount, getOrientation(), getHealth(), score;
-	int x, y, health;
+	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, spawningNum, dyingNum, radius, size, pauseCount, getOrientation(), getHealth(), score;
+	int x, y, health, id;
 	b2Timer shootingTimer;
 	string portName;
 	ofVec2f getPosition();
 	float getXVelocity(), getYVelocity(), jumpForce, blink, speedMultiplier, jumpCount;
 	double speed;
-	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder, dead, justDied, spawning;
+	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder, dead, justDied, spawning, win, justWon;
+	bool reset, canJump;
 	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
+	void isWin();
 	void setup();
 	void update();
 	void draw();
@@ -45,6 +47,7 @@ public:
 	void spawnHandler();
 	void climbingHandler();
 	void shootingAnimationHandler();
+	void dyingHandler();
 	void orientPlayer();
     void idleHandler();
 	void keyPressed(int key);
@@ -59,6 +62,9 @@ public:
 	Environment *eLadder;  
 	void getLadderSpecs(Environment *e);
 	void findClosestLadder();
+
+	//sounds
+	ofSoundPlayer playerDeath;
 	
 
     //Item vars and methods
@@ -84,10 +90,15 @@ public:
 	vector<ofImage> shootingAnimation;
 	vector<ofImage> bulletAnimation;
 	vector<ofImage> spawnAnimation;
+	vector<ofImage> dyingAnimation;
 	ofImage idleShoot;
 
 	shared_ptr<ofxBox2dCircle> playerCollider; 
 	collider *ob; 
+	
+	//timers
+	b2Timer deathTimer;
+	b2Timer winTimer;
     
 };
 #endif /* Player_h */
