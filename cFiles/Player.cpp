@@ -52,7 +52,7 @@ void Player::setup()
 	blink = 0;    //random between 0 and 1
 	radius = 11;  //radius of circle collider 
 	size = radius * 2.4;  //size of character image is based of size of collider 
-
+    lastJumpFrame = 0;
 	//pause logic
 	pauseCount = 0;
 
@@ -157,6 +157,8 @@ int Player::getY_Slot(){
 
 void Player::update()  {  
 
+    playerCollider.get()->setRotation(0);
+    
 	if (getY() > 1400) {
 		applyDamage(100);
 	}
@@ -408,17 +410,17 @@ void Player::controllerInput(char key){
 		break;
 	}
 
-	case 'b':
+        case 'b':{
 		playerCollider.get()->body->SetActive(true);
 		if (playerOne) {
 			GameManager::active = false;
 			GameManager::paused = true;
 		}
 		break;
-
+        }
 
 		//used for climbing
-	case 'u':
+        case 'u':{
 		if (ladder && canClimb) {
 			jumpState = false;
 			randClimbPic = true;
@@ -430,8 +432,9 @@ void Player::controllerInput(char key){
 			}
 		}
 		break;
-
-	case 'U':
+        }
+            
+        case 'U':{
 		if (ladder) {
 			climbing = false;
 			climbingPaused = true;
@@ -442,10 +445,10 @@ void Player::controllerInput(char key){
 			}
 			playerCollider.get()->body->SetActive(false);
 		}
-
 		break;
+        }
 
-	case 'd':
+        case 'd':{
 		if (ladder && canClimb) {
 			jumpState = false;
 			randClimbPic = true;
@@ -456,8 +459,9 @@ void Player::controllerInput(char key){
 			}
 		}
 		break;
+        }
 
-	case 'D':
+        case 'D':{
 		if (ladder) {
 			climbing = false;
 			climbingPaused = true;
@@ -469,17 +473,37 @@ void Player::controllerInput(char key){
 			playerCollider.get()->body->SetActive(false);
 		}
 		break;
-
+        }
 		//jump
-	case 'c':
-		if (!inAir) {
-			jumpNum = 0;
-			if (getYVelocity() != 0) {
-				playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
-			}
-			jumpState = true; 	
-		}
-		break; 
+        case 'c':{
+            
+        if(!cPress){
+            int jumpDeltaTime = ofGetFrameNum() - lastJumpFrame;
+            if (jumpDeltaTime > 40 && !inAir) {
+                lastJumpFrame = ofGetFrameNum();
+                jumpNum = 0;
+
+                playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+
+                jumpState = true;
+            }else if(jumpDeltaTime > 5 && jumpCount == 1 && inAir){
+                lastJumpFrame = ofGetFrameNum();
+                playerCollider.get()->addForce(ofVec2f(0, getY()), -jumpForce);
+            }
+                
+        }
+        cPress = true;
+		break;
+        }
+            
+        case 'C':{
+            if(jumpState && cPress){
+                jumpCount ++;
+            }
+            cPress = false;
+            std::cout<<jumpCount<<endl;
+            break;
+        }
 	}
 
 	
@@ -701,8 +725,9 @@ void Player::climbingHandler() {
 void Player::jumpHandler() {
 
 	//if in the air 
-	if (abs(getYVelocity()) > 0) {
-		inAir = true; 
+//    if (abs(getYVelocity()) > 0) {
+    if(ofGetFrameNum() - lastJumpFrame < 40){
+		inAir = true;
 		if (ofGetFrameNum() % 25 / 2 == 0) {
 			if (jumpNum != jumpAnimation.size() - 1) {
 				jumpNum++;
@@ -710,7 +735,6 @@ void Player::jumpHandler() {
 			jumpNum = jumpNum % jumpAnimation.size();
 		}
 	}
-
 	//reset after falling to the ground
 	else {
 		inAir = false;

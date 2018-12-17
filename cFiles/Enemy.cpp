@@ -33,7 +33,7 @@ Enemy::Enemy(double x, double y, double range, int dir, double speed, string pat
 void Enemy::setup(){
     //computer centers
 	centerX = x + (20/2);
-	centerY = y + (40/2) - 5;
+	centerY = y + (40/2) - 3;
     
     //load Patrol animation
     for (int i = 0; i < 4; i++) {
@@ -80,7 +80,7 @@ void Enemy::draw(){
 		int index = patrol_count % patrol_anim.size();
 		patrol_anim[index].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 		patrol_anim[index].draw(x, y, 20, 40);
-		shootingHandler->draw();  
+		shootingHandler->draw();
 		
 	}
 }

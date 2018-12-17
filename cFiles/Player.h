@@ -24,6 +24,7 @@ public:
 	//var and methods
 	int getX(), getY(), getRadius(), runningNum, idleNum, jumpNum, climbingNum, shootingNum, spawningNum, dyingNum, radius, size, pauseCount, getOrientation(), getHealth(), score;
 	int x, y, health, id;
+    int lastJumpFrame;
 	b2Timer shootingTimer;
 	string portName;
 	ofVec2f getPosition();
@@ -31,6 +32,7 @@ public:
 	double speed;
 	bool leftOriented, running, isFlipped, inAir, moveInAir, doubleJump, holdingItem, climbing, climbingPaused, firingPosition, randClimbPic, canClimb, ladder, dead, justDied, spawning, win, justWon;
 	bool reset, canJump;
+    bool cPress = false;
 	bool shooting = false;
 	bool jumpState;
 	bool playerOne;
