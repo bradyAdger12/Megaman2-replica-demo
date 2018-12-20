@@ -1,30 +1,10 @@
-# About emptyExample
+GAME FINAL
 
-![Screenshot of emptyExample](emptyExample.png)
+Brady Adger
+Joshua Fry
 
-### Learning Objectives
+This project is a simplified MegaMan2 remake with one level that allows for up to two players with using an Arduino Joystick Controller. This game was developed using OpenFrameworks with the ofxBox2d addon. 
 
-This example is the simplest possible openFrameworks app! It does nothing. 
+The controller folder contains the script necessary for the joystick controller to work, as well as an image showing the functions for each button on the controller.
 
-...Well, *almost* nothing. Although it may not be apparent, the emptyExample activates all of the default system states. (For example, it sets the default fill color to white; it just doesn't happen to draw anything with it.)
-
-The emptyExample is great for making sure that your openFrameworks development environment is compiling properly. It can also be useful as a "starter template" for making simple programs. 
-
-The emptyExample will help you understand what are the bare necessities of an openFrameworks program. In this regard, you can think of it as a "Hello World" for OF. 
-
-
-### Expected Behavior
-
-When launching this app, you should see a light-gray screen. 
-
-* There's no interaction. 
-* There's nothing to see. 
-* That's it. 
-
-Instructions for using the app:
-
-* There's nothing to do. Move along.
-
-### Other classes used in this file
-
-This example uses no other classes.
+Obtain points by collecting coins and killing enemies. Beat the game by making it to the end Green room.
