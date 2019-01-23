@@ -1,0 +1,10 @@
+﻿  Menu.cpp
+c:\cs310\openframeworks\of_v0.10.0_vs2017_release\addons\ofxbox2d-master\libs\triangle\dpoint.hpp(477): warning C4002: too many arguments for function-like macro invocation 'assert'
+  physicsPractice.vcxproj -> C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\apps\myApps\physicsPractice\bin\physicsPractice_debug.exe
+  
+  	                   2	C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\libs\fmodex\lib\vs\Win32\
+  	  *EXTRA File 		 5647872	C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\apps\myApps\physicsPractice\bin\FreeImage.dll
+  
+  	                   1	C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\libs\FreeImage\lib\vs\Win32\
+  	  *EXTRA File 		 1266176	C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\apps\myApps\physicsPractice\bin\fmodex.dll
+  	  *EXTRA File 		 1312768	C:\CS310\openFrameworks\of_v0.10.0_vs2017_release\apps\myApps\physicsPractice\bin\fmodexL.dll
